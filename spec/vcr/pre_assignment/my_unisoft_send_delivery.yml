@@ -1,0 +1,56 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.myunisoft.fr/api/v1/entry/temp
+    body:
+      encoding: UTF-8
+      string: '{"pj_list": [{"name": "AC0003 AC 202011 001", "type": "application/pdf",
+        "content": "JVBERi0xLjQKJeLjz9MKMSAwIG9iaiAKPDwKL0Zvcm1UeXBlIDEKL1N1YnR5\ncGUgL0Zvcm0KL1Jlc291cmNlcyAKPDwKL0ZvbnQgCjw8Ci9GMS4wIDIgMCBS\nCj4+Ci9Qcm9jU2V0IFsvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1h\nZ2VJXQo+PgovVHlwZSAvWE9iamVj=="}],
+        "entry_list": [{"credit":0.0,"debit":1213.48,"piece2":"2","deadline":"","payment_type_id":-1,"account_id":585,"label":"CAPITAL
+        NON APPELE"}, {"credit":1213.48,"debit":0.0,"piece2":"2","deadline":"","payment_type_id":-1,"account_id":586,"label":"CAPITAL
+        NON APPELE 2"}], "date_piece": "2020-11-24", "period_to": "2020-11-24", "period_from":
+        "2020-11-24", "diary_id": "36", "etablissement_id": "3" }'
+    headers:
+      Authorization:
+      - Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiYXBpIiwibSI6ODAsInQiOjEwLCJzIjoyLCJpYXQiOjE2MTY3NTYwODR9.ri53LQdMb3FEiS3PDzXPEh1QOzWOYOhJaryjjOezjOo
+      X-Third-Party-Secret:
+      - idocus-s7mvtqFRXNhXspJv4skMvnTq
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Vary:
+      - Origin
+      X-Correlation-Id:
+      - f4b063bc-2a1e-4462-82af-bf700b38f3b9
+      X-Rate-Limit-Remaining:
+      - '9'
+      X-Rate-Limit-Reset:
+      - '1616771052.009915'
+      X-Rate-Limit-Total:
+      - '10'
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '75'
+      Date:
+      - Fri, 26 Mar 2021 15:04:11 GMT
+      Keep-Alive:
+      - timeout=5
+    body:
+      encoding: UTF-8
+      string: '{"type": "O", "debit_total": null, "entry_array": [], "credit_total":
+        null}'
+    http_version: null
+  recorded_at: Mon, 23 Nov 2020 21:00:00 GMT
+recorded_with: VCR 5.1.0

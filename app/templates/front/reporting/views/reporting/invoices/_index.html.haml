@@ -1,0 +1,590 @@
+- if request.env["SERVER_NAME"].include?("axelium")
+  = stylesheet_link_tag 'front/reporting/assets/stylesheets/invoices_axelium'
+- elsif request.env["SERVER_NAME"].include?("dkpartners")
+  = stylesheet_link_tag 'front/reporting/assets/stylesheets/invoices_dk_partners'
+- elsif request.env["SERVER_NAME"].include?("censial")
+  = stylesheet_link_tag 'front/reporting/assets/stylesheets/invoices_censial'
+- elsif request.env["SERVER_NAME"].include?("orial")
+  = stylesheet_link_tag 'front/reporting/assets/stylesheets/invoices_orial'
+- else
+  = stylesheet_link_tag 'front/reporting/assets/stylesheets/invoices'
+
+- months = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
+
+#reporting.container-fluid
+  .row.derivationRight
+    .col-md-12
+      .row.list-legend
+        .col-md-1.text-center.p-1
+          %span.badge.bg-info.semibold.label-legend Légende :
+        .col-md-2.p-2
+          %span.delivery_state.back_red
+          \: Aucun documents reçus
+        .col-md-2.p-2
+          %span.delivery_state
+            .half-delivery_state.left.received
+            .half-delivery_state.right.not_received
+          \: Documents papier reçus
+        .col-md-2.p-2
+          %span.delivery_state
+            .half-delivery_state.left.not_received
+            .half-delivery_state.right.received
+          \: Documents téléversés reçus
+        .col-md-3.p-2
+          %span.delivery_state
+            .half-delivery_state.left.received
+            .half-delivery_state.right.received
+          \: Documents papier reçus et document téléversés reçus        
+        .col-md-2
+          %a{ href: reporting_invoices_index_path(format: :xls, year: @year, organization_id: @report_organization.id), class: 'no-style' }
+            %button.btn.btn-primary.semibold.w-100
+              %span.me-4= glyphicon('share-boxed', { size: '15', color: 'white'})
+              %span.text-white Export xls
+
+  - annual_summary = []
+  - 12.times do
+    - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :excess_sheets => 0, :uploaded_pieces => 0, :uploaded_pages => 0, :excess_uploaded_pages => 0, :dematbox_scanned_pieces => 0, :dematbox_scanned_pages => 0, :excess_dematbox_scanned_pages => 0, :retrieved_pieces => 0, :retrieved_pages => 0, :compta_pieces => 0, :excess_compta_pieces => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0], :active_user => 0 }
+
+  .mb-4
+
+  .row.derivationLeft
+    .col-md-12.d-inline
+      .form-group
+        = label_tag :value_filter, "Affichage par : "
+        - options = []
+        - if @user.collaborator? || @user.organization.try(:is_detail_authorized)
+          - options += [["Montant facture (€ HT)",8], ["Dépassement (€ HT)",9]]
+        - options += [["Feuilles numérisées",0],["Pièces numérisées",1],["Pages numérisées",2],["Dépassement numérisation",10],["Pièces téléversées",4],["Pages téléversées",5],["Dépassement téléversement",11],["Pièces iDocus'Box",14],["Pages iDocus'Box",15],["Dépassement iDocus'Box",16],["Pièces Automatique",17],["Pages Automatique",18],["Pièces pré-affectées",12],["Dépassement pré-affectation",13],["Attaches",6],["Hors format",7]]
+        = select_tag :value_filter, options_for_select(options), class: 'form-select w-25'
+
+      .mb-4
+
+      %table.table.table-striped.reporting
+        %thead
+          %tr
+            %th.w-15.text-center
+              = link_to (@year - 1), "#{@year - 1}", class: 'year_selector'
+              %span.actif-year #{@year}
+              - if Time.now.year != @year
+                = link_to (@year + 1), "#{@year + 1}", class: 'year_selector'
+            - months.each do |month|
+              %th.month
+                #{month}
+        %tbody
+          - row = 0
+          - User.where(id: @customers_ids).each_with_index do |user|
+            - periods = annual_periods_for_user(@periods_by_users[user.id] || [])
+            - if active_year_for_user?(@year, user, periods)
+              - row += 1
+              %tr{ :id => "user_#{user.id}", :class => "user" }
+                %td.align-middle.semibold
+                  #{[user.code,user.company].join(" - ")}
+                - periods.each_with_index do |period, index|
+                  - p_ind         = index + 1
+                  - _period_index = "#{@year}#{sprintf '%02d', p_ind}".to_i
+                  - if period && _period_index <= 202204
+                    - period_billing = Billing::PeriodBilling.new(period)
+                    - period.duration.times do |i|
+                      - if period.duration == 1 || period_billing.amount_in_cents_wo_vat(i + 1) != 0
+                        - annual_summary[period.start_date.month + i - 1][:active_user] += 1
+                    %td.align-middle.block.period_type{ :colspan => period.duration }
+                      %a.do-show{ href: "#" }
+                        - pos = []
+                        - period.duration.times do |i|
+                          - pos << "pos_#{row}_#{(index + i + 1)}"
+                        .period.clearfix{ id: period.id, user_id: user.id, class: pos.join(' '), duration: period.duration, month: index+1, row: row, type: 'period'}
+                          - if period.scanned_pages == 0 && period.uploaded_pages == 0
+                            - annual_summary[period.end_date.month - 1][:delivery_status][0] += 1
+                            .delivery_state.back_red
+                          - elsif period.delivery_state == "received"
+                            - annual_summary[period.end_date.month - 1][:delivery_status][1] += 1
+                            .delivery_state.back_orange
+                          - else
+                            - annual_summary[period.end_date.month - 1][:delivery_status][2] += 1
+                            .delivery_state
+                              .half-delivery_state.left{ class: (period.scanned_pages > 0 ? 'received' : 'not_received') }
+                              .half-delivery_state.right{ class: (period.uploaded_pages > 0 ? 'received' : 'not_received') }
+                          - if period.documents_name_tags && period.documents_name_tags.is_a?(Array)
+                            - period.documents_name_tags.each do |tags|
+                              %span{ :class => tags }
+                          .value{ class: "duration-#{period.duration}" }
+                            %span{ :class => "hide pieces value_1" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:scanned_pieces, i+1)
+                            %span{ :class => "sheets value_0" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:scanned_sheets, i+1)
+                            %span{ :class => "hide pages value_2" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:scanned_pages, i+1)
+                            %span{ :class => "hide uploaded_pieces value_4" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:uploaded_pieces, i+1)
+                            %span{ :class => "hide uploaded_pages value_5" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:uploaded_pages, i+1)
+                            %span{ :class => "hide dematbox_scanned_pieces value_14" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:dematbox_scanned_pieces, i+1)
+                            %span{ :class => "hide dematbox_scanned_pages value_15" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:dematbox_scanned_pages, i+1)
+                            %span{ :class => "hide retrieved_pieces value_17" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:retrieved_pieces, i+1)
+                            %span{ :class => "hide retrieved_pages value_18" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:retrieved_pages, i+1)
+                            %span{ :class => "hide paperclips value_6" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:paperclips, i+1)
+                            %span{ :class => "hide oversized value_7" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:oversized, i+1)
+                            %span{ :class => "hide excess_sheets value_10" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:excess_sheets, i+1)
+                            %span{ :class => "hide excess_uploaded_pages value_11" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:excess_uploaded_pages, i+1)
+                            %span{ :class => "hide excess_dematbox_scanned_pages value_16" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:excess_dematbox_scanned_pages, i+1)
+                            %span{ :class => "hide compta_pieces value_12" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:compta_pieces, i+1)
+                            %span{ :class => "hide excess_compta_pieces value_13" }
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:excess_compta_pieces, i+1)
+                            - if @user.collaborator? || @user.organization.try(:is_detail_authorized)
+                              %span{ :class => "hide price value_8" }
+                                - period.duration.times do |i|
+                                  %div{ class: "period_#{i+1}" }
+                                    #{format_price_00(period_billing.amount_in_cents_wo_vat(i+1))} €
+                              %span{ :class => "hide excess_price value_9" }
+                                - period.duration.times do |i|
+                                  %div{ class: "period_#{i+1}" }
+                                    #{format_price_00(period_billing.data(:excesses_amount_in_cents_wo_vat, i+1))} €
+
+                          - period.duration.times do |i|
+                            - annual_summary[period.start_date.month + i - 1][:pieces] += period_billing.data(:scanned_pieces, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:sheets] += period_billing.data(:scanned_sheets, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:pages] += period_billing.data(:scanned_pages, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:excess_sheets] += period_billing.data(:excess_sheets, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:uploaded_pieces] += period_billing.data(:uploaded_pieces, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:uploaded_pages] += period_billing.data(:uploaded_pages, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:excess_uploaded_pages] += period_billing.data(:excess_uploaded_pages, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:dematbox_scanned_pieces] += period_billing.data(:dematbox_scanned_pieces, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:dematbox_scanned_pages] += period_billing.data(:dematbox_scanned_pages, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:excess_dematbox_scanned_pages] += period_billing.data(:excess_dematbox_scanned_pages, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:retrieved_pieces] += period_billing.data(:retrieved_pieces, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:retrieved_pages] += period_billing.data(:retrieved_pages, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:compta_pieces] += period_billing.data(:compta_pieces, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:excess_compta_pieces] += period_billing.data(:excess_compta_pieces, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:paperclips] += period_billing.data(:paperclips, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:oversized] += period_billing.data(:oversized, i+1)
+                            - annual_summary[period.start_date.month + i - 1][:price_in_cents] += period_billing.amount_in_cents_wo_vat(i+1)
+                            - annual_summary[period.start_date.month + i - 1][:price_in_cents_of_excess] += period_billing.data(:excesses_amount_in_cents_wo_vat, i+1)
+                  - elsif _period_index > 202204 && user.active_at?(_period_index) && _period_index.to_i < CustomUtils.period_of(1.month.after).to_i
+                    - billing = user.billings.of_period(_period_index).first
+                    - data_flow = user.data_flows.of_period(_period_index).first
+                    - if user.active_at?(_period_index)
+                      - annual_summary[index][:active_user] += 1
+                    %td.align-middle.block.billing_type
+                      %a.do-show{ href: "#" }
+                        - pos = []
+                        - pos << "pos_#{row}_#{(index + 1 + 1)}"
+                        - class_not_billed  = (user.total_billing_of(_period_index).to_f == 0 && (user.my_package&.name != 'ido_premium')) ? 'not_billed' : ''
+
+                        .period.clearfix{ id: billing.try(:id).to_i, user_id: user.id, duration: 1, month: p_ind, row: row, class: "#{class_not_billed} #{pos.join(' ')}", type: 'billing' }
+                          - if data_flow.try(:pieces).to_i == 0 && data_flow.try(:operations).to_i == 0
+                            .delivery_state.back_red
+                          - else
+                            .delivery_state
+                              .half-delivery_state.left{ class: (data_flow.try(:scanned_sheets).to_i > 0 ? 'received' : 'not_received') }
+                              .half-delivery_state.right{ class: (data_flow.try(:pieces).to_i > 0 ? 'received' : 'not_received') }
+                          .value{ class: "duration-1" }
+                            %span{ :class => "hide pieces value_1" }
+                              %div{ class: "period_1" }= data_flow.try(:scanned_sheets).to_i
+                            %span{ :class => "sheets value_0" }
+                              %div{ class: "period_1" }= data_flow.try(:scanned_sheets).to_i
+                            %span{ :class => "hide pages value_2" }
+                              %div{ class: "period_1" }= data_flow.try(:scanned_sheets).to_i
+                            %span{ :class => "hide uploaded_pieces value_4" }
+                              %div{ class: "period_1" }= data_flow.try(:pieces).to_i
+                            %span{ :class => "hide uploaded_pages value_5" }
+                              %div{ class: "period_1" }= data_flow.try(:pieces).to_i
+                            %span{ :class => "hide dematbox_scanned_pieces value_14" }
+                              %div{ class: "period_1" }= data_flow.try(:pieces).to_i
+                            %span{ :class => "hide dematbox_scanned_pages value_15" }
+                              %div{ class: "period_1" }= data_flow.try(:pieces).to_i
+                            %span{ :class => "hide retrieved_pieces value_17" }
+                              %div{ class: "period_1" }= data_flow.try(:pieces).to_i
+                            %span{ :class => "hide retrieved_pages value_18" }
+                              %div{ class: "period_1" }= data_flow.try(:pieces).to_i
+                            %span{ :class => "hide paperclips value_6" }
+                              %div{ class: "period_1" }= 0
+                            %span{ :class => "hide oversized value_7" }
+                              %div{ class: "period_1" }= 0
+                            %span{ :class => "hide excess_sheets value_10" }
+                              %div{ class: "period_1" }= 0
+                            %span{ :class => "hide excess_uploaded_pages value_11" }
+                              %div{ class: "period_1" }= 0
+                            %span{ :class => "hide excess_dematbox_scanned_pages value_16" }
+                              %div{ class: "period_1" }= 0
+                            %span{ :class => "hide compta_pieces value_12" }
+                              %div{ class: "period_1" }= data_flow.try(:compta_pieces).to_i
+                            %span{ :class => "hide excess_compta_pieces value_13" }
+                              %div{ class: "period_1" }= 0
+                            - if @user.collaborator? || @user.organization.try(:is_detail_authorized)
+                              %span{ :class => "hide price value_8" }
+                                %div{ class: "period_1" }
+                                  #{format_price_00(user.total_billing_of(_period_index))} €
+                              %span{ :class => "hide excess_price value_9" }
+                                %div{ class: "period_1" }
+                                  - total_excess_price = user.billings.where(kind: 'excess').of_period(_period_index).select("SUM(price) as price").first.price.to_f
+                                  #{format_price_00(total_excess_price)} €
+
+                    - annual_summary[index][:pieces] += data_flow.try(:scanned_sheets).to_i
+                    - annual_summary[index][:sheets] += data_flow.try(:scanned_sheets).to_i
+                    - annual_summary[index][:pages] += data_flow.try(:scanned_sheets).to_i
+                    - annual_summary[index][:excess_sheets] += 0
+                    - annual_summary[index][:uploaded_pieces] += data_flow.try(:pieces).to_i
+                    - annual_summary[index][:uploaded_pages] += data_flow.try(:pieces).to_i
+                    - annual_summary[index][:excess_uploaded_pages] += 0
+                    - annual_summary[index][:dematbox_scanned_pieces] += data_flow.try(:pieces).to_i
+                    - annual_summary[index][:dematbox_scanned_pages] += data_flow.try(:pieces).to_i
+                    - annual_summary[index][:excess_dematbox_scanned_pages] += 0
+                    - annual_summary[index][:retrieved_pieces] += data_flow.try(:pieces).to_i
+                    - annual_summary[index][:retrieved_pages] += data_flow.try(:pieces).to_i
+                    - annual_summary[index][:compta_pieces] += data_flow.try(:compta_pieces).to_i
+                    - annual_summary[index][:excess_compta_pieces] += 0
+                    - annual_summary[index][:paperclips] += 0
+                    - annual_summary[index][:oversized] += 0
+                    - annual_summary[index][:price_in_cents] += user.total_billing_of(_period_index)
+                    - annual_summary[index][:price_in_cents_of_excess] += total_excess_price
+                  - else
+                    %td.align-middle.block
+                      \-
+          - if @user.collaborator?
+            %tr#total
+              %td
+                %b.value
+                  %span{ :class => "sheets value_0" }
+                    Nb de feuilles numérisées
+                  %span{ :class => "hide pieces value_1" }
+                    Nb de pièces numérisées
+                  %span{ :class => "hide pages value_2" }
+                    Nb de pages numérisées
+                  %span{ :class => "hide excess_sheets value_10" }
+                    Dépassement numérisation
+                  %span{ :class => "hide uploaded_pieces value_4" }
+                    Nb de pièces téléversées
+                  %span{ :class => "hide uploaded_pages value_5" }
+                    Nb de pages téléversées
+                  %span{ :class => "hide excess_uploaded_pages value_11" }
+                    Dépassement téléversement
+                  %span{ :class => "hide dematbox_scanned_pieces value_14" }
+                    Nb de pièces iDocus'Box
+                  %span{ :class => "hide dematbox_scanned_pages value_15" }
+                    Nb de pages iDocus'Box
+                  %span{ :class => "hide excess_dematbox_scanned_pages value_16" }
+                    Dépassement iDocus'Box
+                  %span{ :class => "hide retrieved_pieces value_17" }
+                    Nb de pièces Automatique
+                  %span{ :class => "hide retrieved_pages value_18" }
+                    Nb de pages Automatique
+                  %span{ :class => "hide compta_pieces value_12" }
+                    Nb de pièces pré-affectées
+                  %span{ :class => "hide excess_compta_pieces value_13" }
+                    Dépassement pré-affectation
+                  %span{ :class => "hide paperclips value_6" }
+                    Nb d'attaches
+                  %span{ :class => "hide oversized value_7" }
+                    Nb de hors formats
+                  %span{ :class => "hide price value_8" }
+                    Montant facture (€ HT)
+                  %span{ :class => "hide price value_9" }
+                    Dépassement (€ HT)
+                %br
+                %span{ :style => "color:red;" } Non reçus
+                |
+                %span{ :style => "color:#F89406;" } Reçus
+                |
+                %span{ :style => "color:#468847;" } Traités
+                %br
+                Nombre de clients actifs
+                %br
+                Facture
+              - annual_summary.each_with_index do |month,index|
+                %td{ :style => "width:7%;text-align:center;padding-right:5px;" }
+                  %b.value
+                    %span{ :class => "hide pieces value_1" }
+                      #{month[:pieces]}
+                    %span{ :class => "sheets value_0" }
+                      #{month[:sheets]}
+                    %span{ :class => "hide pages value_2" }
+                      #{month[:pages]}
+                    %span{ :class => "hide excess_sheets value_10" }
+                      #{month[:excess_sheets]}
+                    %span{ :class => "hide uploaded_pieces value_4" }
+                      #{month[:uploaded_pieces]}
+                    %span{ :class => "hide uploaded_pages value_5" }
+                      #{month[:uploaded_pages]}
+                    %span{ :class => "hide excess_uploaded_pages value_11" }
+                      #{month[:excess_uploaded_pages]}
+                    %span{ :class => "hide dematbox_scanned_pieces value_14" }
+                      #{month[:dematbox_scanned_pieces]}
+                    %span{ :class => "hide dematbox_scanned_pages value_15" }
+                      #{month[:dematbox_scanned_pages]}
+                    %span{ :class => "hide excess_dematbox_scanned_pages value_16" }
+                      #{month[:excess_dematbox_scanned_pages]}
+                    %span{ :class => "hide retrieved_pieces value_17" }
+                      #{month[:retrieved_pieces]}
+                    %span{ :class => "hide retrieved_pages value_18" }
+                      #{month[:retrieved_pages]}
+                    %span{ :class => "hide compta_pieces value_12" }
+                      #{month[:compta_pieces]}
+                    %span{ :class => "hide excess_compta_pieces value_13" }
+                      #{month[:excess_compta_pieces]}
+                    %span{ :class => "hide paperclips value_6" }
+                      #{month[:paperclips]}
+                    %span{ :class => "hide oversized value_7" }
+                      #{month[:oversized]}
+                    %span{ :class => "hide price value_8" }
+                      - time  = Time.local(@year,(index+1),15,0,0)
+                      - price = 0
+                      - if @user.leader? && (@user.has_one_organization? || @user.scoped?)
+                        / - price = price_of_period_by_time(@user.organization.periods,time)
+                        - month[:price_in_cents] = month[:price_in_cents]
+                      - elsif @user.leader? && !params[:organization_id].present?
+                        / - @user.organizations.each{|organization| price += price_of_period_by_time(organization.periods, time)}
+                        - month[:price_in_cents] = month[:price_in_cents]
+                      #{format_price_00 month[:price_in_cents]} €
+                    %span{ :class => "hide price value_9" }
+                      #{format_price_00 month[:price_in_cents_of_excess]} €
+                  %br
+                  %span{ :style => "color:red;" }= month[:delivery_status][0]
+                  |
+                  %span{ :style => "color:#F89406;" }= month[:delivery_status][1]
+                  |
+                  %span{ :style => "color:#468847;" }= month[:delivery_status][2]
+                  %br
+                  %span{ :style => "padding-right:3px;" }= month[:active_user]
+                  .invoice{ :style => "padding-right:3px;" }
+                    - if @user.leader? && (@user.has_one_organization? || @user.scoped?) && @user.organization.invoices.count > 0
+                      - start_time = Time.local(@year, index+1, 1) + 1.month
+                      - end_time = start_time.end_of_month
+
+                      - invoice  = @user.organization.invoices.where("created_at > ? AND created_at < ?", start_time, end_time).first
+                      - if invoice
+                        - if invoice.cloud_content_object.try(:url)
+                          %a{ :href => organization_invoice_path(invoice.id, invoice.organization.id), :class => "icon-download-alt", :style => "width:16px;height:16px;" }
+                          %a{ :href => organization_invoice_path(invoice.id, invoice.organization.id), :title => "#{invoice.number}.pdf", :class => "icon-eye-open do-showInvoice" }
+            %tr.global_excess
+              %td
+                Facturation supplémentaire
+              - 12.times do |time|
+                - time += 1
+                %td.text-center{ id: "period_#{time}"}
+                  - _period = "#{@year}#{(sprintf '%02d', time)}".to_i
+                  - if _period <= 202204
+                    - date = (Time.local(@year) + time.month).to_date
+                    = render partial: 'organization_quota', locals: { period: @user.organization.subscription.find_period(date) }
+                  - else
+                    = render partial: 'organization_billing', locals: { billings: @user.organization.billings.of_period(_period) }
+        %tfoot
+          %tr
+            %th.w-15.text-center
+              = link_to (@year - 1), "#{@year - 1}", class: 'year_selector'
+              %span.actif-year #{@year}
+              - if Time.now.year != @year
+                = link_to (@year + 1), "#{@year + 1}", class: 'year_selector'                
+            - months.each do |month|
+              %th.month{ :style => "width:7%;padding-right:7px;" }
+                #{month}
+
+
+
+
+#periodModal.modal.fade.in
+  .modal-dialog
+    .modal-content
+      .modal-header
+        .user
+          %h4.modal-title.bold
+        .period.no-border.ms-5.no-padding
+          %h3.no-margin.grey-label.regular
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}        
+        = hidden_field_tag :year, @year
+      .modal-body.clearfix.back-grey
+      .modal-footer
+        .row.w-100.form-group
+          .col-md-8.p-2
+            %label Légende : Total (Téléversées, Numérisées, iDocus'Box, Automatique)
+          .col-md-4.text-end
+            %a.left.btn.btn-light
+              = glyphicon('chevron-left', size: '13')
+            %a.up.btn.btn-light
+              = glyphicon('chevron-top', size: '13')
+            %a.down.btn.btn-light
+              = glyphicon('chevron-bottom', size: '13')
+            %a.right.btn.btn-light
+              = glyphicon('chevron-right', size: '13')          
+
+#invoiceDialog.modal.fade.in
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}   
+      .modal-body
+        %iframe{ :src => "", :id => "invoice-show" }
+
+%script{ :type => "text/x-tmpl", :id => "tmpl-period" }
+  :plain
+    <div class="documentslist">
+      <div class='box'>
+      <table class="table table-striped">
+        <thead>
+          <th>Nom des documents</th>
+          <th class="center">Pièces</th>
+          <th class="center">Pré-aff.</th>
+          <th class="center">Feuilles</th>
+          <th class="center">Pages</th>
+          <th class="center">Attaches</th>
+          <th class="center">Hors format</th>
+          <th class="last"></th>
+        </thead>
+        <tbody>
+        {% for(var i=0; i<o.documents.list.length; i++) {
+            var content = "<table class='historic table table-striped'><tr><th>N°</th><th>Date</th><th class='right'>Télév.</th><th class='right'>Num.</th><th class='right'>iDocus'Box</th><th class='right'>Auto.</th></tr>";
+            for(var k=0; k<o.documents.list[i].historic.length; k++) {
+              content += "<tr>";
+              content += "<td>"+(k+1)+"</td>";
+              content += "<td>"+o.documents.list[i].historic[k].date+"</td>";
+              content += "<td class='text-right'>"+o.documents.list[i].historic[k].uploaded+"</td>";
+              content += "<td class='text-right'>"+o.documents.list[i].historic[k].scanned+"</td>";
+              content += "<td class='text-right'>"+o.documents.list[i].historic[k].dematbox_scanned+"</td>";
+              content += "<td class='text-right'>"+o.documents.list[i].historic[k].retrieved+"</td>";
+              content += "</tr>";
+            }
+            content += "</table>";
+          %}
+          <tr>
+            <td class="name first">
+              <a href="#" class="do-popover" data-content="{%= content %}" data-original-title="Historique des ajouts de pages :"><i class="icon-info-sign" style="margin-right:3px;"></i></a>
+              {% if(o.documents.list[i].link != "#") { %}
+                <a href="{%= o.documents.list[i].link%}">{%= o.documents.list[i].name %}</a>
+              {% } else { %}
+                {%= o.documents.list[i].name %}
+              {% } %}
+            </td>
+            <td class="center">{%= o.documents.list[i].pieces %} ({%= o.documents.list[i].uploaded_pieces %}, {%= o.documents.list[i].scanned_pieces %}, {%= o.documents.list[i].dematbox_scanned_pieces %}, {%= o.documents.list[i].retrieved_pieces %})</td>
+            <td class="center">{%= o.documents.list[i].pre_assignments %}</td>
+            <td class="center">{%= o.documents.list[i].scanned_sheets %}</td>
+            <td class="center">{%= o.documents.list[i].pages %} ({%= o.documents.list[i].uploaded_pages %}, {%= o.documents.list[i].scanned_pages %}, {%= o.documents.list[i].dematbox_scanned_pages %}, {%= o.documents.list[i].retrieved_pages %})</td>
+            <td class="center">{%= o.documents.list[i].paperclips %}</td>
+            <td class="center">{%= o.documents.list[i].oversized %}</td>
+            <td class="last">
+              {% if(o.documents.list[i].report_id != "#") { %}
+                {% if(o.documents.list[i].report_type == "NDF") { %}
+  = link_to(image_tag('application/icon-xls.png', title: 'Notes de frais', alt: 'NDF.xlsx'),"/reporting/expenses/{%= o.documents.list[i].report_id %}.xlsx")
+  = link_to(image_tag('application/icon-pdf.png', title: 'Notes de frais', alt: 'NDF.pdf'),"/reporting/expenses/{%= o.documents.list[i].report_id %}.pdf")
+  :plain
+                {% } else { %}
+  = link_to(image_tag('application/icon-csv.png', title: 'Fichier de pré-affectation comptable', alt: '{%= o.documents.list[i].report_type %}.csv'),"/reporting/preseizures/{%= o.documents.list[i].report_id %}.csv")
+  :plain
+                {% } %}
+              {% } %}
+            </td>
+          </tr>
+        {% } %}
+        <tr>
+          <td class="semibold">Total</td>
+          <td class="center"><b>{%= o.documents.total.pieces %} ({%= o.documents.total.uploaded_pieces %}, {%= o.documents.total.scanned_pieces %}, {%= o.documents.total.dematbox_scanned_pieces %}, {%= o.documents.total.retrieved_pieces %})</b></td>
+          <td class="center"><b>{%= o.documents.total.pre_assignments %}<b/></td>
+          <td class="center"><b>{%= o.documents.total.scanned_sheets %}</b></td>
+          <td class="center"><b>{%= o.documents.total.pages %} ({%= o.documents.total.uploaded_pages %}, {%= o.documents.total.scanned_pages %}, {%= o.documents.total.dematbox_scanned_pages %}, {%= o.documents.total.retrieved_pages %})</b></td>
+          <td class="center"><b>{%= o.documents.total.paperclips %}</b></td>
+          <td class="center"><b>{%= o.documents.total.oversized %}</b></td>
+          <td class="last"></td>
+        </tr>
+      </tbody>
+      </table>
+      </div>      
+      {% if (!o.documents.is_valid_for_quota_organization)
+        { %}
+        <hr/>
+        <div class='box'>
+        <table class="table table-striped">
+          <thead>         
+            <th>Dépassement</th>
+            <th class="center">Pièces</th>
+            <th class="center">Feuilles</th>
+            <th class="center">Pages</th>
+            <th class="center">Attaches</th>
+            <th class="center">Hors format</th>          
+          </thead>
+          <tbody>
+          <tr>
+            <td class='semibold' >Pré-affectation</td>
+            <td class="center">{%= o.documents.excess.compta_pieces %}</td>
+            <td class="center">-</td>
+            <td class="center">-</td>
+            <td class="center">-</td>
+            <td class="center">-</td>
+          </tr>
+        </tbody>
+        </table>
+        </div>
+      {% } %}
+    </div>
+  - if @user.collaborator? || @user.organization.try(:is_detail_authorized)
+    :plain
+      <hr/>
+      <div class="optionslist box">        
+        <table class="table table-striped">
+          <thead>
+            <th class="header">Paramètre</th>
+            <th class="header">Valeur</th>
+            <th class="header" style="text-align:right; width: 25%;">Prix HT</th>
+          </thead>
+          <tbody>
+          {% for(var i=0; i<o.options.list.length; i++) { %}
+            <tr>
+              <td class='semibold'>{%# o.options.list[i].group_title %}</td>
+              <td>{%# o.options.list[i].title %}</td>
+              <td style="text-align:right;">{%= o.options.list[i].price %} €</td>
+            </tr>
+          {% } %}
+          {% if (!o.documents.is_valid_for_quota_organization && o.documents.type == 'period')
+            { %}
+            <tr>
+              <td class='semibold' >Dépassement pré-affectation</td>
+              <td></td>
+              <td style="text-align:right;">{%= o.options.excess_compta_pieces%} €</td>
+            </tr>
+          {% } %}
+          <tr>
+            <td></td>
+            <td class='semibold' ><b>Total :</b></td>
+            <td class='semibold text-end' >{%= o.options.total%} €</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td class='semibold' >Facture(s) :</td>
+            <td>
+              {% if (o.options.invoices != []) { %}
+                {% for (i=0;i<o.options.invoices.length;i++) { %}
+                  <a href="{%= o.options.invoices[i]['link'] %}" class="icon-download-alt" style="width:16px;height:16px;"></a>
+                  <a href="{%= o.options.invoices[i]['link'] %}" class="icon-eye-open do-showInvoice" style="width:16px;height:16px;" title="{%= o.options.invoices[i]['number'] %}.pdf"></a>
+                  <br/>
+                {% } %}
+              {% } %}
+            </td>
+          </tr>
+          </tbody>
+      </div>
+
+= javascript_include_tag 'front/reporting/assets/javascripts/invoices'

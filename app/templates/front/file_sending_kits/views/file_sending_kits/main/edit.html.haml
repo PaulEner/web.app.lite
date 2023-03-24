@@ -1,0 +1,114 @@
+= stylesheet_link_tag 'front/organizations/assets/stylesheets/show'
+= stylesheet_link_tag 'front/file_sending_kits/assets/stylesheets/main'
+
+%input#organization_id{type: :hidden, value: @organization.id, name: 'organization_id'}
+
+.file_sending_kits_edit
+  - manual_paper_set_order = CustomUtils.is_manual_paper_set_order?(@organization)
+  = simple_form_for [@organization, @file_sending_kit], html: { class: 'form form-horizontal margin0', :enctype => manual_paper_set_order ? "multipart/form-data" : "", id: 'edit_file_sending_kit_form'  } do |f|
+    %ul#file_sending_kits_tab.nav.nav-tabs.ms-3{role: "tablist"}
+      %li.nav-item.no-margin{role: "presentation"}
+        %button#basic_info_details_tab.semibold.nav-link.active{"aria-controls" => "basic_info_details", "aria-selected" => "true", "data-bs-target" => "#basic_info_details", "data-bs-toggle" => "tab", role: "tab", type: "button"}= t('common.details')
+      %li.nav-item.no-margin{role: "presentation"}
+        %button#file_sending_kits_center_logo_tab.semibold.nav-link{"aria-controls" => "file_sending_kits_center_logo", "aria-selected" => "false", "data-bs-target" => "#file_sending_kits_center_logo", "data-bs-toggle" => "tab", role: "tab", type: "button"}= t('activerecord.models.file_sending_kit.attributes.logo.center')
+      %li.nav-item.no-margin{role: "presentation"}
+        %button#file_sending_kits_left_logo_tab.semibold.nav-link{"aria-controls" => "file_sending_kits_left_logo", "aria-selected" => "false", "data-bs-target" => "#file_sending_kits_left_logo", "data-bs-toggle" => "tab", role: "tab", type: "button"}= t('activerecord.models.file_sending_kit.attributes.logo.left')
+      %li.nav-item.no-margin{role: "presentation"}
+        %button#file_sending_kits_right_logo_tab.semibold.nav-link{"aria-controls" => "file_sending_kits_right_logo", "aria-selected" => "false", "data-bs-target" => "#file_sending_kits_right_logo", "data-bs-toggle" => "tab", role: "tab", type: "button"}= t('activerecord.models.file_sending_kit.attributes.logo.right')
+    
+    #file_sending_kits_content.tab-content
+      #basic_info_details.tab-pane.fade.show.active{"aria-labelledby" => "basic_info_details_tab", role: "tabpanel"}
+        .box.no-margin
+          = f.label :title, :class => "semibold"
+          .select-container.no-padding.w-100
+            = f.input :title, label: false
+          = f.label :position, :class => "semibold"
+          .select-container.no-padding.w-100
+            = f.input :position, label: false
+          = f.label :instruction, :class => "semibold"
+          .select-container.no-padding.w-100
+            = f.input :instruction,  as: :text, label: false
+      #file_sending_kits_center_logo.tab-pane.fade{"aria-labelledby" => "file_sending_kits_center_logo_tab", role: "tabpanel"}
+        .box.no-margin
+          - if manual_paper_set_order
+            .row
+              .col-md-8
+                = f.label :center_logo, label: 'Chemin', :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :center_logo, as: :file, label: false, :accept => 'image/png', required: !File.exist?(@file_sending_kit.real_logo_path)
+                = f.label :logo_height, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :logo_height, label: false
+                = f.label :logo_width, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :logo_width, label: false
+              .col-md-4
+                - if File.exist?(@file_sending_kit.real_logo_path)
+                  %img{ src: get_logo_organization_file_sending_kit_path(position: 'center'), alt: 'center_logo', style: 'max-width: 150px;' }
+          - else
+            = f.label :logo_path, :class => "semibold"
+            .select-container.no-padding.w-100
+              = f.input :logo_path, label: false
+            = f.label :logo_height, :class => "semibold"
+            .select-container.no-padding.w-100
+              = f.input :logo_height, label: false
+            = f.label :logo_width, :class => "semibold"
+            .select-container.no-padding.w-100
+              = f.input :logo_width, label: false
+      #file_sending_kits_left_logo.tab-pane.fade{"aria-labelledby" => "file_sending_kits_left_logo_tab", role: "tabpanel"}
+        .box.no-margin
+          - if manual_paper_set_order
+            .row
+              .col-md-8
+                = f.label :left_logo, label: 'Chemin', :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :left_logo, as: :file, label: false, :accept => 'image/png', required: !File.exist?(@file_sending_kit.real_left_logo_path)
+                = f.label :left_logo_height, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :left_logo_height, label: false
+                = f.label :left_logo_width, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :left_logo_width, label: false
+              .col-md-4
+                - if File.exist?(@file_sending_kit.real_left_logo_path)
+                  %img{ src: get_logo_organization_file_sending_kit_path(position: 'left'), alt: 'left_logo', style: 'max-width: 150px;' }
+          - else
+            = f.label :left_logo_path, :class => "semibold"
+            .select-container.no-padding.w-100
+              = f.input :left_logo_path, label: false
+            = f.label :left_logo_height, :class => "semibold"
+            .select-container.no-padding.w-100
+              = f.input :left_logo_height, label: false
+            = f.label :left_logo_width, :class => "semibold"
+            .select-container.no-padding.w-100
+              = f.input :left_logo_width, label: false
+      #file_sending_kits_right_logo.tab-pane.fade{"aria-labelledby" => "file_sending_kits_right_logo_tab", role: "tabpanel"}
+        .box.no-margin
+          - if manual_paper_set_order
+            .row
+              .col-md-8
+                = f.label :right_logo, label: 'Chemin', :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :right_logo, as: :file, label: false, :accept => 'image/png', required: !File.exist?(@file_sending_kit.real_right_logo_path)
+                = f.label :right_logo_height, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :right_logo_height, label: false
+                = f.label :right_logo_width, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :right_logo_width, label: false
+              .col-md-4
+                - if File.exist?(@file_sending_kit.real_right_logo_path)
+                  %img{ src: get_logo_organization_file_sending_kit_path(position: 'right'), alt: 'right_logo', style: 'max-width: 150px;' }
+          - else
+            = f.label :right_logo_path, :class => "semibold"
+            .select-container.no-padding.w-100
+              = f.input :right_logo_path, label: false
+            = f.label :right_logo_height, :class => "semibold"
+            .select-container.no-padding.w-100
+              = f.input :right_logo_height, label: false
+            = f.label :right_logo_width, :class => "semibold"
+            .select-container.no-padding.w-100
+              = f.input :right_logo_width, label: false
+
+
+= javascript_include_tag 'front/file_sending_kits/assets/javascripts/main'

@@ -1,0 +1,77 @@
+- address = address rescue nil
+
+%form.adresses_form{class: "#{type}_form"}
+  .row
+    .col-md-8.pt-2
+      .form-group
+        - if type == 'paper_return'
+          %h6.semibold= t('activerecord.models.address.attributes.paper_return')
+        - if type == 'paper_set_shipping'
+          %h6.semibold= t('activerecord.models.address.attributes.paper_set_shipping')
+        - if type == 'dematbox_shipping'
+          %h6.semibold= t('activerecord.models.address.attributes.dematbox_shipping')
+        - if type == 'billing'
+          %h6.semibold= t('activerecord.models.address.attributes.billing')
+    .col-md-4.text-end
+      - if address.try(:id).to_i > 0
+        %button.btn.destroy_address{ data: { id: address.try(:id).to_i, type: type } }
+          %span= glyphicon('trash', color: 'red', size: '15')
+
+  %hr
+  .form-group
+    .select-container.no-padding.w-100
+      %label= t('activerecord.models.address.attributes.company')
+      %input{ type: 'text', name: "company", class: "#{type} input", value: address.try(:company), required: 'required' }
+  - if type == 'dematbox_shipping'
+    .form-group
+      .select-container.no-padding.w-100
+        %label= t('activerecord.models.address.attributes.company_number')        
+        %input{ type: 'text', name: "company_number", class: "#{type} input", value: address.try(:company_number), required: 'required' }
+
+  .form-group
+    .select-container.no-padding.w-100
+      %label= t('activerecord.models.address.attributes.first_name')
+      %input{ type: 'text', name: "first_name", class: "#{type} input", value: address.try(:first_name), required: 'required' }
+
+  .form-group
+    .select-container.no-padding.w-100
+      %label= t('activerecord.models.address.attributes.last_name')
+      %input{ type: 'text', name: "last_name", class: "#{type} input", value: address.try(:last_name), required: 'required' }
+
+  - if type == 'dematbox_shipping'
+    .form-group
+      .select-container.no-padding.w-100
+        %label= t('activerecord.models.address.attributes.phone')
+        %input{ type: 'text', name: "phone", class: "#{type} input", value: address.try(:phone) }
+
+  .form-group
+    .select-container.no-padding.w-100
+      %label= t('activerecord.models.address.attributes.address_1')
+      %input{ type: 'text', name: "address_1", class: "#{type} input", value: address.try(:address_1), required: 'required' }
+
+  .form-group
+    .select-container.no-padding.w-100
+      %label= t('activerecord.models.address.attributes.address_2')
+      %input{ type: 'text', name: "address_2", class: "#{type} input", value: address.try(:address_2) }
+
+  - if type == 'dematbox_shipping'
+    .form-group
+      .select-container.no-padding.w-100
+        %label= t('activerecord.models.address.attributes.place_called_or_postal_box')
+        %input{ type: 'text', name: "place_called_or_postal_box", class: "#{type} input", value: address.try(:place_called_or_postal_box), required: 'required' }
+
+  .form-group
+    .select-container.no-padding.w-100
+      %label= t('activerecord.models.address.attributes.city')
+      %input{ type: 'text', name: "city", class: "#{type} input", value: address.try(:city), required: 'required' }
+
+  .form-group
+    .select-container.no-padding.w-100
+      %label= t('activerecord.models.address.attributes.zip')
+      %input{ type: 'text', name: "zip", class: "#{type} input", value: address.try(:zip), required: 'required' }
+
+  - if type == 'dematbox_shipping'
+    .form-group
+      .select-container.no-padding.w-100
+        %label= t('activerecord.models.address.attributes.building')
+        %input{ type: 'text', name: "building", class: "#{type} input", value: address.try(:building) }

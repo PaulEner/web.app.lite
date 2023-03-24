@@ -1,0 +1,89 @@
+.derivationRight
+  %input#duplicated-pre-assignment-size{ type: 'hidden', value: @duplicates.total_count }
+
+  .form-group
+    .w-100.text-end
+      - if @user.has_collaborator_action? && @user.still_active?     
+        %button.btn.btn-danger.semibold#unlock-preseizures
+          %span.me-2= glyphicon('aperture', { size: '15', color: '#FF4848'})
+          %span Débloquer ceux séléctionnées
+      - if @user.still_active?
+        %button.btn.btn-default.semibold.no-margin#confirm-duplication
+          %span.me-2= glyphicon('circle-check', { size: '15', color: '#72AA42'})
+          %span Marquer comme duplication ceux séléctionnées
+  .row
+    .col-md-12
+      %table.table.table-striped.table_integration#tbl_duplicated_pieces
+        %thead            
+          %th.text-center
+            .form-check
+              %input.form-check-input.pointer.float-none.check-all-piece-ignored.duplicated{ type: :checkbox, value: "" }
+          %th= sortable :created_at, 'Date de création'
+          %th= sortable :piece_name, 'N° pièce'
+          %th= sortable :piece_number, 'N° facture'
+          %th= sortable :third_party, 'Tiers'
+          %th= sortable :amount, 'Montant'
+          %th= sortable :date, "Date d'opération"
+          %th Statut
+          %th.text-end Action
+        %tbody
+          - if @duplicates.any?
+            - @duplicates.each do |object|
+              - similar_preseizure = object.similar_preseizure || FakeObject.new
+              %tr
+                %td.text-center
+                  .form-check.pt-2
+                    %input.form-check-input.pointer.float-none.check-piece-duplicated{ type: :checkbox, data: { value: object.id } }
+                %td 
+                  %b
+                    - if object.created_at
+                      - if object.created_at.today?
+                        = l(object.created_at, format: '%H:%M')
+                      - else
+                        = l(object.created_at, format: '%d %b %Y %H:%M')
+                    - else
+                      \-
+                  %br
+                  - if similar_preseizure.try(:created_at)
+                    - if similar_preseizure.try(:created_at).try(:today?)
+                      = similar_preseizure.try(:created_at) ?  l(similar_preseizure.try(:created_at), format: '%H:%M') : '-'
+                    - else
+                      = similar_preseizure.try(:created_at) ? l(similar_preseizure.try(:created_at), format: '%d %b %Y %H:%M') : '-'
+                  - else
+                    \-
+                %td
+                  - url = documents_details_path({ id: object.piece.try(:pack).try(:id).presence || -1, _ext: 1, k: Base64.encode64({  by_all: { position: "#{object.piece.try(:position).presence || -1 }, #{similar_preseizure.try(:piece).try(:position).presence || -1 }"}, reinit: true }.to_json) })
+                  %label.semibold
+                    = link_to object.piece.try(:name).presence || "", url, class: 'no-style bold black-label underlined-pointer', target: '_blank'
+                  %p.no-margin
+                    - if similar_preseizure.try(:piece).try(:name)
+                      = link_to similar_preseizure.try(:piece).try(:name), url, class: 'no-style bold black-label underlined-pointer', target: '_blank'
+                    - else
+                      Duplicated piece has been deleted
+                %td
+                  %label.semibold= object.piece_number
+                  %p.no-margin= similar_preseizure.piece_number          
+                %td
+                  %label.semibold= object.third_party
+                  %p.no-margin= similar_preseizure.third_party
+                %td
+                  %label.semibold= object.cached_amount.to_s + ' €'
+                  %p.no-margin= similar_preseizure.cached_amount.to_s + ' €'
+                %td
+                  %label.semibold= l object.date, format: '%d %b %Y'
+                  %p.no-margin= similar_preseizure.date ? l(similar_preseizure.date, format: '%d %b %Y') : '-'
+                %td
+                  %label.semibold Doublon
+                  %p.no-margin Original
+                %td.text-end.pointer
+                  .action.sub-menu-piece-ignored.pt-2
+                    %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+                  .sub_menu.text-start.hide
+                    %ul.no-margin.no-padding.regular
+                      %li.show_duplicated_piece
+                        = link_to glyphicon('eye', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Voir la pièce', '#', class: ("do-showPieces custom_popover duplicated_piece"), title: 'Voir la différence entre les 2 pièces PDF', data: { duplicate_url: object.piece.try(:cloud_content_object).try(:url), original_url: similar_preseizure.try(:piece).try(:cloud_content_object).try(:url), content: ""  }
+          - else
+            %tr
+              %td.text-center{colspan: 9}= t('global.no-data-found')
+
+  = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { name: 'duplicated-pre-assignment', filter: 'filter-duplicated-pre-assignment-form', mark: 'pieces_errors', total_pages: @duplicates.total_pages }

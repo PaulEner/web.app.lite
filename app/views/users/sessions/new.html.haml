@@ -1,0 +1,81 @@
+!!!
+%html
+  %head
+    %title
+      - if request.env["SERVER_NAME"].include?("axelium")
+        Axelium | Connexion
+      - elsif request.env["SERVER_NAME"].include?("dkpartners")
+        DK Partners | Connexion
+      - elsif request.env["SERVER_NAME"].include?("censial")
+        Censial Online | Connexion
+      - elsif request.env["SERVER_NAME"].include?("orial")
+        My Orial | Connexion
+      - else
+        Idocus | Connexion
+      
+    %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-type" }
+    %meta{ name: "viewport", content: "width=device-width, initial-scale=1" }
+
+    %link{ :rel => 'shortcut icon', :type => "image/ico", :href => image_path('favicon.ico') }
+    - if request.env["SERVER_NAME"].include?("axelium")
+      = stylesheet_link_tag 'front/main_axelium'
+    - elsif request.env["SERVER_NAME"].include?("dkpartners")
+      = stylesheet_link_tag 'front/main_dk_partners'
+    - elsif request.env["SERVER_NAME"].include?("censial")
+      = stylesheet_link_tag 'front/main_censial'
+    - elsif request.env["SERVER_NAME"].include?("orial")
+      = stylesheet_link_tag 'front/main_orial'
+    - else
+      = stylesheet_link_tag 'front/main'
+
+  .body_content
+    .container-fluid.text-center.login
+      .box.text-center.showLogin
+        %h4.regular.m-3.p-4.semibold
+          Bienvenue sur
+          - if request.env["SERVER_NAME"].include?("axelium")
+            %span.semibold.label_idocus Axelium
+          - elsif request.env["SERVER_NAME"].include?("dkpartners")
+            %span.semibold.label_idocus DK Partners
+          - elsif request.env["SERVER_NAME"].include?("censial")
+            %span.semibold.label_idocus Censial Online
+          - elsif request.env["SERVER_NAME"].include?("orial")
+            %span.semibold.label_idocus My Orial
+          - else
+            %span.semibold.label_idocus iDocus
+
+
+        - if flash[:alert].present?
+          - error_class = 'error'
+          .alert.alert-danger
+            %a.close{ data: { dismiss: 'alert' } } ×
+            = flash[:alert].capitalize
+        - else
+          - error_class = ''
+
+        = simple_form_for resource, url: session_path(resource_name), wrapper_html: { class: "text-start w-100 m-1" }  do |f|
+          .row.text-center
+            .col-md-12
+              .input-group.mb-3
+                %span.input-group-text#input-email= glyphicon('person', { size: '14', color: 'background: rgba(26, 26, 26, 0.7)' })          
+                = f.input :email, wrapper_html: { class: "#{error_class}", placeholder: 'identifiant (email)', "aria-label" => "identifiant (email)", "aria-describedby" => "input-email"}
+              .input-group.mb-3
+                %span.input-group-text#input-password= glyphicon('key', { size: '14', color: 'background: rgba(26, 26, 26, 0.7)', style: 'transform: rotate(45deg)'})          
+                = f.input :password, wrapper_html: { class: "#{error_class}", required: true, placeholder: 'mot de passe', "aria-label" => "identifiant (email)", "aria-describedby" => "input-password"}
+                       
+          .row.text-center.p-2.semibold.hide.alert-identification
+            .col-md-12.red-label identifiant ou mot de passe incorrect
+
+          
+          .form-check.text-start
+            = f.check_box :remember_me, class: 'form-check-input pointer float-none'
+            = f.label :remember_me, 'Rester connecté ?', class: 'form-check-label stay-connect ms-2'
+
+          .row.mt-3
+            .col-md-12.text-center
+              = f.submit 'Connexion', class: 'btn btn-primary bold w-100 connexion'
+          .row.mt-3
+            .col-md-12.text-start
+              %a.red-label{ href: new_user_password_path } Mot de passe oublié ?
+
+  = javascript_include_tag 'front/main'

@@ -1,0 +1,37 @@
+.container
+  #csv_descriptors.edit
+    = stylesheet_link_tag 'front/csv_descriptors/assets/stylesheets/main'
+
+    - url = organization_csv_descriptor_path(@organization)
+    - url = organization_customer_csv_descriptor_path(@organization, @customer) if @customer.present?
+    = simple_form_for @csv_descriptor, url: url, html: { id: 'edit_format_csv_descriptor', class: 'form-horizontal label-auto' } do |f|      
+      .row
+        .col-md-6 
+          .form-group
+            %p
+              Ajouter les champs souhaités.
+              %span.semibold Un « Séparateur » est ajouté automatiquement après chacun des champs sélectionnés.
+              %br
+              Le « Séparateur » est constitué d’un point-virgule
+              %span.separator ;
+              , cliquez dessus pour en
+              %span.semibold Ajouter ou Supprimer
+          .form-group
+            %button.btn.btn-primary.add_field Ajouter un champ
+            %button.btn.btn-light.add_all_fields Ajouter tous les champs
+            %button.btn.btn-danger.remove_all_fields{ data: { confirm: 'Etes-vous sûr ?' } } Supprimer tous les champs
+          .mb-3
+          .form-group
+            = f.input :directive, as: :hidden
+            = f.input :comma_as_number_separator, as: :boolean, wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input me-1 mt-2' }
+          .mb-3
+          .form-group
+            %ul.list.clearfix
+              - @csv_descriptor.directive_to_h.each do |part|
+                = render partial: 'field', locals: { part: part }
+
+          .template.hide= render partial: 'field', locals: { selected: :date }
+        .col-md-6
+          = render partial: 'legend'
+
+        = javascript_include_tag 'front/csv_descriptors/assets/javascripts/main'

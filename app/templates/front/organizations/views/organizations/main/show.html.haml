@@ -1,0 +1,45 @@
+- if request.env["SERVER_NAME"].include?("axelium")
+  = stylesheet_link_tag 'front/organizations/assets/stylesheets/show_axelium'
+- elsif request.env["SERVER_NAME"].include?("dkpartners")
+  = stylesheet_link_tag 'front/organizations/assets/stylesheets/show_dk_partners'
+- elsif request.env["SERVER_NAME"].include?("censial")
+  = stylesheet_link_tag 'front/organizations/assets/stylesheets/show_censial'
+- elsif request.env["SERVER_NAME"].include?("orial")
+  = stylesheet_link_tag 'front/organizations/assets/stylesheets/show_orial'
+- else
+  = stylesheet_link_tag 'front/organizations/assets/stylesheets/show'
+
+- is_premium = CustomUtils.is_ido_premium?(@organization.code)
+
+.acceuil_organizations.container-fluid
+  .row.derivationRight
+    .col-md-12.title
+      %h3.semibold
+        = t('organizations.my_organization') + ' :'
+        %span= @organization.name
+      %input#organization_id{ type: :hidden, value: @organization.id }
+  .row
+    .col-md-12.statistic_board
+      .left_section.derivationLeft{ class: is_premium ? 'col-md-12' : 'col-md-8' }
+        .row.no-padding.no-margin
+          .col-md-12.collab_customer.no-margin
+            .col-md-6.collaborator.box.no-margin
+              %h2= @organization.collaborators.count
+              %h4 Collaborateurs
+            .col-md-6.customer.box.no-margin.float-end
+              %h2= @organization.customers.active.count
+              %h4= t('organizations.active_customers')
+        .row.no-padding.no-margin
+          .col-md-12.evolution
+            %h4= t('organizations.customers_evolution')
+
+            %input#stat_customers_labels{ type: :hidden, value: @stat_customers_labels.reverse.to_json }
+            %input#stat_customers_values{ type: :hidden, value: @stat_customers_values.reverse.to_json }
+            %canvas#chart_dossiers
+      - if not is_premium    
+        .col-md-4.right_section.derivationRight
+          .box
+            .repartition
+              %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}
+
+= javascript_include_tag 'front/organizations/assets/javascripts/show'

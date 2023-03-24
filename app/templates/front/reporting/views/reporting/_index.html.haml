@@ -1,0 +1,46 @@
+- if request.env["SERVER_NAME"].include?("axelium")
+  = stylesheet_link_tag 'front/reporting/assets/stylesheets/main_axelium'
+- elsif request.env["SERVER_NAME"].include?("dkpartners")
+  = stylesheet_link_tag 'front/reporting/assets/stylesheets/main_dk_partners'
+- elsif request.env["SERVER_NAME"].include?("censial")
+  = stylesheet_link_tag 'front/reporting/assets/stylesheets/main_censial'
+- elsif request.env["SERVER_NAME"].include?("orial")
+  = stylesheet_link_tag 'front/reporting/assets/stylesheets/main_orial'
+- else
+  = stylesheet_link_tag 'front/reporting/assets/stylesheets/main'
+
+%input#organization_id{ type: 'hidden', name: 'organization_id', value: @report_organization.id }
+
+.container-fluid.reporting
+  .row.derivationRight
+    .col-md-9
+      %h3.bold
+        = t('reporting.reporting_text') + ' : '
+        %span.green-label= @report_organization.name
+    .col-md-3
+      = select_tag 'customer_filter', options_for_select(accounts_options), id: 'customer_filter', multiple: true
+    
+      / .form-group
+      /   .input-group.mb-3
+      /     %span.show-calendar.input-group-text{ data: { ref: 'date_filter' } }= glyphicon('calendar', { size: '14', color: 'background: rgba(26, 26, 26, 0.7)' })          
+      /     %input.form-control.value-content.date.daterange#date_filter{ type: :text, name: 'date_filter'}
+      /     %span.show-calendar.input-group-text-right{ data: { ref: 'date_filter' } }= glyphicon('chevron-bottom', { size: '12', color: 'background: rgba(26, 26, 26, 0.7)' })
+
+  .mb-5
+
+  .derivationLeft
+    %ul.nav.nav-tabs.ms-3{ "role" => "tablist" }    
+      %li.reporting_links.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link.active#documents-selection-tab{ "data-bs-toggle" => "tab", "data-bs-target" => "#invoices", type: :button, "role" => "tab", "aria-controls" => "invoices", "aria-selected" => "false"} 
+          Facturations
+      %li.reporting_links.statistics.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link#statistics-tab{ "data-bs-toggle" => "tab", "data-bs-target" => "#statistics", type: :button, "role" => "tab", "aria-controls" => "statistics", "aria-selected" => "true" }
+          Statistiques
+          %span.badge.bg-dark= "#{15.days.ago.strftime('%d/%m/%y')} - #{Time.now.strftime('%d/%m/%y')}"
+    
+    .tab-content.mb-4
+      .tab-pane.box.no-margin.active#invoices{ "role" => "tabpanel", "aria-labelledby" => "invoices-tab" }
+      .tab-pane.no-margin#statistics{ "role" => "tabpanel", "aria-labelledby" => "statistics-tab" }
+        = render file: Rails.root.join('app/templates/front/reporting/views/reporting/statistics/_index.html.haml')
+
+= javascript_include_tag 'front/reporting/assets/javascripts/main'

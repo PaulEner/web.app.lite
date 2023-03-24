@@ -1,0 +1,40 @@
+- if @user.my_package.try(:scan_active)
+  #idocus_box
+    %h3 iDocus'Box
+    .mb-2
+    .box  
+      - if @user.dematbox.try(:is_configured)
+        %h6 Liste des services
+        - if @user.dematbox.try(:services).try(:any?)
+          %table.table.table-striped
+            %thead
+              %tr
+                %th Groupe
+                %th Nom
+            %tbody
+              - @user.dematbox.services.order(group_name: :asc, name: :asc).each do |service|
+                %tr
+                  %td= service.group_name
+                  %td= service.name
+        - elsif @user.account_book_types.size == 0
+          %p Pas de journaux paramétrés.
+        .text-end
+          = link_to icon_destroy + ' Déconnecter le Scanner', delete_dematbox_path, method: :delete, class: 'btn btn-danger margin1top', data: { confirm: 'Etes-vous sûr de vouloir déconnecter le scanner ?' }
+      - elsif @user.dematbox.try(:beginning_configuration_at).present?
+        %label Configuration en cours...veuillez recharger votre page dans quelques secondes.
+      - else
+        %label.semibold Appairez ici un scanner iDocus'Box (Produit Sagemcom).
+        %br
+        %label Afin d'appairer le scanner, merci de suivre les instructions du
+        %label= link_to "mode d'emploi Sagemcom", download_document_path(name: 'Livret_utilisation_Dematbox.pdf')
+        %label fournit lors de la livraison.
+        %br
+        %label Merci d'inscrire le code d'appairage dans le champ ci-dessous :
+        = form_tag create_dematbox_path, method: :post, id: 'idocus_box_configuration', class: 'form-inline margin2top' do
+          .form-group.no-margin
+            = label_tag :pairing_code, 'Code appairage : ', class: 'semibold'           
+            .select-container.no-padding.w-25
+              = text_field_tag :pairing_code, ''
+            .mb-2
+            - idocus_params = param_encode({ url: '#url', form: { id: 'idocus_box_configuration', dump_action: true }, method: 'post'  })
+            = button_tag t('actions.submit'), type: 'button', class: 'btn btn-primary semibold w-25 as_idocus_ajax', idocus: idocus_params

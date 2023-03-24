@@ -1,0 +1,69 @@
+= stylesheet_link_tag 'front/organizations/assets/stylesheets/show'
+
+#paper_set_orders.order_multiple.derivationRight
+  - manual_paper_set_order = CustomUtils.is_manual_paper_set_order?(@organization)
+  .row.hide
+    .text-center
+      %h5.modal-title
+        Commande multiple de Kit Courriers 
+        %span.badge.badge-info= @orders.count
+  .box.mt-4.form-content
+    = form_tag create_multiple_organization_paper_set_orders_path(@organization), :id => manual_paper_set_order ? 'valid-manual-paper-set-order' : 'default', class: 'paper_set_order_form order_multiple_form' do |f|
+      %input#paper_set_prices{ value: "#{@paper_set_prices}", type: :hidden }
+      .form-group.form-body-content
+        %input#paper_set_specific_prices{ value: 1, type: :hidden, data: {manual: manual_paper_set_order.to_s} }
+        %p Veuillez choisir les options pour chaque commande.
+        %span.fs-origin.badge.badge-warning Note :
+        %span Pour un écart de période important par rapport au nombre d'enveloppes, nous vous conseillons de prendre une enveloppe de taille supérieur à 500g
+        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
+          %thead
+            %tr.bg-brown
+              %th code
+              %th société
+              %th dern. envel. retour
+              - if not manual_paper_set_order
+                %th proposition
+                %th nb enveloppes
+              %th nb chemises
+              %th= t('activerecord.models.order.attributes.paper_set_start_date').downcase
+              %th= t('activerecord.models.order.attributes.paper_set_end_date').downcase
+              %th prix ht
+          %tbody#list_orders
+            - @orders.each_with_index do |order, index|
+              - order.paper_set_annual_end_date
+              - paper_return = order.user.paper_processes.returns.last
+              - order.paper_set_casing_size = paper_return.letter_type if paper_return
+              %tr{"data-index" => index}
+                = simple_fields_for 'orders[]', order do |builder|
+                  %td
+                    = order.user.code
+                    = builder.hidden_field :user_id
+                    = builder.hidden_field :period_duration, class: "period_duration_#{index}"
+                  %td= truncate(order.user.company, length: 20, separator: ' ')
+                  %td= paper_return ?  "#{paper_return.letter_type}g" : '-'
+
+                  - if not manual_paper_set_order
+                    %td= builder.input :paper_set_casing_size,label: false, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false, input_html: { class: 'form-control select form-select form-select-sm optional required_field'}
+                    %td= builder.input :paper_set_casing_count, label: false, collection: [], include_blank: true, :input_html => { "data-index" => index, class: "casing_count_#{index} form-control select form-select form-select-sm" }
+                  %td
+                    - if manual_paper_set_order
+                      %spn
+                        Nb journaux comptables paramétrés:
+                        = order.user.account_book_types.size
+                      = builder.hidden_field :paper_set_folder_count, value: order.user.account_book_types.size
+                    - else
+                      = builder.input :paper_set_folder_count, label: false, collection: 5..10, include_blank: false, include_blank: false, input_html: { class: 'form-control select form-select form-select-sm optional required_field'}
+
+                  %td= builder.input :paper_set_start_date, label: false, collection: paper_set_start_date_options(order), include_blank: false, :input_html => { "data-index" => index, class: "date_order start_date_#{index} form-control select form-select form-select-sm optional required_field" }
+                  %td= builder.input :paper_set_end_date, label: false, collection: paper_set_end_date_options(order), include_blank: false, :input_html => { "data-index" => index, class: "date_order end_date_#{index} form-control select form-select form-select-sm optional required_field" }
+                  %td.price{ style: 'font-size:15px;text-align: left !important;'}
+        %hr
+        .text-center
+          %h4 Total de la commande :
+          %b.total_price{ style: 'font-size:20px' }
+      .form-group.form-footer-content.text-end
+        = submit_tag t('actions.submit'), class: "btn btn-primary bold#{' valid-manual-paper-set-order' if manual_paper_set_order}"
+        = link_to t('actions.cancel'), select_for_orders_organization_paper_set_orders_path(@organization), class: 'btn btn-light'
+
+
+= javascript_include_tag 'front/paper_set_orders/assets/javascripts/main'

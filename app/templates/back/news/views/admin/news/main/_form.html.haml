@@ -1,0 +1,6 @@
+= simple_nested_form_for [:admin, @news], html: { class: 'form form-horizontal', id: 'form-news' }, wrapper: :new_template do |f|  
+  = f.input :title
+  = f.input :target_audience, collection: news_target_audience_options, include_blank: false, input_html: { class: 'form-select' }
+  = f.input :url, input_html: { class: 'span12' }
+  = f.input :body, as: :ckeditor, input_html: { class: 'ckeditor', ckeditor: { toolbar: 'news' } }
+  

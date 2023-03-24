@@ -1,0 +1,38 @@
+#guest_collaborators.derivationRight
+  .row.retractable.with-filter
+    .col-md-12
+      .card
+        .card-header
+          %h3
+            Contacts
+            %span.badge.badge-info= @guest_collaborators.count
+        .card-body
+          = render partial: 'account/organization/account_sharings/navigation'
+          .row
+            .col-md-12
+              .box.border-top-0.bg-light
+                = render partial: 'shared/list_options', locals: { collection: @guest_collaborators }
+                %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
+                  %thead
+                    %tr.bg-brown.text-white
+                      %th= sortable :created_at, 'Date de création'
+                      %th= sortable :email,      'Email'
+                      %th= sortable :company,    'Société'
+                      %th Nom
+                      %th Nb. de dossiers
+                      %th Actions
+                  %tbody.retractable.slidedown
+                    - @guest_collaborators.each do |guest_collaborator|
+                      %tr
+                        %td.date= guest_collaborator.created_at.strftime('%d/%m/%Y %H:%M')
+                        %td= guest_collaborator.email
+                        %td= guest_collaborator.company
+                        %td= guest_collaborator.name
+                        %td= guest_collaborator.accounts.size
+                        %td
+                          = link_to glyphicon('pencil'), edit_organization_guest_collaborator_path(@organization, guest_collaborator), class: 'btn btn-light'
+                          = link_to glyphicon('x'), organization_guest_collaborator_path(@organization, guest_collaborator), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir supprimer le contact \"#{guest_collaborator.info}\" ?" }, class: 'btn btn-light'
+                = render partial: 'shared/list_options', locals: { collection: @guest_collaborators }
+                .alignright.margin1bottom
+                  = link_to 'Ajouter un contact', new_organization_guest_collaborator_path(@organization), class: 'btn btn-primary'
+    = render partial: 'sidebar'

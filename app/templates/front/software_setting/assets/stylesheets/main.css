@@ -1,0 +1,232 @@
+.form-group .ui-sortable li {
+  width: auto;
+  float: left;
+  margin-right: 2%;
+  margin-bottom: 1%;
+  text-align: center;
+  padding: 1%;
+  cursor: pointer;
+}
+
+#sortable-software li, #sortable-software-preseizures li{
+  width: auto;
+  font-size: 0.8rem;
+}
+
+.form-group .ui-sortable li.btn-light:hover {
+  border: 1px solid #CBD9C0;
+}
+
+.form-group .ui-sortable li.btn-light.active{
+  background: #EEF8B8;
+  border: 1px solid #72AA42;
+  border-radius: 8px;
+  color: #72AA42;
+  font-family: Raleway-semiBold
+}
+
+.form-group{
+  margin-bottom: 1%;
+}
+
+.select-container input{
+  padding: 0.5%;
+  font-size: 17px;
+}
+
+
+.box-software{
+  display: flex;  
+  background: #FFFFFF;
+  border: 1px solid rgba(26, 26, 26, 0.1);
+  box-sizing: border-box;
+  border-radius: 8px;
+  width: 25%;
+  margin: 3%;
+  height: 10em;
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+  transition: all 0.4s ease-out;
+}
+
+.box-software:hover{
+  -webkit-filter: none;
+  filter: none;
+}
+
+.box-software.selected{
+  border: 2px solid #C1D837;
+  box-shadow: 0px 1px 0px 5px rgba(193,216,55,0.23);
+  -webkit-box-shadow: 0px 1px 0px 5px rgba(193,216,55,0.23);
+  -moz-box-shadow: 0px 1px 0px 5px rgba(193,216,55,0.23);
+  -webkit-filter: none;
+  filter: none;
+}
+
+.use-software{
+  font-size: 40px;
+  color: rgba(26,26,26,0.7);
+}
+
+.form-check-input[type='checkbox']{
+  margin-top: 14%
+}
+
+#ibiza img{
+  margin: 8% 25%;
+}
+
+#exact_online img{
+  margin: 15% 20%;
+  width: 200px;
+}
+
+#coala img{
+  margin: 16% 25%;  
+}
+
+#acd img{
+  margin: 0 25%;
+}
+
+#sage_gec img{
+  margin: 16% 26%;
+}
+
+#my_unisoft img{
+  margin: 6% 20%;
+  width: 200px;
+}
+
+#quadratus img{
+  margin: 15% 20%;
+  width: 200px;
+}
+
+#cegid img{
+  margin: 15% 25%;
+}
+
+#fec_agiris img{
+  margin: 15% 25%;  
+}
+
+#fec_acd img{
+  margin: 10% 27%;
+  width: 160px;
+}
+
+#csv_descriptor img{
+  margin: 5% 35%;
+  width: 120px;
+}
+
+#cogilog img{
+  margin: 13% 24%;
+  width: 200px;
+}
+
+#ciel img{
+  margin: 2% 19%;
+  width: 200px;
+}
+
+.image-software{
+  width: 150px;
+}
+
+@media (max-width: 1280px) {
+  .use-software{
+    font-size: 30px;
+  }
+
+  .image-software{
+    width: 100px;
+  }
+
+  #ibiza img{
+    margin: 22% 28%;
+  }
+
+  #exact_online img{
+    margin: 28% 16%;
+    width: 140px;
+  }
+
+  #coala img{
+    margin: 28% 24%;
+  }
+
+  #sage_gec img{
+    margin: 28% 24%;
+  }
+
+  #my_unisoft img{
+    margin: 15% 18%;
+    width: 150px;
+  }
+
+  #quadratus img{
+    margin: 25% 16%;
+    width: 150px;
+  }
+
+  #cegid img{
+    margin: 25% 23%;
+  }
+
+  #fec_agiris img{
+    margin: 26% 25%; 
+  }
+
+  #cogilog img{
+    margin: 20% 6%;
+  }
+
+  #fec_acd img{
+    margin: 20% 24%;
+    width: 120px;
+  }
+
+  #csv_descriptor img{
+    margin: 14% 30%;
+    width: 90px;
+  }
+
+  .form-check-input[type="checkbox"]{
+    margin-top: 43%;
+  }
+
+  .customer_content .form-check-input[type="checkbox"]{
+    margin-top: 28%;
+  }
+
+  .customer_content .select-container input{
+    padding: 4%;
+  }
+
+  .modal#csv_descriptor_modal .modal-dialog{
+    min-width: 1160px;
+  }
+
+  .modal#csv_descriptor_modal .oi-icon{
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  .legend table tbody, .foot-legend{
+    font-size: 11px !important;
+  }
+
+  #csv_descriptors.edit .input-prepend .on, #csv_descriptors.edit .input-prepend .off {
+    font-size: 15px !important;
+  }
+
+  h4{
+    font-size: 1.2rem;
+  }
+
+  input#software_csv_descriptor_comma_as_number_separator{
+    margin-top: 0.4rem !important;    
+  }
+}

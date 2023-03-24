@@ -1,0 +1,16 @@
+- @notifications.each do |notification|
+  %li.notification-list{ id: "li-id-#{notification.id}" }
+    .row
+      .col-md-11
+        %a.dropdown-item.notification-link{ href: "#notification-link"}
+          =notification.title
+        .text-muted-light
+          .notification-date
+            %i.text-muted= notification.date
+            %br
+            %span.notification-content
+              %i.text-muted= notification.content
+      .col-md-1.notification-state{ id: "notif-id-#{notification.id}" }
+        .m-0.text-right
+
+= javascript_declare_var('notifications_length', @notifications.size)

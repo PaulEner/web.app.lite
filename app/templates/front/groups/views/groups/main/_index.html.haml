@@ -1,0 +1,62 @@
+.box-group-content.derivationLeft
+  .groups.page-content
+    .row.mt-5
+      .col-md-6
+        %h3.bold
+          Gérer les groupes
+          %span.badge.badge-secondary.badge-sm.regular= @groups.try(:total_count).to_i
+      .col-md-2.no-padding
+        .input-group.mb-3.search-content
+          %span.input-group-text.group-search#basic-addon_group= glyphicon('magnifying-glass', { size: '16', color: 'background: rgba(26, 26, 26, 0.7)' })
+          %input.form-control#search_input_groups.search_input_text{ type: :text, "aria-label" => "Rechercher", "aria-describedby" => "basic-addon_group", name:'group_contains[text]', placeholder: 'Rechercher' } 
+      .col-md-2.text-center.no-padding
+        %button.btn.btn-light.more-filter.group_filter.semibold.w-75
+          %span.me-2 Filtrer
+          %span
+            = glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+      .col-md-2.no-padding
+        %button.btn.btn-primary.group.create.new_edit.semibold.w-100
+          %span= glyphicon('plus', { size: '14', color: '#FFFF'})
+          %span.ms-2 Créer un groupe
+
+    - @groups.each_slice(3) do |groups|
+      .content-list-group
+        .row.mt-3
+          - groups.each do |group|
+            .col-md-4.no-margin.m-2.groups
+              .box.p-3.h-100
+                .head.w-100.row
+                  .w-75.text-start 
+                    %h6= link_to group.name, organization_group_path(@organization, group), class: 'show_details_group no-style black-label bold'
+                    .content-box= group.created_at.strftime('%d%m%Y')
+                  .w-25.text-end.no-padding
+                    .action.submenu_action.edit_group.pointer.list-groupe
+                      %span.glyph= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);'})
+                    .sub_menu.text-start.hide
+                      %ul.no-margin.no-padding.regular.edit-delete{id: "group-#{group.id}"}
+                        - if @organization.is_active
+                          - if @user.leader? || @user.manage_groups
+                            %li.edit.group.new_edit
+                              = link_to glyphicon('pencil', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Éditer', '#', link: edit_organization_group_path(@organization, group), class: 'edit_organization_group'
+                          - if @user.leader?
+                            - if group.is_dropbox_authorized
+                              - confirm = "Attention ! la suppression de ce groupe entraîne l'arrêt du déversement automatique de ses documents dans votre dropbox. Voulez-vous continuer ?"
+                            - else
+                              - confirm = 'Etês vous sûr ?'
+                            %li.delete.red-label
+                              - idocus_params = param_encode({ url: organization_group_path(@organization, group), method: 'delete', confirm: confirm, redirect_to: { url: organization_groups_path(@organization), html: { target: '.box-group-content' } } })
+                              = link_to glyphicon('trash', { size: '15', color: "#FF4848" }) + ' supprimer', '#', class: 'as_idocus_ajax', idocus: idocus_params
+                %br        
+                .body
+                  = group.description
+
+                  .w-100.row.mt-2
+                    .w-75.text-start.semibold Nombre de collaborateurs :
+                    .w-25.text-end.no-padding
+                      %span.badge.badge-secondary.badge-sm.semibold= group.collaborators.count
+                  .w-100.row.mt-2
+                    .w-75.text-start.semibold Nombre de clients :
+                    .w-25.text-end.no-padding
+                      %span.badge.badge-secondary.badge-sm.semibold= group.customers.count
+    .mt-5
+      = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: organization_groups_path(@organization.id), target: '.box-group-content', total_pages: @groups.total_pages, filter: 'form-groups-filter', no_per_page: true }

@@ -1,0 +1,22 @@
+#use_csv_descriptor.edit
+  - unless @customer.configured?
+    .box
+      = render 'account/customers/steps'
+  .card
+    .card-header
+      - if @customer.configured?
+        %h3 Édition des options de comptabilité du client :
+        = link_to @customer, organization_customer_path(@organization, @customer, tab: 'compta'), class: 'fs-origin'
+      - else
+        %h3
+          Format d’export .csv pour le dossier :
+          %span.text-info.fs-origin= @customer
+    = simple_form_for @customer, url: organization_customer_use_csv_descriptor_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
+      .card-body
+        = f.simple_fields_for :csv_descriptor do |o|
+          = o.hidden_field :id
+          = o.input :use_own_csv_descriptor_format, as: :radio_buttons
+      .card-footer
+        = link_to t('actions.previous_step'), previous_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
+        = link_to t('actions.complete_later'), complete_later_organization_customer_setup_path(@organization, @customer), class: 'btn'
+        = f.submit t('actions.next_step'), class: 'btn btn-primary'

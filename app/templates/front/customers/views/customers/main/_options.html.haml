@@ -1,0 +1,51 @@
+%table.table.table-striped.table-condensed.margin0bottom
+  %thead
+    %tr
+      %th Forfait
+      %th Description/Options
+      %th Prix HT
+      %th Prix TTC
+  %tbody.retractable.slidedown
+    - period           = @subscription.current_period
+    - enabled_packages = @subscription.get_enabled_packages_and_options
+    - active_packages  = @subscription.get_active_packages_and_options
+    - found_pending    = false
+
+    - pack = nil
+
+    - enabled_packages.each do |package|
+      - if !active_packages.include?(package)
+        - found_pending = true
+        - package_infos = Subscription::Package.infos_of(package)
+        - unless package_infos[:group].blank?
+          %tr
+            %td= package_infos[:group]
+            %td
+              = package_infos[:label]
+              %b (Applicable le mois prochain)
+            %td.price
+              %i= '(' + format_price_00(Subscription::Package.price_of(package).to_i * 100) + ' €)' rescue '0,00 €'
+            %td.price
+              %i= '(' + format_price_00(Subscription::Package.price_of(package).to_i * 100 * period.tva_ratio) + ' €)' rescue '0,00 €'
+
+    - if found_pending
+      %tr
+        %td{colspan: 4}
+          %hr
+
+    - period.product_option_orders.each do |order|
+      %tr
+        %td.semibold= order.group_title
+        %td
+          = order.title
+          - if order.is_to_be_disabled
+            %b (disparaîtra le mois prochain)
+        %td
+          = format_price_00(order.price_in_cents_wo_vat) + ' €'
+        %td
+          = format_price_00(order.price_in_cents_wo_vat * period.tva_ratio) + ' €'
+    %tr
+      %td
+      %th Total
+      %td= format_price_00(period.products_price_in_cents_wo_vat) + ' €' rescue '0,00 €'
+      %td= format_price_00(period.products_price_in_cents_w_vat) + ' €' rescue '0,00 €'

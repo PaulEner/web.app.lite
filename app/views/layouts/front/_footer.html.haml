@@ -1,0 +1,66 @@
+.modal.fade.in#all_notifications{'aria-hidden' => 'true', :role => 'dialog', :tabindex => '-1'}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Notifications 
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.no-padding
+
+%footer.navbar-fixed-bottom.p-3.main_footer
+  .row
+    - if request.env["SERVER_NAME"].include?("axelium")
+      .col-md-12.text-center
+        %p.m-0.text-white
+          = "Copyright Axelium"
+          &copy;
+          %span.semibold= Time.now.strftime('%Y')
+    - elsif request.env["SERVER_NAME"].include?("dkpartners")
+      .col-md-12.text-center
+        %p.m-0.text-white
+          = "Copyright DK Partners"
+          &copy;
+          %span.semibold= Time.now.strftime('%Y')
+    - elsif request.env["SERVER_NAME"].include?("censial")
+      .col-md-12.text-center
+        %p.m-0.text-white
+          = "Copyright Censial"
+          &copy;
+          %span.semibold= Time.now.strftime('%Y')
+    - elsif request.env["SERVER_NAME"].include?("orial")
+      .col-md-12.text-center
+        %p.m-0.text-white
+          = "Copyright Orial"
+          &copy;
+          %span.semibold= Time.now.strftime('%Y')
+    - else
+      .col-md-6.text-start.text-white
+        .contact-number
+          -if @user.pre_assignement_displayed?
+            .commercial-contact.d-inline
+              %span.semibold Service Commercial :
+              %span.open-time.semibold 01 84 250 251
+              &#124;
+          .client-contact.d-inline
+            %span.semibold.mt-2.d-inline  Support Client :
+            .number.d-inline
+              = image_tag('application/contact_number.png', alt: 'contact', class: 'contact_number')
+              %span.open-time.semibold 8h à 12h - 13h à 17h
+      .col-md-3.text-start
+        %p.m-0.text-white{ class: "#{!@user.collaborator? ? 'minimize_p' : ''}" }
+          = t('footer.copyright_text')
+          &copy;
+          %span.semibold= Time.now.strftime('%Y')
+      - if @user.collaborator?
+        .col-md-3.network-link
+          %p.m-0.text-center.text-white
+            %a.facebook.ms-4{ href: 'https://www.facebook.com/idocus/', target: '_blank' }
+              %svg{:fill => "none", :height => "16", :viewbox => "0 0 9 16", :width => "9", :xmlns => "http://www.w3.org/2000/svg"}
+                %path{"clip-rule" => "evenodd", :d => "M5.73256 3.86286C5.73256 3.14286 5.80456 2.75771 6.89256 2.75771H8.34742V0H6.01942C3.22513 0 2.23999 1.33829 2.23999 3.58743V5.24229H0.497131V8H2.23999V16H5.72799V8H8.05485L8.36342 5.24229H5.72799L5.73256 3.86286Z", :fill => "white", "fill-rule" => "evenodd"}
+            %a.twitter.ms-4{ href: 'https://twitter.com/idocus', target: '_blank' }
+              %svg{:fill => "none", :height => "14", :viewbox => "0 0 16 14", :width => "16", :xmlns => "http://www.w3.org/2000/svg"}
+                %path{"clip-rule" => "evenodd", :d => "M15.5577 0.909726C14.9113 1.28325 14.2066 1.5452 13.4731 1.68458C13.1617 1.36349 12.7886 1.10875 12.3761 0.935715C11.9636 0.762676 11.5204 0.674918 11.0731 0.677726C10.2155 0.666738 9.38859 0.99662 8.77401 1.59491C8.15944 2.1932 7.80747 3.01097 7.79543 3.86858C7.79651 4.1151 7.82682 4.36063 7.88571 4.60001C6.5877 4.54128 5.31592 4.21434 4.1505 3.63979C2.98509 3.06525 1.9513 2.25555 1.11429 1.26173C0.823959 1.74497 0.670302 2.29798 0.669714 2.86173C0.67073 3.39206 0.805013 3.91364 1.06023 4.37854C1.31544 4.84343 1.68339 5.23673 2.13029 5.5223C1.61071 5.50711 1.1019 5.37052 0.644571 5.12344C0.644571 5.13601 0.644571 5.14973 0.644571 5.16344C0.652124 5.90897 0.918381 6.62873 1.39783 7.19969C1.87728 7.77065 2.54015 8.15736 3.27314 8.29373C2.99095 8.36924 2.70012 8.40766 2.408 8.40801C2.20089 8.40842 1.99423 8.3889 1.79086 8.34973C2.00993 8.991 2.42246 9.54858 2.97161 9.94565C3.52075 10.3427 4.17951 10.5598 4.85714 10.5669C3.68599 11.4597 2.25324 11.9417 0.780572 11.9383C0.519609 11.9362 0.258987 11.919 0 11.8869C1.50843 12.8274 3.25094 13.3248 5.02857 13.3223C6.24068 13.3484 7.44588 13.1331 8.57402 12.6891C9.70217 12.245 10.7307 11.581 11.5998 10.7357C12.469 9.89044 13.1613 8.88073 13.6365 7.76536C14.1117 6.64999 14.3604 5.45124 14.368 4.23887C14.368 4.10058 14.368 3.96344 14.3589 3.8263C15.0001 3.3773 15.5559 2.81725 16 2.17258C15.3996 2.43243 14.7642 2.60226 14.1143 2.67658C14.7954 2.28407 15.309 1.65544 15.5577 0.909726Z", :fill => "white", "fill-rule" => "evenodd"}
+            %a.linkedin.ms-4{ href: 'https://www.linkedin.com/company/idocus', target: '_blank' }
+              %svg{:fill => "none", :height => "16", :viewbox => "0 0 16 16", :width => "16", :xmlns => "http://www.w3.org/2000/svg"}
+                %path{:d => "M8.97828 5.52455V6.95312C9.07771 6.82055 9.16114 6.70397 9.25142 6.59197C9.61264 6.1319 10.084 5.7703 10.6219 5.54058C11.1599 5.31087 11.747 5.22045 12.3291 5.27769C12.9512 5.29883 13.5583 5.47397 14.096 5.7874C14.5197 6.04586 14.8867 6.38754 15.1746 6.79179C15.4626 7.19605 15.6656 7.65448 15.7714 8.1394C15.905 8.67345 15.9714 9.22206 15.9691 9.77255C15.9691 11.7337 15.9691 13.6952 15.9691 15.6571C15.9691 15.6891 15.9691 15.7223 15.9691 15.76H12.5714V15.6571C12.5714 13.8285 12.5714 12 12.5714 10.1714C12.5786 9.76609 12.5116 9.36288 12.3737 8.98169C12.2739 8.6893 12.0854 8.43529 11.8345 8.25504C11.5835 8.07478 11.2827 7.97723 10.9737 7.97597C10.717 7.96584 10.4608 8.00753 10.2205 8.09855C9.98025 8.18958 9.76076 8.32807 9.57517 8.50577C9.38958 8.68347 9.24169 8.89673 9.14031 9.13283C9.03894 9.36893 8.98617 9.62303 8.98514 9.87998C8.99428 10.6228 8.98514 11.3657 8.98514 12.1063C8.98514 13.2895 8.98514 14.4724 8.98514 15.6548V15.7623H5.58057V5.52455H8.97828Z", :fill => "white"}
+                %path{:d => "M0.0297241 5.52228H3.42858V15.76H0.0297241V5.52228Z", :fill => "white"}
+                %path{:d => "M1.72685 3.74399C2.69446 3.74399 3.47885 2.95959 3.47885 1.99199C3.47885 1.02439 2.69446 0.23999 1.72685 0.23999C0.759251 0.23999 -0.0251465 1.02439 -0.0251465 1.99199C-0.0251465 2.95959 0.759251 3.74399 1.72685 3.74399Z", :fill => "white"}

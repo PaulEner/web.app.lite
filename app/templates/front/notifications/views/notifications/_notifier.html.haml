@@ -1,0 +1,12 @@
+= stylesheet_link_tag 'front/notifications/assets/stylesheets/main'
+
+#notifications_notifier
+
+.mb-3
+
+.form-group.text-center#see_all_notifications
+  %button.btn.btn-default.w-50#see_all{ :type => 'button' }
+    %span Voir tout
+    %span.ms-4=glyphicon('chevron-right', { size: '10', color: '#72AA42'})
+
+= javascript_include_tag 'front/notifications/assets/javascripts/main'

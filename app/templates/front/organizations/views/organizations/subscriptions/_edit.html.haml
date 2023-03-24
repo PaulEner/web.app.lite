@@ -1,0 +1,11 @@
+﻿.ajax_response
+  #organization_subscriptions.edit
+    = simple_form_for @subscription, url: organization_organization_subscription_path(@organization), html: { id: 'edit_subscription_form', class: 'form form-horizontal margin0' } do |f|
+      = hidden_field_tag 'subscription[option_ids][]'
+      %table.table.table-striped
+        %tbody
+          - SubscriptionOption.by_position.each do |option|
+            %tr
+              %td.text-center= check_box_tag('subscription[option_ids][]', option.id, @subscription.options.include?(option), id: "subscription_option_ids_#{option.id}", class: 'form-check-input', data: { price: (option.price_in_cents_wo_vat / 100.0) })
+              %td.w-75= label_tag "subscription_option_ids_#{option.id}", option.name
+              %td.text-end= format_price_00(option.price_in_cents_wo_vat) + '€'

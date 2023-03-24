@@ -1,0 +1,32 @@
+.container-fluid
+  .row.derivationLeft
+    .col-md-8.text-start
+      %h3.bold Historique de récupération
+    .col-md-3.p-1
+      = select_tag 'account_id', options_for_select(customers_active, @account.try(:id)), include_blank: false, class: 'chosen-list w-100'
+    .col-md-1.text-start.p-1
+      %button.btn.btn-light.semibold.retriever-filter-historic.w-100{ disabled: false }
+        %span.me-2 Filtrer
+        %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})  
+
+  .mb-4
+
+  .derivationRight
+    %ul.nav.nav-tabs.ms-3{ "role" => "tablist" }
+      %li.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link#operations-tab{ class: (params[:tab] != 'documents')? 'active' : '',"data-bs-toggle" => "tab", "data-bs-target" => "#operations", type: :button, "role" => "tab", "aria-controls" => "operations", "aria-selected" => "true" } 
+          Opérations bancaires 
+          %span.ms-1.badge.badge-secondary.regular#total-operations 0
+      - if @account.retrievers.where('budgea_id > 0').size > 0
+        %li.nav-item.no-margin{ "role" => "presentation" }
+          %button.semibold.nav-link#documents-tab{ class: (params[:tab] == 'documents')? 'active' : '', "data-bs-toggle" => "tab", "data-bs-target" => "#documents", type: :button, "role" => "tab", "aria-controls" => "documents", "aria-selected" => "false"} 
+            Documents
+            %span.ms-1.badge.badge-secondary.regular#total-documents 0
+    .tab-content
+      .tab-pane.box.no-margin#operations{ class: (params[:tab] != 'documents')? 'active' : '',"role" => "tabpanel", "aria-labelledby" => "operations-tab" }
+      - if @account.retrievers.where('budgea_id > 0').size > 0
+        .tab-pane.box.no-margin#documents{ class: (params[:tab] == 'documents')? 'active' : '', "role" => "tabpanel", "aria-labelledby" => "documents-tab" }
+
+  = render partial: 'dialogs'
+      
+= javascript_include_tag 'front/retrieved_datas/assets/javascripts/main'

@@ -1,0 +1,51 @@
+= stylesheet_link_tag 'front/retrievers/assets/stylesheets/main'
+
+.container-fluid
+  .row
+    .col-md-2.text-start.derivationLeft
+      %h3.bold
+        Mes automates
+        %span.badge.badge-secondary.regular.total-count= @retrievers.total_count
+    .col-md-10.text-start.resp-view.derivationRight
+      .row.choose_retriever_action.float-end.w-50
+        - if @account
+          - if @is_budgea
+            .col-md-8.text-center.derivationRight
+              %button.btn.btn-dark.semibold.list-retriever.w-100{ disabled: false }
+                %span.me-2= glyphicon('list', { size: '15', color: 'white'})
+                %span Automates disponibles
+            .col-md-4.text-center.derivationRight
+              %button.btn.btn-primary.semibold.add-retriever.w-100{ disabled: false }
+                %span.me-2= glyphicon('plus', { size: '15', color: '#FFFF'})
+                %span Ajouter
+          - elsif @is_bridge
+            .col-md-6.text-center.derivationRight
+              %button.btn.btn-primary.add-bridge-retriever.semibold.w-100
+                %span.me-2= glyphicon('plus', { size: '15', color: '#FFFF'})
+                %span Ajouter un automate bancaire
+          - if @is_specific_mission
+            .col-md-6.text-center.derivationRight.mt-1
+              %button.btn.btn-primary.add-internal-retriever.semibold.w-100
+                %span.me-2= glyphicon('plus', { size: '15', color: '#FFFF'})
+                %span Ajouter un automate spécifique
+      .resp-view.text-center.derivationRight.float-end.ms-4.me-4
+        %button.btn.btn-light.semibold.retriever-filter.w-100{ disabled: false }
+          %span.me-2 Recherche
+          %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+      = select_tag 'account_id', options_for_select(customers_active.unshift(['Tous', 'all']), @account.try(:id) || params[:account_id] || 'all'), include_blank: false, class: 'chosen-list float-end w-25'
+
+  .mb-4
+
+  .retrievers-list
+    = javascript_declare_var 'can_manage_providers', CustomUtils.can_create_budgea_documents(@account)? 1 : 0
+    - if @retrievers.size > 0
+      - @retrievers.each_slice(2) do |retrievers|
+        .row.retriever-content.animatedGroups
+          - retrievers.each_with_index do |retriever, index|
+            = render partial: 'retriever', locals: { retriever: retriever, animation: (index % 2 == 0) ? 'toLeft' : 'toRight' }
+    - else
+      .no-data-found.box= t('global.no-data-found')
+
+= render partial: 'dialogs'
+
+= javascript_include_tag 'front/retrievers/assets/javascripts/main'

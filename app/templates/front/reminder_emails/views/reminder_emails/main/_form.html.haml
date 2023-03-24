@@ -1,0 +1,37 @@
+.reminder_form
+  = simple_form_for [@organization, @reminder_email || ReminderEmail.new], html: { id: 'email_configuration', class: 'form form-horizontal margin0' } do |f|
+    .form-group
+      .select-container.no-padding.w-100
+        = f.input :name, input_html: { class: '', placeholder: 'Exemple: Envoi 1' }
+    .form-group
+      .select-container.no-padding.w-100
+        = f.input :delivery_day, as: :integer, required: true, hint: 'Choisir un chiffre de 0 à 28.', input_html: { min: 0, max: 20, placeholder: "Ex : 1" }
+    .form-group
+      .select-container.no-padding.w-100
+        = f.input :subject, input_html: { class: 'input-xxlarge' }
+    .form-group
+      .select-container.no-padding.w-100
+        = f.input :content, as: :ckeditor, input_html: { class: 'ckeditor', ckeditor: { toolbar: 'mini' }}
+
+    .mb-4
+    / .form-group
+    /   %label.semibold Envoyez à
+    /   .select-container.no-padding.w-100
+    /     %input.book-code-software{ placeholder: "Ex : N’oubliez pas d’envoyer vos documents !" }
+
+    .form-group
+      .row
+        .col-md-8.semibold Envoyez tous les...
+        .col-md-2.text-end
+          .form-check.form-check-inline
+            = f.radio_button :period, 1, id: '', class: 'form-check-input'
+            = f.label :period, t('activerecord.models.reminder_email.attributes.period_options.monthly'), class: 'form-check-label'
+        .col-md-2.text-end
+          .form-check.form-check-inline
+            = f.radio_button :period, 3, id: '', class: 'form-check-input'
+            = f.label :period, t('activerecord.models.reminder_email.attributes.period_options.quarterly'), class: 'form-check-label'
+
+  .idocus_modal_buttons
+    - redirection = { url: organization_reminder_emails_path(@organization.id), method: 'GET', html: { target: '.reminder-email-content' } }
+    - idocus_params = param_encode({ url: '#url', form: { id: 'email_configuration', dump_action: true }, before_send: 'update_reminder_email_content', redirect_to: redirection, modal: { id: '#' } })
+    %button.btn.btn-primary.as_idocus_ajax{ type: 'button', idocus: idocus_params }= t('actions.submit')

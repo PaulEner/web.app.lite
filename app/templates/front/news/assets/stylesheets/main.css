@@ -1,0 +1,25 @@
+.toast{
+  max-width: 675px;
+  min-width: 675px;
+  width: auto!important;
+  background-color: rgba(255, 255, 255, 1) !important;
+}
+
+.toast .toast-header{
+  background-color: antiquewhite;
+  font-weight: bold;
+  border-bottom: 1px solid #ceb594a3;
+}
+
+.toast .toast-header strong{
+  max-width: 500px;
+}
+
+.toast .toast-body{
+  background-color: #faebd75e;
+}
+
+.scrollable_body{
+  overflow: auto;
+  max-height: 200px;
+}

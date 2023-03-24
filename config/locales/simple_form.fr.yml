@@ -1,0 +1,426 @@
+fr:
+  simple_form:
+    "yes": 'Oui'
+    "no": 'Non'
+    required:
+      text: 'champ requis'
+      mark: '*'
+      # You can uncomment the line below if you need to overwrite the whole required html.
+      # When using html, text and mark won't be used.
+      # html: '<abbr title="required">*</abbr>'
+    error_notification:
+      default_message: "Veuillez revoir les problèmes suivants:"
+    # Labels and hints examples
+    # labels:
+    #   defaults:
+    #     password: 'Password'
+    #   user:
+    #     new:
+    #       email: 'E-mail to sign in.'
+    #     edit:
+    #       email: 'E-mail.'
+    # hints:
+    #   defaults:
+    #     username: 'User name to sign in.'
+    #     password: 'No special characters, please.'
+    hints:
+      ftp:
+        root_path: "C'est dans ce dossier qu'iDocus importera ou expotera des documents."
+      conterpart_account:
+        is_default: 'Si par défaut : cette catégorie sera assignée automatiquement à tous les comptes de tiers'
+    labels:
+      doc_group:
+        leader: 'Prescripteur'
+        name: 'Nom'
+        description: 'Description'
+      retriever:
+        connector_id: Fournisseur/Banque
+        capabilities: Type
+        journal: Journal
+        name: Nom personnalisé
+      new_provider_request:
+        state: Etat
+        name: Nom
+        url: URL
+        email: Email
+        login: Identifiant
+        password: Mot de passe
+        types: Types de récupération
+        description: Description
+        message: Message
+      bank_account:
+        number: Numéro de compte
+        name: Nom
+        journal: Code journal
+        foreign_journal: Journal comptable de l’outil comptable
+        currency: Devise
+        accounting_number: Compte de trésorerie
+        temporary_account: Compte d’attente
+        start_date: Date limite de livraison
+        lock_old_operation: Bloquer les opérations du mois précédent
+        permitted_late_days: Nombre de jour de retard autorisé avant blocage de l'opération
+        cedricom_mandate_identifier: CEDRICOM - Identifiant Mandat
+        jedeclare_mandate_identifier: JEDECLARE - Identifiant Mandat
+        cedricom_mandate_state: CEDRICOM - État Mandat
+        jedeclare_mandate_state: JEDECLARE - État Mandat
+        cedricom_signed_mandate: Mandat EBICS signé 
+      user:
+        code: Code du dossier
+        company: Nom de la société
+        type_of_entity: Type d'entité
+        legal_registration_city: Ville d'enregistrement
+        registration_number: Numéro d'enregistrement
+        address_street: Rue
+        address_zip_code: Code postal
+        address_city: Ville
+        first_name: Prénom
+        last_name: Nom
+        email: Courriel
+        jefacture_account_id: Identifiant Jefacture (SIREN)
+        phone_number: Numéro de téléphone
+        is_pre_assignement_displayed: Activer la vue écriture comptable dans l'onglet 'Mes Documents' pour ce compte
+        act_as_a_collaborator_into_pre_assignment: Donner les droits collaborateur dans l'onglet 'Mes Documents' pour ce compte
+        password: Mot de passe
+        password_confirmation: Comfirmer le mot de passe
+        is_admin: Est admin ?
+        is_prescriber: Est prescripteur ?
+        is_dropbox_extended_authorized: Dropbox Extended autorisé ?
+        knowings_code: Quel est le code Knowings du dossier ?
+        knowings_visibility: Quelle est la visibilité Knowings attribué au dossier ?
+        authd_prev_period: Nombre de périodes antérieures accessibles au téléversement des pièces par l'utilisateur
+        auth_prev_period_until_day: "Jour de clôture de la période précédente dans la période en cours (exemple : 11 février pour clôturer janvier)"
+        auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel et l'annuel)
+        cedricom_account_identifier: CEDRICOM - ID API dossier
+        jedeclare_account_identifier: JEDECLARE - ID API dossier
+      member:
+        code: Code collaborateur
+        role: Rôle
+        group_ids: Groupes
+        manage_collaborators: Gestion des collaborateurs autorisé ?
+        manage_customers: Gestion des clients autorisé ?
+        manage_groups: Gestion des groupes autorisé ?
+        manage_journals: Gestion des journaux comptables autorisé ?
+        manage_customer_journals: Gestion des journaux comptables des clients autorisé ?
+      options:
+        is_taxable: Le dossier est-il assujetti à TVA?
+        is_pre_assignment_date_computed: Date de saisie des factures
+        is_operation_processing_forced: Forcer la pré-affectation des écritures récupérées par les automates ?
+        is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?
+        preseizure_date_option: Date de l'écriture des opérations bancaires
+      softwares:
+        is_ibiza_auto_deliver: Souhaitez-vous livrer automatiquement les écritures ?
+        is_ibiza_compta_analysis_activated: Souhaitez-vous activer la compta analytique ?
+        is_exact_online_auto_deliver: Souhaitez-vous livrer automatiquement les écritures ?
+        is_ibiza_analysis_to_validate: Souhaitez-vous valider la compta analytique des pièces avant envoi en pré-affectation ?
+        is_coala_auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
+        is_cegid_auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
+        is_quadratus_auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
+        use_own_csv_descriptor_format: Utilise son propre format de CSV ?
+        is_csv_descriptor_auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures ?
+      organization:
+        name: Nom
+        description: Description
+        code: Code
+        authd_prev_period: Nombre de périodes antérieures accessibles au téléversement des pièces par l'utilisateur
+        auth_prev_period_until_day: "Jour de clôture de la période précédente dans la période en cours (exemple : 11 février pour clôturer janvier)"
+        auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel et l'annuel)
+        invoice_created_customer: Facturer un dossier à la création ?
+        is_detail_authorized: Divulguer le coût iDocus au client ?
+        is_test: Organisation de test ?
+        is_quadratus_used: Activer l'option d'export des écritures comptables et pièces pour Quadratus (.zip)?
+        is_coala_used: Activer l'option d'export des écritures comptables et pièces pour Coala (.zip)?
+        is_cegid_used: Activer l'option d'export des écritures comptables et pièces pour Cegid (.zip)?
+        is_fec_agiris_used: Activer l'option d'export des écritures comptables et pièces pour Fec Agiris?
+        is_csv_descriptor_used: Activer l’option de création d'export (csv) des écritures comptables ?
+        is_pre_assignment_date_computed: Date de saisie des factures
+        is_operation_processing_forced: Souhaitez-vous forcer la pré-affectation des écritures récupérées par les automates ?
+        is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?
+        is_duplicate_blocker_activated: Bloquer les doublons de pré-affectation ?
+        subject_to_vat: Est assujetti à la tva ?
+        specific_mission: Mission spécifique ?
+        invoice_mails: Email(s) en copie de la facture iDocus
+        preseizure_date_option: Date de l'écriture des opérations bancaires
+        is_exact_online_used: Utilise Exact Online?
+        is_exact_online_auto_deliver: Livrer automatiquement les écritures ?
+        jefacture_api_key: Clé API Jefacture
+        cedricom_name: CEGID Relations Bancaires - Nom technique du cabinet
+        cedricom_user: CEGID Relations Bancaires - Identifiant
+        cedricom_password: CEGID Relations Bancaires - Mot de passe
+        jedeclare_account_identifier: JEDECLARE - ID API Cabinet
+        jedeclare_user: JEDECLARE - Identifiant
+        jedeclare_password: JEDECLARE - Mot de passe
+      organization_group:
+        name: Nom du groupe
+        organizations: Organisations membre du groupe
+        is_auto_membership_activated: Membre automatique des organisations du groupe ?
+      group:
+        name: Nom
+        description: Description
+        members: Collaborateurs
+        customers: Clients
+      accounting_plan_vat_account:
+        code: Code TVA
+        nature: Nature
+        account_number: Numéro de compte
+      account_book_type:
+        name: Code journal iDocus
+        label: Libelé
+        pseudonym: Code journal comptable
+        use_pseudonym_for_import: Code journal comptable pour l'import
+        description: Nom du journal comptable
+        domain: Domaine (Knowings)
+        entry_type: Type de saisie (Pré-affectation)
+        entry_type_0: Aucun
+        entry_type_1: Notes de frais
+        entry_type_2: Achat
+        entry_type_3: Vente
+        entry_type_4: Banque
+        entry_type_5: Prestation spécifique
+        currency: Devise
+        meta_account_number: Compte de tiers
+        meta_charge_account: Compte de charge / produit
+        vat_account: Compte de TVA 20% appliqué à tous les documents dans le journal comptable iDocus
+        vat_account_10: Compte de TVA 10%
+        vat_account_8_5: Compte de TVA 8.5%
+        vat_account_5_5: Compte de TVA 5.5%
+        vat_account_2_1: Compte de TVA 2.1%
+        anomaly_account: "Compte d'anomalie"
+        is_expense_categories_editable: Catégories de dépenses editable ?
+        expense_categories: Catégories de dépenses
+        expense_category:
+          name: Nom
+          description: Description
+        instructions: Instructions pour vos clients avec option courrier
+        position: Position
+        is_default: Par défaut ?
+        clients: Clients
+        jefacture_enabled: Utiliser ce journal pour les flux JeFacture
+      knowings:
+        is_active: Activer la livraison ?
+        username: Identifiant
+        password: Mot de passe
+        url: URL
+        state: Etat
+        pole_name: Nom du Pôle
+        is_third_party_included: Inclure le tiers ?
+        is_pre_assignment_state_included: Inclure l'état de la pré-affectation ?
+      exercise:
+        start_date: Date de début
+        end_date: Date de fin
+        is_closed: Fermé ?
+      reminder_email:
+        name: Nom de l'email
+        delivery_day: Jour de l'envoi
+        period: Périodicité
+        subject: Sujet
+        content: Contenu
+      file_sending_kit:
+        title: Titre
+        instruction: Instruction(s)
+        position: Position
+        folders: Chemises
+        mails: Mails
+        customer_labels: Etiquettes clients
+        workshop_labels: Etiquettes ateliers
+        logo_path: Chemin
+        logo_height: Hauteur
+        logo_width: Largeur
+        left_logo_path: Chemin
+        left_logo_height: Hauteur
+        left_logo_width: Largeur
+        right_logo_path: Chemin
+        right_logo_height: Hauteur
+        right_logo_width: Largeur
+      software_csv_descriptor:
+        is_used: Activer l’option de création d'export (csv) des écritures comptables ?
+        comma_as_number_separator: Séparer les chiffres par une virgule
+        use_own_csv_descriptor_format: Utilise son propre format de CSV ?
+        auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures ?
+      external_file_storage:
+        is_dropbox_basic_authorized: Dropbox Basic autorisé ?
+        is_google_docs_authorized: Google Drive autorisé ?
+        is_ftp_authorized: FTP autorisé ?
+        is_box_authorized: Box autorisé ?
+      product:
+        title: Titre
+        position: Position
+        period_duration: Type de période
+      product_option:
+        name: Nom
+        title: Nom (public)
+        description: Description
+        position: Position
+        price_in_cents_wo_vat: Prix (en centimes)
+        duration: "Durée de l'abonnement (1 = une seule fois, 0 = reconduit à chaque période)"
+        quantity: Quantité
+        product_group: Groupe
+        action_names: Action(s) à exécuter
+        notify: Notifier par email
+        is_default: Par défaut ?
+      product_group:
+        name: Nom
+        title: Nom (public)
+        position: Position
+        is_option_dependent: Bouton radio ? (sinon case à cocher)
+        products: Sélectionner les produits
+        product_supergroups: Sélectionner les groupes parents
+        product_require_id: Sélectionner un groupe pour la dépendance
+      address:
+        first_name: Prénom
+        last_name: Nom
+        company: Société
+        company_number: N° de Siret
+        address_1: Adresse
+        address_2: Adresse (suite)
+        city: Ville
+        zip: Code postal
+        state: Etat
+        phone: Tél fixe ou mobile
+        building: Bâtiment et appartement
+        place_called_or_postal_box: Lieu-dit ou BP
+        door_code: Digicode
+        other: Autre (sonnerie, concierge...)
+        is_for_billing: Pour la facturation ?
+        is_for_paper_return: Pour le retour des factures papier ?
+        is_for_paper_set_shipping: Pour la livraison du kit envoi courrier ?
+        is_for_dematbox_shipping: Pour la livraison de l’iDocus Box ?
+      paper_return_address:
+        first_name: Prénom
+        last_name: Nom
+        company: Société
+        company_number: N° de Siret
+        address_1: Adresse
+        address_2: Adresse (suite)
+        city: Ville
+        zip: Code postal
+        state: Etat
+        phone: Tél fixe ou mobile
+        building: Bâtiment et appartement
+        place_called_or_postal_box: Lieu-dit ou BP
+        door_code: Digicode
+        other: Autre (sonnerie, concierge...)
+        is_for_billing: Pour la facturation ?
+        is_for_paper_return: Pour le retour des factures papier ?
+        is_for_paper_set_shipping: Pour la livraison du kit envoi courrier ?
+        is_for_dematbox_shipping: Pour la livraison de l’iDocus Box ?
+      software_ibiza:
+        is_used: Utilise Ibiza?
+        auto_deliver: Souhaitez-vous livrer automatiquement les écritures ?
+        is_analysis_activated: Souhaitez-vous activer la compta analytique ?
+        is_analysis_to_validate: Souhaitez-vous valider la compta analytique des pièces avant envoi en pré-affectation ?
+        specific_url_options: URL de connexion iBiZa à iDocus (Optionnel)
+        access_token: Jeton d'accès Scan et OCR
+        state: Etat
+        access_token_2: Jeton d'accès iDo'FacBanque
+        state_2: Etat
+        description: Description
+        description_separator: Séparateur du champ description
+        piece_name_format: Format de nom de la pièce iDocus dans iBiza (colonne "Pièce" dans iBiza)
+        piece_name_format_sep: Séparateur du format de nom de la pièce
+      software_exact_online:
+        is_used: Utilise Exact Online?
+        client_id: Client ID
+        client_secret : Client Secret
+        auto_deliver: Souhaitez-vous livrer automatiquement les écritures ?
+      software_coala:
+        is_used: Activer l'option d'export des écritures comptables et pièces pour Coala (.zip)?
+        auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
+      software_cegid:
+        is_used: Activer l'option d'export des écritures comptables et pièces pour Cegid (.zip)?
+        auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
+      software_quadratus:
+        is_used: Activer l'option d'export des écritures comptables et pièces pour Quadratus (.zip)?
+        auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
+      software_fec_agiris:
+        is_used: Activer l'option d'export des écritures comptables et pièces pour Fec Agiris?
+      software_cogilog:
+        is_used: Activer l'option d'export des écritures comptables et pièces pour Cogilog (.txt)?
+      software_cogilog:
+        is_used: Activer l'option d'export des écritures comptables et pièces pour Ciel (.txt)?
+
+      account_number_rule:
+        rule_target: Appliqué à
+        name: Nom de la règle
+        rule_type: Type de règle
+        affect: Affecté à
+        content: Contenu recherché
+        third_party_account: Numéro de compte
+        priority: Priorisation de règles similaires
+        categorization: Catégorisation
+        users: Clients
+      file_naming_policy:
+        scope: Portée
+        separator: Séparer les éléments par
+      subscription_option:
+        name: Nom
+        price_in_cents_wo_vat: Prix (en centimes)
+        position: Position
+        period_duration: Durée de l'abonnement
+      order:
+        dematbox_count: Combien de scanner souhaitez-vous commander pour ce dossier?
+        paper_set_casing_size: Taille d'enveloppe
+        paper_set_casing_count: Nombre d'enveloppes
+        paper_set_folder_count: Nombre de chemises
+        paper_set_start_date: Date de début
+        paper_set_end_date: Date de fin
+      orders:
+        paper_set_casing_size: Taille d'enveloppe
+        paper_set_casing_count: Nombre d'enveloppes
+        paper_set_folder_count: Nombre de chemises
+        paper_set_start_date: Date de début
+        paper_set_end_date: Date de fin
+      account_sharing:
+        collaborator_id: Contact ou client
+        account_id: Dossier client
+      ftp:
+        host: Hôte
+        port: Port
+        is_passive: Mode passif ?
+        login: Identifiant
+        password: Mot de passe
+        root_path: Chemin racine d'import et de livraison
+        path: Chemin de livraison
+      news:
+        title: Titre
+        body: Message
+        target_audience: Audience cible
+        url: URL vers l'article complet
+        target_audiences:
+          everyone: Tout le monde
+          collaborators: Collaborateurs
+          customers: Clients finaux
+      mcf_settings:
+        delivery_path_pattern: Chemin de livraison
+        is_delivery_activated: Activer la livraison ?
+      pack_report_preseizure:
+        date: Date
+        deadline_date: Date d'échéance
+        third_party: Nom de tiers
+        operation_label: Libelé de l'opération
+        piece_number: Numéro de pièce
+        amount: Montant d'origine
+        cached_amount: Montant d'origine
+        currency: Devise
+        conversion_rate: Taux de conversion
+        observation: Remarque
+      pack_report_preseizure_entry:
+        type: Type
+        amount: Montant
+      pack_report_preseizure_account:
+        number: Numéro
+        lettering: Lettrage
+      accounting_plan_item:
+        third_party_account: Compte de tiers
+        third_party_name: Nom du tiers
+        conterpart_account: Compte de contrepartie
+        code: Code TVA
+        vat_not_recoverable: TVA non récupérable
+        vat_autoliquidation: Fournisseur auto-liquidé
+        vat_autoliquidation_debit_account: Compte de TVA autoliquidée déductibe
+        vat_autoliquidation_credit_account: Compte de TVA autoliquidée collectée
+      conterpart_account:
+        name: 'Catégorie'
+        number: 'N° de compte'
+        is_default: 'Par défaut ?'
+
+

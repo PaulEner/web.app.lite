@@ -1,0 +1,93 @@
+.result-sol
+.all-results
+  .preseizures_box
+    - preseizures = @piece.preseizures  
+    - expense     = @piece.expense
+    .box.list.animatedChild.toLeft.select-box-document{ class: params[:grid_or_list_view] != 'grid' ? '' : 'hide' }
+      .row.list-content
+        .w-25.piece-background
+          .stamp-content.pagethumb.text-center.h-100
+            .image_piece.h-100.animated-pointer
+              %span.zoom.pdf-viewer.pointer.float-start.p-2{title: 'Visualiser la pièce', "data-content-url" => @piece.get_access_url}
+                = glyphicon('magnifying-glass', { size: '20', color: 'background: rgba(26, 26, 26, 0.7)'})
+              = image_tag document_thumb_url(@piece), class: 'p-3 me-5'
+        - if preseizures.size == 1
+          .w-75.dynamic_box.preseizure-content-list{ id: "document_#{@piece.id}", data: { preseizure_id: preseizures.first.id, type: 'piece' } }            
+            = render_async preseizures_reloaded_infos_path, { id: preseizures.first.id }   
+        - elsif preseizures.size >= 1
+          .w-75{ id: "document_#{@piece.id}" }
+            %ul.nav.nav-tabs.ms-3{ "role" => "tablist" }
+              - preseizures.each_with_index do |preseizure, index|
+                %li.nav-item.no-margin{ "role" => "presentation" }
+                  %button.semibold.nav-link{ class: "#{(index == 0) ? 'active' : ''}", "id" => "preseizure-tab-#{preseizure.id}", "data-bs-toggle" => "tab", "data-bs-target" => "#preseizure-#{preseizure.id}", type: :button, "role" => "tab", "aria-controls" => "preseizure-tab-#{preseizure.id}", "aria-selected" => "true" }= preseizure.try(:third_party)
+
+            .tab-content
+              - preseizures.each_with_index do |preseizure, index|
+                .tab-pane.box.no-margin{ class: "#{(index == 0) ? 'active' : ''}", "id" => "preseizure-#{preseizure.id}", "role" => "tabpanel", "aria-labelledby" => "preseizure-#{preseizure.id}-tab" }
+                  .dynamic_box.preseizure-content-list{ id: "document_#{index}_#{@piece.id}", data: { preseizure_id: preseizure.id, type: 'piece' } }
+                    = render_async preseizures_reloaded_infos_path, { id: preseizure.id }
+        - elsif expense
+          .w-75{ id: "document_#{@piece.id}" }
+            .row.p-3
+              .col-md-12.text-start
+                %h5.pack.semibold.no-margin= @piece.name
+            .for-expense.text-center
+              %table.table.table-striped
+                %thead
+                  %th Créer le
+                  %th Montant
+                  %th Date
+                  %th Type
+                  %th Origine
+                %tbody
+                  %tr
+                    %td= expense.created_at.strftime('%d/%m/%Y')
+                    %td= expense.amount_in_cents_w_vat.to_f.to_s + ' €'
+                    %td= expense.date.strftime('%d/%m/%Y')
+                    %td= expense.type
+                    %td= expense.origin
+
+            %hr.w-100
+              .row.ml-1.mb-1.mr-0
+                .col-md-9.text-start
+                  - delivery_state = @piece.get_state_to('text')
+                  - if ['delivery_failed', 'duplication', 'piece_ignored'].include?(delivery_state)
+                    %span.badge.badge-danger.semibold= t("pieces.delivery_state.#{delivery_state}")
+                  - elsif ['awaiting_analytics', 'awaiting_pre_assignment', 'delivery_pending'].include?(delivery_state)
+                    %span.badge.badge-warning.semibold= t("pieces.delivery_state.#{delivery_state}")
+                  - elsif delivery_state != 'none'
+                    %span.badge.badge-success.semibold= t("pieces.delivery_state.#{delivery_state}")
+
+                  - @piece.get_tags.split(' - ').each_slice(3).first.try(:each) do |tag|
+                    - if tag != '-'
+                      %span.badge.bg-dark.semibold= tag
+                - if @piece
+                  .col-md-3.icon-actions.text-end.pe-4
+                    %span.ms-2.update_tags{title: 'Taguer la pièce', data: {id: @piece.id, type: 'piece'}}= glyphicon('tag', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+                    %span.ms-2.delete_piece{title: 'Supprimer la pièce', data: {id: @piece.id}}= glyphicon('trash', { size: '14', color:'#FF4848'})
+
+        - else
+          .w-75.text-center{ id: "document_#{@piece.id}" }
+            .row.p-3
+              .col-md-12.text-start
+                %h5.pack.semibold.no-margin.grey-label= @piece.name
+            .no-preseizure
+              %h3.grey-label Aucune écriture comptable
+            %hr.w-100
+              .row.ml-1.mb-1.mr-0
+                .col-md-9.text-start
+                  - delivery_state = @piece.get_state_to('text')
+                  - if ['delivery_failed', 'duplication', 'piece_ignored', 'not_processed'].include?(delivery_state)
+                    %span.badge.badge-danger.semibold= t("pieces.delivery_state.#{delivery_state}")
+                  - elsif ['awaiting_analytics', 'awaiting_pre_assignment', 'delivery_pending'].include?(delivery_state)
+                    %span.badge.badge-warning.semibold= t("pieces.delivery_state.#{delivery_state}")
+                  - elsif delivery_state != 'none'
+                    %span.badge.badge-success.semibold= t("pieces.delivery_state.#{delivery_state}")
+
+                  - @piece.get_tags.split(' - ').each_slice(3).first.try(:each) do |tag|
+                    - if tag != '-'
+                      %span.badge.bg-dark.semibold= tag
+                - if @piece
+                  .col-md-3.icon-actions.text-end.pe-4
+                    %span.ms-2.update_tags{title: 'Taguer la pièce', data: {id: @piece.id, type: 'piece'}}= glyphicon('tag', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+                    %span.ms-2.delete_piece{title: 'Supprimer la pièce', data: {id: @piece.id}}= glyphicon('trash', { size: '14', color:'#FF4848'})

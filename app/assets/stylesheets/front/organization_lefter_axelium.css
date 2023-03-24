@@ -1,0 +1,108 @@
+body {
+  background: rgba(26, 26, 26, 0.04);
+}
+
+.organizations{
+  width: 100%;
+  display: flex;
+}
+
+.lefter{
+  font-family: Raleway-Medium;
+  font-style: normal;
+  font-weight: 600; 
+  line-height: 16px;  
+  width: 20%;
+  display: inline-flex;
+}
+
+.lefter ul.principal{     
+  font-size: 13px;
+  width: 100%;
+}
+
+.lefter ul.principal li{
+  list-style: none;
+  width: 100%;
+  cursor: pointer;
+}
+
+.lefter ul.principal li, .lefter ul.principal li a{
+  text-decoration: none;  
+  color: rgba(26, 26, 26, 0.32);
+}
+
+.link_principal, .link_slave{
+  transition: all 0.2s ease-out; 
+}
+
+.lefter ul.principal li .link_principal.active{   
+  color: rgba(26, 26, 26, 0.7);
+}
+
+.lefter ul.principal li span{
+  display: block;
+  padding: 4%;
+}
+
+.lefter ul.principal li span.chevron{
+  width: 12%;
+  float: right;       
+}
+
+.lefter li span.link_principal.active{
+  background: #fa8e2e;
+  border-radius: 8px;
+  border-bottom: none;
+}
+
+.lefter li span.link_principal:hover{
+  background: rgba(10, 16, 26, 0.1);
+  border-radius: 8px;
+  padding-left: 7%;
+}
+
+.lefter ul.slave{
+  font-size: 11px;
+  width: 100%;
+  margin-top: 2%;
+}
+
+.lefter li{ 
+  list-style: none;
+  width: 100%;
+}
+.lefter li span{
+  padding: 2%;
+}
+
+.lefter li span.link_slave.active{
+  background: rgba(26, 26, 26, 0.1);
+  border-radius: 6px;
+  border-bottom: none;
+}
+
+.lefter li span.link_slave:hover{
+  background: rgba(10, 16, 10, 0.1);
+  border-radius: 8px;
+  width: 100%;
+  padding-left: 7%;
+}     
+
+.content{
+  width: 90%;
+  margin-left: 2%;
+}
+
+.customer_content_container{
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 42.7em;
+}
+
+@media (max-width: 1280px) {
+  .lefter ul.principal {
+    font-size: 11px;
+    padding-left: 1rem;
+  }
+}

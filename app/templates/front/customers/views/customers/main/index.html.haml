@@ -1,0 +1,150 @@
+= stylesheet_link_tag 'front/customers/assets/stylesheets/main'
+
+.customer_container_view
+  .customers
+    %input#organization_id{type: :hidden, value: @organization.id, name: 'organization_id'}
+    %input#customer_id{type: :hidden, value: 0, name: 'customer_id'}
+    .list-customers
+      .row.derivationRight
+        .col-md-5
+          %h3.bold.mt-2
+            Liste des clients
+            %span.badge.badge-secondary.badge-sm.regular= @customers.total_count
+        .col-md-3.no-padding
+          .input-group.search-content
+            %span.input-group-text#basic-addon1= glyphicon('magnifying-glass', { size: '16', color: 'background: rgba(26, 26, 26, 0.7)' })
+            %input.form-control#search_input{ type: :text, "aria-label" => "Rechercher", "aria-describedby" => "basic-addon1", name:'user_contains[text]', placeholder: 'Rechercher' }
+        .col-md-2.text-center
+          %button.btn.btn-light.customer-filter.semibold.w-75
+            %span.me-2 Filtrer
+            %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+        .col-md-2.no-padding.text-center
+          - if (@user.leader? || (@user.manage_customers && @user.groups.any?)) && @organization.is_active
+            %button.btn.btn-primary.new-customer.semibold.add-edit.w-100
+              %span.me-2= glyphicon('plus', { size: '15', color: '#FFFF'})
+              %span Nouveau Client   
+      
+      .mb-3
+      .box#table_customers.derivationLeft
+        .row
+          .col-md-12
+            %table.table.table-striped.list_customers#tbl_customers
+              %thead
+                %th Nom
+                %th= sortable :code, 'Identifiant'
+                %th= sortable :created_at, 'Date de création'
+                - if not CustomUtils.is_ido_premium?(@organization.code)
+                  %th Date fin d'engagement
+                  %th Forfait
+                  %th Pré-affectation
+                  %th Automates
+                  %th Journaux sup.
+                %th.text-end Action
+              %tbody
+                - @customers.each do |customer|
+                  - color = customer.try(:inactive_at).blank? ? 'rgba(26, 26, 26, 0.7);' : 'white'
+                  - package = customer.my_package
+                  %tr{ class: (customer.try(:inactive_at).present?)? 'inactive' : '' }
+                    %td.align-middle= customer.name
+                    %td.align-middle
+                      %span.info
+                        = link_to customer, organization_customer_path(@organization, customer)
+                    %td.align-middle= customer.created_at.strftime('%d/%m/%Y')
+                    - if not CustomUtils.is_ido_premium?(@organization.code)
+                      %td.align-middle
+                        - if package && BillingMod::Configuration::LISTS[package.name.to_sym][:commitment] > 0
+                          - if package.commitment_end_period.to_i == Date.today.strftime('%Y%m').to_i
+                            %span.badge.bg-danger.semibold= l CustomUtils.period_to_date(package.commitment_end_period).end_of_month
+                          - else
+                            %label= l CustomUtils.period_to_date(package.commitment_end_period).end_of_month
+                      %td.align-middle.pointer
+                        .td-popover                        
+                          - if package                        
+                            %span.semibold= BillingMod::Configuration.human_name_of(package.name)
+                            %br
+                            %i= BillingMod::Configuration.label_of(package.name).presence || ""                
+                            .popover_content_customer.alert.alert-warning.hide= popover_content(package)                                                   
+                      %td.text-center.align-middle= package.try(:preassignment_active) ? 'Activé' : '-'
+                      %td.text-center.align-middle= package.try(:bank_active) ? "Activé" : "-"
+                      %td.align-middle= (customer.subscription.try(:number_of_journals).to_i > 5)? (customer.subscription.try(:number_of_journals).to_i - 5) : 0
+                    %td.text-end.pointer.align-middle
+                      .action.sub_edit_delete.list-collaborators
+                        %span.glyph= glyphicon('ellipses', { size: '15', color: color, style: 'transform: rotate(90deg)'})
+                      .sub_menu.text-start.hide
+                        %ul.no-margin.no-padding.regular
+                          %li.edit.edit-customer
+                            = link_to glyphicon('pencil', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Éditer', organization_customer_path(@organization, customer)
+                          - if customer.active?
+                            %li.delete.red-label
+                              = link_to glyphicon('ban', { size: '15', color: "#FF4848" }) + ' Clôturer le dossier', account_close_confirm_organization_customer_path(@organization, customer), class: 'close_customer'
+                          - else
+                            %li.reopen.text-success
+                              = link_to glyphicon('folder', { size: '15', color: '#72AA42'}) + ' Réouvrir le dossier', account_reopen_confirm_organization_customer_path(@organization, customer), class: 'reopen_customer'
+            = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: organization_customers_path(@organization.id), target: '#table_customers', total_pages: @customers.total_pages, filter: 'form-customer-filter' }
+
+  .modal.fade.in#customers-filter
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %h5.modal-title.bold Filtrer les clients
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        = form_tag organization_customers_path(@organization), method: :get, class: 'form-filter', id: 'form-customer-filter' do
+          = hidden_field_tag :with_details, params[:with_details] || true
+          .modal-body
+            .form-group
+              = label_tag 'user_contains[company]', t('activerecord.models.user.attributes.company'), class: 'col-form-label semibold'
+              .select-container.no-padding.w-100
+                = text_field_tag 'user_contains[company]', (params[:user_contains][:company] rescue ''), class: 'form-control filter-field'
+            .form-group
+              = label_tag 'user_contains[code]', t('activerecord.models.user.attributes.code'), class: 'col-form-label semibold'
+              .select-container.no-padding.w-100
+                = text_field_tag 'user_contains[code]', (params[:user_contains][:code] rescue ''), class: 'form-control filter-field'
+            .form-group
+              = label_tag 'user_contains[last_name]', t('activerecord.models.user.attributes.last_name'), class: 'col-form-label semibold'
+              .select-container.no-padding.w-100
+                = text_field_tag 'user_contains[last_name]', (params[:user_contains][:last_name] rescue ''), class: 'form-control filter-field'
+            .form-group
+              = label_tag 'user_contains[first_name]', t('activerecord.models.user.attributes.first_name'), class: 'col-form-label semibold'
+              .select-container.no-padding.w-100
+                = text_field_tag 'user_contains[first_name]', (params[:user_contains][:first_name] rescue ''), class: 'form-control filter-field'
+            .form-group
+              = label_tag 'user_contains[email]', t('activerecord.models.user.attributes.email'), class: 'col-form-label semibold'
+              .select-container.no-padding.w-100
+                = text_field_tag 'user_contains[email]', (params[:user_contains][:email] rescue ''), class: 'form-control filter-field'
+            .form-group
+              = label_tag 'group_ids[]', 'Filtrer par groupe', class: 'semibold'
+              = select_tag 'group_ids[]', options_from_collection_for_select(@user.groups.order(name: :asc), :id, :name, (params[:group_ids] rescue '')), include_blank: false, class: 'searchable-option-list', id: 'group-filter', multiple: true
+            .form-group
+              = label_tag 'user_contains[collaborator_id]', 'Filtrer par collaborateur', class: 'semibold'
+              = select_tag 'user_contains[collaborator_id]', options_from_collection_for_select(@organization.collaborators.order(code: :asc), :id, :my_code, (params[:user_contains][:collaborator_id] rescue '')), include_blank: true, class: 'form-control form-select form-select-sm filter-field', id: 'collaborator-filter', multiple: false
+
+            .form-group
+              = label_tag 'user_contains[is_inactive]', t('activerecord.models.user.attributes.is_inactive'), class: 'semibold'
+              = select_tag 'user_contains[is_inactive]', options_for_select([['Oui', 1], ['Non', 0]], (params[:user_contains][:is_inactive] rescue '')), include_blank: true, class: 'form-control form-select form-select-sm filter-field', multiple: false
+
+          .modal-footer
+            = link_to 'Annuler', organization_customers_path(@organization), class: 'btn btn-light cancel'
+            = submit_tag t('filters.action'), class: 'btn btn-primary semibold btn-filter'
+
+  .modal.fade.in#create-customer{ data: { 'bs-backdrop': "static" } }
+    .modal-dialog
+      .modal-content
+        .modal-header          
+          %h5.modal-title.semibold Créer un nouveau client
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        .modal-body.back-grey
+          Chargement ...
+          
+        .modal-footer
+          .row.w-100.carousel-item-action
+            .col-md-8.d-inline-block
+              %button.btn.btn-default.semibold.previous.hide{ type: :button, "data-bs-target" => "#carousel_customer_form", "data-bs-slide" => "prev" } Précedent
+            .col-md-4.d-inline-block.ps-1.text-end
+              %button.btn.btn-light.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' } Annuler
+              %button.btn.btn-primary.semibold.next{ type: :button, "data-bs-target" => "#carousel_customer_form", "data-bs-slide" => "next", disabled: true } Suivant
+              - idocus_params = param_encode({ url: "#create", method: 'POST', form: { id: 'create-customer-form-data', dump_action: true }, modal: { id: 'create-customer' }, after_send: 'show_new_customer' })
+              %button.btn.btn-primary.submit_customer.as_idocus_ajax.hide{ type: :button, idocus: idocus_params } Valider              
+
+= render partial: 'customer_modal'
+
+= javascript_include_tag 'front/customers/assets/javascripts/main'

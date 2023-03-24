@@ -1,0 +1,93 @@
+#customer.edit_softwares_selection.derivationRight
+  - unless @customer.configured?
+    .box
+      = render 'steps'
+
+  .card
+    .card-header
+      %h3
+        Séléction de logiciels comptables pour le dossier : 
+        %span.text-info.fs-origin= @customer
+    = simple_form_for @customer, url: update_softwares_selection_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal' } do |c|
+      .card-body
+        - Interfaces::Software::Configuration::SOFTWARES.each do |software|
+          = c.simple_fields_for software.to_sym do |f|
+            .row
+              .col-md-6
+                %table.table.table-condensed.table-striped
+                  -if software.to_s == 'ibiza' && @organization.try(:ibiza).try(:used?)
+                    %tr
+                      %td Ce dossier utilise Ibiza ?
+                      %td
+                        = hidden_field_tag :part, 'ibiza'
+                        = f.check_box :is_used, class: 'softwares_setting', style: "position:unset"
+                  -if software.to_s == 'exact_online' && @organization.try(:exact_online).try(:used?)
+                    %tr
+                      %td Ce dossier utilise Exact Online ?
+                      %td
+                        = hidden_field_tag :part, 'exact_online'
+                        = f.check_box :is_used, class: 'softwares_setting', style: "position:unset"
+                  -if software.to_s == 'my_unisoft' && @organization.try(:my_unisoft).try(:used?)
+                    %tr
+                      %td Ce dossier utilise My Unisoft ?
+                      %td
+                        = hidden_field_tag :part, 'my_unisoft'
+                        = f.check_box :is_used, class: 'softwares_setting', style: "position:unset"
+                  -if software.to_s == 'sage_gec' && @organization.try(:sage_gec).try(:used?)
+                    %tr
+                      %td Ce dossier utilise Sage GEC ?
+                      %td
+                        = hidden_field_tag :part, 'sage_gec'
+                        = f.check_box :is_used, class: 'softwares_setting', style: "position:unset"
+                  -if software.to_s == 'acd' && @organization.try(:acd).try(:used?)
+                    %tr
+                      %td Ce dossier utilise ACD ?
+                      %td
+                        = hidden_field_tag :part, 'acd'
+                        = f.check_box :is_used, class: 'softwares_setting', style: "position:unset"
+                  -if software.to_s == 'coala' && @organization.try(:coala).try(:used?)
+                    %tr
+                      %td Ce dossier utilise Coala ?
+                      %td
+                        = hidden_field_tag :part, 'coala'
+                        = f.check_box :is_used, style: "position:unset"
+                    %tr
+                      %td Identifiant unique du dossier
+                      %td= f.input :internal_id, as: 'string', label: false
+
+                  -if software.to_s == 'quadratus' && @organization.try(:quadratus).try(:used?)
+                    %tr
+                      %td Ce dossier utilise Quadratus ?
+                      %td
+                        = hidden_field_tag :part, 'quadratus'
+                        = f.check_box :is_used, style: "position:unset"
+                  -if software.to_s == 'ciel' && @organization.try(:ciel).try(:used?)
+                    %tr
+                      %td Ce dossier utilise Ciel ?
+                      %td
+                        = hidden_field_tag :part, 'ciel'
+                        = f.check_box :is_used, style: "position:unset"
+                  -if software.to_s == 'cegid' && @organization.try(:cegid).try(:used?)
+                    %tr
+                      %td Ce dossier utilise Cegid ?
+                      %td
+                        = hidden_field_tag :part, 'cegid'
+                        = f.check_box :is_used, style: "position:unset"
+                  - if software.to_s == 'fec_agiris' && @organization.try(:fec_agiris).try(:used?)
+                    %tr
+                      %td Ce dossier utilise Fec Agiris ?
+                      %td
+                        = hidden_field_tag :part, 'fec_agiris'
+                        = f.check_box :is_used, style: "position:unset"
+                  -if software.to_s == 'csv_descriptor' && @organization.try(:csv_descriptor).try(:used?)
+                    %tr
+                      %td Ce dossier utilise un format d'export .csv ? (personnalisable)
+                      %td
+                        = hidden_field_tag :part, 'csv_descriptor'
+                        = f.check_box :is_used, style: "position:unset"
+            .card-footer
+              .form-actions.margin0bottom
+                = link_to t('actions.previous_step'), previous_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
+                = link_to t('actions.complete_later'), complete_later_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
+                = f.submit t('actions.next_step'), class: 'btn btn-primary'
+= javascript_include_tag 'account/customers'

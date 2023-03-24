@@ -1,0 +1,62 @@
+.box.back-grey
+  %table.table.table-condensed.table-striped{ data: { total: collection.count.to_i }}
+    %thead.text-white
+      %tr
+        %th.text-center= header[1]
+        %th.text-center= header[2]
+        %th.text-center= header[3]
+        %th.text-center= header[4]
+    %tbody.text-white
+      - total = 0
+      - if header[5].present?
+        - if collection.count > 0
+          - collection.each do |object|
+            - organization = Organization.find(object[0][0])
+            - date = object[0][2]
+            - iban = object[0][1]
+            - count = object[1]
+            %tr
+              %td.text-center.text-white
+                - if date
+                  = l(date, format: '%d %b %Y %H:%M')
+                - else
+                  \-
+              %td.text-center.text-white= organization.name
+              %td.text-center.text-white= count
+              %td.text-center.text-white= iban
+          %tr
+            %td.semibold.text-white Total
+            %td.text-white
+            %td.text-center.text-white
+              %strong= collection.sum {|h| h[1]}
+            %td
+        - else
+          %tr
+            %td.text-center.text-white{ colspan: 4 }
+              %i Aucun
+      - else
+        - if collection.count > 0
+          - collection.each do |object|
+            - total = total + object.document_count
+            %tr
+              %td.text-center.text-white
+                - if object.date
+                  - if object.date.today?
+                    = l(object.date, format: '%H:%M')
+                  - else
+                    = l(object.date, format: '%d %b %Y %H:%M')
+                - else
+                  \-
+              %td.text-center.text-white= object.name
+              %td.text-center.text-white= object.document_count
+              %td.text-center.text-white{ title: object.try(:error_message).presence || '-' }
+                = object.message == false ? '-' : sanitize(object.message, :tags => %w(br))
+          %tr
+            %td.text-center.semibold.text-white Total
+            %td.text-white
+            %td.text-center.semibold.text-white= total
+            %td.text-white
+        - else
+          %tr
+            %td.text-center.text-white{ colspan: 4 }
+              %i Aucun

@@ -1,0 +1,90 @@
+#orders
+  .row.box.small-shadow.clearfix.derivationLeft
+    .col-md-10
+      %h3
+        Liste des commandes de scanner iDocus'Box et de Kit envoi courrier
+        %span.badge.bg-dark= @orders_count      
+    .col-md-2.text-end
+      %button.btn.btn-warning.filter-orders.w-50
+        %span.me-2= glyphicon('transfer', { size: '10', style: 'transform: rotate(90deg)'})
+        %span Filtrer
+
+  .row.derivationRight#table_orders
+    .col.md-12
+      .box
+        %table.table.table-condensed.table-striped
+          %thead
+            %tr
+              %th= sortable :created_at, t('activerecord.models.common.attributes.created_at'), { order_contains: @order_contains }
+              %th= sortable :user_id, 'Client', { order_contains: @order_contains }
+              %th= sortable :type, t('activerecord.models.order.attributes.type'), { order_contains: @order_contains }
+              %th Quantité
+              %th= sortable :price_in_cents_wo_vat, 'Prix (HT)', { order_contains: @order_contains }
+              %th Adresse de livraison
+              %th.text-end= sortable :state, t('activerecord.models.order.attributes.state'), { order_contains: @order_contains }
+          %tbody.readonly-link-container
+            - @orders.each do |order|
+              %tr
+                %td= l order.created_at
+                %td= link_to "#{order.user.code} - #{order.user.company}", organization_customer_path(order.organization, order.user, tab: 'orders')
+                - if order.dematbox?
+                  %td iDocus'Box
+                  %td= order.dematbox_count
+                  %td.text-end= format_price_00(order.price_in_cents_wo_vat) + ' €'
+                - else
+                  %td Kit envoi courrier
+                  %td
+                    = order.paper_set_casing_size.to_s + 'g'
+                    %br
+                    = order.paper_set_folder_count.to_s + ' chemises'
+                    %br
+                    = paper_set_date_to_name(order.period_duration, order.paper_set_start_date)
+                    à
+                    = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
+                  %td.text-end= format_price_00(order.price_in_cents_wo_vat) + ' €'
+                %td= order.address.try(:long_info)
+                %td.text-end
+                  %span.badge.bg-dark= Order.state_machine.states[order.state].human_name
+
+        = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: admin_orders_index_path, target: '#table_orders', total_pages: @orders.total_pages, filter: 'form-organizations-filter' }
+
+.modal#filter-orders
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h5.modal-title.bold Filtrer
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      = form_tag admin_orders_index_path, method: :get, class: 'form-filter' do
+        .modal-body
+          = hidden_field_tag :direction, sort_direction
+          = hidden_field_tag :sort, sort_column
+          = hidden_field_tag :per_page, per_page
+          .form-group
+            %label.semibold
+              = label_tag 'order_contains[created_at]', t('activerecord.models.common.attributes.created_at')
+            .select-container.w-100.no-padding  
+              = text_field_tag 'order_contains[created_at]', (params[:order_contains][:created_at] rescue ''), class: 'form-control date daterange'
+          .form-group
+            %label.semibold
+              = label_tag 'order_contains[user_code]', 'Code client'
+            .select-container.w-100.no-padding  
+              = text_field_tag 'order_contains[user_code]', (params[:order_contains][:user_code] rescue ''), class: 'form-control'
+          .form-group
+            %label.semibold
+              = label_tag 'order_contains[type]', t('activerecord.models.order.attributes.type')
+            = select_tag 'order_contains[type]', options_for_select([["iDocus'Box", 'dematbox'],['Kit envoi courrier', 'paper_set']], (params[:order_contains][:type] rescue '')), include_blank: true, class: 'form-select'
+          .form-group
+            %label.semibold
+              = label_tag 'order_contains[price_in_cents_wo_vat][>=]', t('activerecord.models.order.attributes.price_in_cents_wo_vat')
+            .select-container.w-100.no-padding  
+              = text_field_tag 'order_contains[price_in_cents_wo_vat][>=]', (params[:order_contains][:price_in_cents_wo_vat] rescue ''), class: 'form-control'  
+          .form-group
+            %label.semibold
+              = label_tag 'order_contains[state]', t('activerecord.models.order.attributes.state')
+            = select_tag 'order_contains[state]', options_for_select([["En attente", 'pending'],['Confirmé', 'confirmed'], ['Annulée', 'cancelled']], (params[:order_contains][:state] rescue '')), include_blank: true, class: 'form-select'
+        .modal-footer            
+          = link_to 'Réinitialiser', admin_orders_index_path, class: 'btn btn-light', title: t('filters.reset')
+          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+
+
+= javascript_include_tag 'back/orders/assets/javascripts/main'

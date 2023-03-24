@@ -1,0 +1,155 @@
+.heading_customer.customer_container_view
+  .customer_header
+    %input#organization_id{type: :hidden, value: @organization.id, name: 'organization_id'}
+    %input#customer_id{type: :hidden, value: @customer.id, name: 'customer_id'}
+    .row.derivationRight
+      .col-md-12
+        - options = { size: '15', color: 'rgba(26, 26, 26, 0.7);'}
+        .row.clearfix
+          .col-md-6.text-start.p-2    
+            %h3.bold.text-start
+              %span.me-1 Clients :
+              %span.badge.bg-dark.regular= @customer.info
+              - if @customer.inactive?
+                %span.badge.badge-danger.text-start.ms-2.regular.closed_account Dossier clôturé
+          .col-md-6.text-end.no-padding
+            - if @customer.active?
+              = link_to glyphicon('ban', { size: '15', color: '#FF4848'}) + ' Clôturer le dossier', account_close_confirm_organization_customer_path(@organization, @customer), class: 'btn btn-danger semibold close_customer'
+            - else
+              = link_to glyphicon('folder', { size: '15', color: '#72AA42'}) + ' Réouvrir le dossier', account_reopen_confirm_organization_customer_path(@organization, @customer), class: 'btn btn-light no-style reopen_customer'
+
+    .mb-4
+
+    - if @customer.still_active?
+      .w-100.fadein
+        %span.auto-scroll-span-left.hide.ml-1.mr-1.float-start
+          %button.btn.btn-default
+            = glyphicon('location', size: '16', color: '#C1D837', style: 'transform: rotate(-140deg)' )
+        %span.auto-scroll-span-right.hide.mr-auto.ml-1.float-end
+          %button.btn.btn-default
+            = glyphicon('location', size: '16', color: '#C1D837', style: 'transform: rotate(45deg)')
+        .main-menu-content.auto-scroll-div
+          %ul.list.nav.nav-tabs.ms-3
+            %li.nav-item.no-margin
+              %a.head_customer_link.semibold.nav-link#customer_information{ class: ('active' if (controller_path == 'customers/main' && action_name == 'show') ), href: organization_customer_path(@organization, @customer) } Informations générales
+            - if !CustomUtils.is_ido_premium?(@organization.code) && @customer.active? && !@organization.specific_mission
+              %li.nav-item.no-margin
+                %a.head_customer_link.semibold.nav-link#customer_subscription{ class: ('active' if (controller_path == 'subscriptions/main' && action_name == 'edit')), href: edit_organization_customer_subscription_path(@organization, @customer) } Forfait
+            - if !@customer.is_package?('ido_x') && ( @customer.is_package?(:mail_active) || @customer.is_package?(:scan_active) || @customer.is_package?(:digitize_active) )
+              %li.nav-item.no-margin
+                %a.head_customer_link.semibold.nav-link#orders-tab{ class: ('active' if (controller_path == 'orders/main' && action_name == 'index')), href: organization_customer_orders_path(@organization, @customer) } Commandes Kits/Scan
+            %li.nav-item.no-margin
+              %a.head_customer_link.semibold.nav-link#adresses-tab{ class: ('active' if (controller_path == 'addresses/user' && action_name == 'index')), href: organization_user_addresses_path(@organization, @customer) } Adresses
+            - if @organization.specific_mission
+              %li.nav-item.no-margin
+                %a.head_customer_link.semibold.nav-link#journals-tab{ class: ('active' if (controller_path == 'journals/user' && action_name == 'index')), href: organization_user_journals_path(@organization, @customer) } Dossiers
+            - else
+              %li.nav-item.no-margin
+                %a.head_customer_link.semibold.nav-link#journals-tab{ class: ('active' if (controller_path == 'journals/user' && action_name == 'index')), href: organization_user_journals_path(@organization, @customer) } Journaux comptables
+              - if !@customer.is_package?('ido_x')
+                %li.nav-item.no-margin
+                  %a.head_customer_link.semibold.nav-link#compta-tab{ class: ('active' if (controller_path == 'customers/main' && action_name == 'edit_setting_options')), href: edit_setting_options_organization_customer_path(@organization, @customer) } Paramètres
+              - if @customer.uses?(:ibiza)
+                %li.nav-item.no-margin
+                  %a.head_customer_link.semibold.nav-link#ibizabox_tab{ class: ('active' if (controller_path == 'ibiza/box_documents' && action_name == 'index')), href: organization_customer_ibizabox_documents_path(@organization, @customer) } iBiza Box
+              %li.nav-item.dropdown.no-margin
+                %a.head_customer_link.semibold.nav-link.dropdown-toggle#softwares-list{ "data-bs-toggle" => "dropdown", "aria-expanded" => "false", href: '#', class: ('active' if (controller_path == 'software_setting/user' && action_name == 'index')) } Logiciels comptables / export csv
+                %ul.dropdown-menu{ "aria-labelledby" => "softwares-list" }
+                  - if software_uses('ibiza')   
+                    %li.clearfix
+                      %a.head_customer_link.semibold.nav-link.dropdown-item#ibiza-tab{ href: organization_customer_softwares_path(@organization, @customer, software_name: 'ibiza') }
+                        %span.float-start iBiza
+                        - if @customer.uses?(:ibiza)
+                          = glyphicon('check', { size: '15', color: 'rgba(26, 26, 26, 0.7);', class: 'float-end' })
+                  - if software_uses('exact_online')
+                    %li.clearfix
+                      %a.head_customer_link.semibold.nav-link.dropdown-item#exact-online-tab{ href: organization_customer_softwares_path(@organization, @customer, software_name: 'exact_online') }
+                        %span.float-start Exact Online
+                        - if @customer.uses?(:exact_online)
+                          = glyphicon('check', { size: '15', color: 'rgba(26, 26, 26, 0.7);', class: 'float-end' })
+                  - if software_uses('my_unisoft')
+                    %li.clearfix
+                      %a.head_customer_link.semibold.nav-link.dropdown-item#my-unisoft-tab{ href: organization_customer_softwares_path(@organization, @customer, software_name: 'my_unisoft') }
+                        %span.float-start My Unisoft
+                        - if @customer.uses?(:my_unisoft)
+                          = glyphicon('check', { size: '15', color: 'rgba(26, 26, 26, 0.7);', class: 'float-end' })
+                  - if software_uses('sage_gec')
+                    %li.clearfix
+                      %a.head_customer_link.semibold.nav-link.dropdown-item#sage-gec-tab{ href: organization_customer_softwares_path(@organization, @customer, software_name: 'sage_gec') }
+                        %span.float-start Sage GEC
+                        - if @customer.uses?(:sage_gec)
+                          = glyphicon('check', { size: '15', color: 'rgba(26, 26, 26, 0.7);', class: 'float-end' })
+                  - if @organization.try(:coala).try(:used?)  
+                    %li.clearfix
+                      %a.head_customer_link.semibold.nav-link.dropdown-item#coala-tab{ href: organization_customer_softwares_path(@organization, @customer, software_name: 'coala') }
+                        %span.float-start Coala
+                        - if @customer.uses?(:coala)
+                          = glyphicon('check', { size: '15', color: 'rgba(26, 26, 26, 0.7);', class: 'float-end' })
+                  - if @organization.try(:ciel).try(:used?)  
+                    %li.clearfix
+                      %a.head_customer_link.semibold.nav-link.dropdown-item#ciel-tab{ href: organization_customer_softwares_path(@organization, @customer, software_name: 'ciel') }
+                        %span.float-start Ciel
+                        - if @customer.uses?(:ciel)
+                          = glyphicon('check', { size: '15', color: 'rgba(26, 26, 26, 0.7);', class: 'float-end' })
+                  - if @organization.try(:quadratus).try(:used?)
+                    %li.clearfix
+                      %a.head_customer_link.semibold.nav-link.dropdown-item#quadratus-tab{ href: organization_customer_softwares_path(@organization, @customer, software_name: 'quadratus') }
+                        %span.float-start Quadratus
+                        - if @customer.uses?(:quadratus)
+                          = glyphicon('check', { size: '15', color: 'rgba(26, 26, 26, 0.7);', class: 'float-end' })
+                  - if @organization.try(:cegid).try(:used?)
+                    %li.clearfix
+                      %a.head_customer_link.semibold.nav-link.dropdown-item#cegid-tab{ href: organization_customer_softwares_path(@organization, @customer, software_name: 'cegid') }
+                        %span.float-start Cegid
+                        - if @customer.uses?(:cegid)
+                          = glyphicon('check', { size: '15', color: 'rgba(26, 26, 26, 0.7);', class: 'float-end' })
+                  - if @organization.try(:fec_agiris).try(:used?)
+                    %li.clearfix
+                      %a.head_customer_link.semibold.nav-link.dropdown-item#fec-agiris-tab{ href: organization_customer_softwares_path(@organization, @customer, software_name: 'fec_agiris') }
+                        %span.float-start Fec Agiris
+                        - if @customer.uses?(:fec_agiris)
+                          = glyphicon('check', { size: '15', color: 'rgba(26, 26, 26, 0.7);', class: 'float-end' })
+                  - if software_uses('acd')
+                    %li.clearfix
+                      %a.head_customer_link.semibold.nav-link.dropdown-item#sage-gec-tab{ href: organization_customer_softwares_path(@organization, @customer, software_name: 'acd') }
+                        %span.float-start ACD
+                        - if @customer.uses?(:acd)
+                          = glyphicon('check', { size: '15', color: 'rgba(26, 26, 26, 0.7);', class: 'float-end' })
+                  - if @organization.try(:fec_acd).try(:used?)
+                    %li.clearfix
+                      %a.head_customer_link.semibold.nav-link.dropdown-item#fec-acd-tab{ href: organization_customer_softwares_path(@organization, @customer, software_name: 'fec_acd') }
+                        %span.float-start Fec ACD
+                        - if @customer.uses?(:fec_acd)
+                          = glyphicon('check', { size: '15', color: 'rgba(26, 26, 26, 0.7);', class: 'float-end' })
+                  - if @organization.try(:cogilog).try(:used?)
+                    %li.clearfix
+                      %a.head_customer_link.semibold.nav-link.dropdown-item#cogilog-tab{ href: organization_customer_softwares_path(@organization, @customer, software_name: 'cogilog') }
+                        %span.float-start Cogilog
+                        - if @customer.uses?(:cogilog)
+                          = glyphicon('check', { size: '15', color: 'rgba(26, 26, 26, 0.7);', class: 'float-end' })
+                  - if @organization.try(:csv_descriptor).try(:used?)
+                    %li.clearfix
+                      %a.head_customer_link.semibold.nav-link.dropdown-item#csv-descriptor-tab{ href: organization_customer_softwares_path(@organization, @customer, software_name: 'csv_descriptor') }
+                        %span.float-start Format d’export (.csv)
+                        - if @customer.uses?(:csv_descriptor)
+                          = glyphicon('check', { size: '15', color: 'rgba(26, 26, 26, 0.7);', class: 'float-end' })
+              %li.nav-item.no-margin
+                %a.head_customer_link.semibold.nav-link#accounting-plan-tab{ class: ('active' if (controller_path == 'accounting_plans/main' && (action_name == 'show' || action_name == 'import_fec'))), href: organization_customer_accounting_plan_path(@organization, @customer) } Plan comptable
+              - if @organization.mcf_settings.try(:access_token).present? || @customer.try(:mcf_documents).try(:not_processable).try(:any?)
+                %li.nav-item.no-margin{ "role" => "presentation" }
+                  %a.head_customer_link.semibold.nav-link#mcf-tab{ class: ('active' if (controller_path == 'my_company_files/user_mcf_storage' && action_name == 'index')), href: organization_customer_my_company_files_path(@organization, @customer) } My Company Files
+              - if @organization.knowings.try(:ready?)
+                %li.nav-item.no-margin
+                  %a.head_customer_link.semibold.nav-link#ged-tab{ class: ('active' if params[:tab] == 'ged'), href: '#' } Outil GED
+              - if @user.is_admin && @customer.active? && !@organization.specific_mission
+                %li.nav-item.no-margin
+                  %a.head_customer_link.semibold.nav-link#file-storages-tab{ class: ('active' if (controller_path == 'external_file_storages/efs_user' && action_name == 'index')), href: organization_customer_efs_path(@organization, @customer) } Stockages externes
+
+
+
+  .customer_content_container
+    .customer_content.mb-5.ps-4.pe-4
+      != content_for?(:content) ? yield(:content) : yield
+
+= render file: Rails.root.join('app/templates/front/customers/views/customers/main/_customer_modal.html.haml')
+

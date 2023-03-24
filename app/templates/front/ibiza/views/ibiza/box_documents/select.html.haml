@@ -1,0 +1,39 @@
+.ibizabox_documents
+  #ibizabox_documents_select
+    .row
+      .col-md-10
+        %h5.semibold
+          Sélection de documents ibiza box restant à intégrer du client
+          %span.badge.bg-secondary= @documents.total_count
+      .col-md-2.text-center.no-padding
+        %button.btn.btn-light.w-75.open_ibizabox_documents_filter.semibold{ 'data-bs-toggle'=>'modal', 'data-bs-target'=>"#filter_#{action_name}" }
+          %span.me-2 Filtrer
+          %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+    %hr
+    %div{ id: "ibizabox_#{action_name}" }
+      = form_tag validate_organization_customer_ibizabox_documents_path, method: 'patch', class: 'form form-horizontal', id: 'validate_ibizabox_documents' do
+        = hidden_field_tag 'document_contains[name]',    (params[:document_contains][:name] rescue '')
+        = hidden_field_tag 'document_contains[journal]', (params[:document_contains][:journal] rescue '')
+        #select_document_content
+          %table.table.table-striped
+            %thead
+              %tr
+                %th= check_box_tag 'master_checkbox', 0, false, class: 'form-check-input'
+                %th= sortable :created_at,              'Date de la récupération'
+                %th= sortable :journal,                 'Journal'
+                %th= sortable :original_file_name,       'Nom original'
+                %th.pages= sortable :pages_number,      'Nb. pages'
+            %tbody
+              - @documents.each do |document|
+                %tr
+                  %td= check_box_tag "document_ids[]", document.id, false, class: 'checkbox form-check-input'
+                  %td= l(document.created_at)
+                  %td= document.try(:journal)
+                  %td= link_to document.original_file_name, organization_customer_ibizabox_document_path(@organization, @customer, document), target: '_blank'
+                  %td.pages= document.pages_number
+          = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: select_organization_customer_ibizabox_documents_path(@organization, @customer), target: '#select_document_content', total_pages: @documents.total_pages }
+        .form-actions.margin1top.mt-3
+          - idocus_params = param_encode({ url: '#url', form: { id: 'validate_ibizabox_documents', dump_action: true }, method: 'patch', redirect_to: { url: select_organization_customer_ibizabox_documents_path(@organization, @customer), method: 'get', html: { target: '#ibizabox_documents_select' } } })
+          = button_tag 'Intégrer les documents sélectionnés', class: 'btn btn-primary as_idocus_ajax', type: 'button', data: { confirm: t('actions.confirm') }, idocus: idocus_params
+
+    = render 'dialogs'

@@ -1,0 +1,21 @@
+= stylesheet_link_tag 'front/organizations/assets/stylesheets/show'
+
+#paper_set_orders.select_to_order.derivationRight
+  .row
+    .text-center
+      %h5
+        Sélection des clients pour la commande multiple
+        %span.badge.badge-info.fs-origin= @customers.size
+  .box.mt-4
+    = form_tag(order_multiple_organization_paper_set_orders_path(@organization), method: :post, id: 'order_multiple_paper_set', class: 'paper_set_order_form') do
+      .form-group
+        .label-section
+          = label_tag 'customer_ids[]', 'Code client', class: 'select control-label'
+        .control-section
+          = select_tag 'customer_ids[]', options_from_collection_for_select(@customers, 'id', 'info'), class: 'form-control select form-select-sm optional select-customer searchable-option-list', id: 'select-customers-paper-set-order', include_blank: false, multiple: true
+          %i.block_helper Veuillez sélectionner les clients pour lesquels vous voulez commander un Kit Courrier.
+      .form-group.form-footer-content.text-end.hide
+        = link_to t('actions.cancel'), organization_paper_set_orders_path(@organization), class: 'btn btn-light'
+        = submit_tag t('actions.submit'), class: 'btn btn-primary'
+
+= javascript_include_tag 'front/paper_set_orders/assets/javascripts/main'

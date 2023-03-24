@@ -1,0 +1,16 @@
+.box
+  = simple_form_for @conterpart_account, url: "/organizations/#{@organization.id}/customers/#{@customer.id}/conterpart_account", html: { id: 'conterpart_account_form', method: 'patch' }, wrapper: :form_v3 do |f|
+    = f.input :id, :as => :hidden
+    = f.input :kind, as: :hidden
+    = f.input :name, required: true
+    = f.input :number
+
+    - class_hide = @conterpart_account.persisted? ? '' : 'hide'
+    .mb-3.form-group.string.required{ class: class_hide }
+      = label_tag 'conterpart_account[accounting_plan_items][]', 'Compte de tiers'
+      .select-container.no-padding.w-100
+      = select_tag 'conterpart_account[accounting_plan_items][]', options_for_select(@accounting_plan_items, @conterpart_account.accounting_plan_items.map(&:id)), include_blank: false,  class: 'w-100 searchable-option-list', multiple: true
+
+    - idocus_params = param_encode({ url: "#conterpart_accounts", method: 'POST', form: { id: 'conterpart_account_form', dump_action: true }, after_send: 'ca.refresh_accounts_list' })
+    .w-100.text-center
+      %button.btn.btn-primary.as_idocus_ajax{ type: 'button', idocus: idocus_params }= glyphicon('plus', { size: '10', color: '#ffff'}) + ' Enregistrer'

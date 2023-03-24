@@ -1,0 +1,21 @@
+.box
+  .form-group
+    .row         
+      .col-md-12
+        %label.semibold Informations supplémentaires
+    %hr
+
+  .more-information
+    %form#additionnal-info
+      - CustomUtils.arrStr_to_array(@connector[:additionnal_fields]).each do |field|
+        .form-group
+          %label.semibold= field[:label]
+          .select-container.no-padding.w-100
+            - case field[:type]
+            - when 'list'
+              = select_tag field[:name], options_for_select(parse_options_with(field[:values])), include_blank: (field[:required].to_s == 'false'), class: "form-select"
+            - when 'password'
+              = password_field_tag field[:name].strip, nil, required: (field[:required].to_s == 'true')
+            - else
+              = text_field_tag field[:name].strip, nil, required: (field[:required].to_s == 'true')
+      

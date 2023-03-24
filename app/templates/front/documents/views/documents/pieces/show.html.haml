@@ -1,0 +1,92 @@
+= stylesheet_link_tag 'front/documents/assets/stylesheets/main'
+
+.container-fluid.main-content
+  .row.derivationLeft
+    .col-md-1.return-back.text-end
+      %a{ href: '/documents' }
+        %button.btn.btn-default
+          %span.me-2= glyphicon('arrow-left', {size: '12', color: '#72AA42'})
+          %span Retour
+    .col-md-7.no-padding.report_pack{ id: 'current_pack', data: { id: @pack.id } }
+      %h3.bold.mt-1
+        %span.me-2= @pack.name.gsub('all', '')
+        %span.badge.bg-dark.semibold.regular.datas_size= @pieces.total_count
+        - if @filters.present?
+          %span.filter-info.badge.bg-info.regular.datas_size.blink Filtre actif
+        - if @pieces_deleted.count > 0
+          %span.badge.bg-danger.semibold.deleted-piece-count
+            = @pieces_deleted.count.to_s + " pièce(s) supprimée(s)"
+            .content-list-pieces-deleted.text-start.regular.hide
+              %ul
+                - @pieces_deleted.each do |piece_deleted|
+                  %li.get-pieces-deleted.pointer{ "data-content" => html_piece_view(piece_deleted), "data-content-url" => piece_deleted.get_access_url, id: piece_deleted.id}
+                    %span #{piece_deleted.name} supprimée le #{piece_deleted.delete_at.try(:to_date)} par #{piece_deleted.delete_by}
+                    %span.float-end.restore{ data: {"piece-id": piece_deleted.id}} Restaurer
+    .col-md-3   
+      .search-content
+        .row.no-margin
+          .col-md-1.no-padding.text-center.glass
+            = glyphicon('magnifying-glass', { size: '16', color: 'background: rgba(26, 26, 26, 0.7)' })
+          .col-md-11.no-padding.no-margin
+            %input#search_input{placeholder: 'Recherche (contenu, nom du lot, dossier)', value: @options.try(:[], :text)}
+    .col-md-1.no-padding
+      %button.btn.btn-light.more-filter.semibold
+        %span.me-2 Filtrer
+        %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+  - if @pieces.total_count > 2
+    .verif-fixed-action
+
+  .row.box.derivationRight.p-4.action-fixed
+    - if @user.pre_assignement_displayed?
+      .col-md-1.no-padding.text-left.change-view.to-list= glyphicon('grid-two-up', { size: '14', color:'rgba(26, 26, 26, 0.32);' })
+      .col-md-1.no-padding.text-left.change-view.to-grid.hide= glyphicon('media-pause', { size: '14', color:'rgba(26, 26, 26, 0.32);', style: 'transform: rotate(90deg)' })
+    - else
+      .col-md-1.no-padding.text-left
+    .col-md-8
+      - if @temp_documents.count > 0
+        .show-list-document.pointer
+          %span= glyphicon('pulse', { size: '12' })
+          %label.semibold Piece(s) en cours d'intégration :
+          %span.badge.bg-info.pointer.semibold
+            = @temp_documents.count.to_s
+            .temp-document-view.hide
+              - _index = 0
+              - @temp_documents.each_slice(4) do |documents|
+                .temp-document-content
+                  - documents.each do |document|
+                    - _index += 1
+                    .temp-document-content-lists
+                      .image_piece.text-center.animated-pointer{ id: "each_"+_index.to_s, "data-content" => html_piece_view(document, true), "data-each-class" => ".temp-document-view .image_piece", "data-index" => _index}
+                        = image_tag document_thumb_url(document)
+                      .white-label.p-2= truncate(document.original_file_name, length: 25)
+                .clearfix
+
+    .col-md-3.icon-actions.text-end      
+      - if @pack.owner.uses_ibiza_analytics?
+        %span.pointer.ms-2.action-selected.edit_compta_analysis.hide{ title: 'Édition compta. analytiques', data: { code: @pack.owner.code, is_used: @pack.owner.uses_ibiza_analytics?.to_s } }= glyphicon('brush', { size: '18', color:'rgba(26, 26, 26, 0.32);'})
+      / %span.pointer.ms-2.download_pack_bundle{title: 'Télécharger', data: {id: @pack.id}}= glyphicon('data-transfer-download', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+      %span.pointer.ms-2.download_pack_archive{title: 'Télécharger une archive zip', data: {id: @pack.id}}= glyphicon('cloud-download', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+      - if @user.has_collaborator_action?
+        %span.pointer.ms-2.preseizures_export{title: 'Export écriture', data:{ id: @pack.id, type: 'special_piece', multi: 'true' }}= glyphicon('external-link', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+        %span.pointer.ms-2.deliver_preseizures{title: 'Livraison écriture comptable', data: { id: @pack.id, type: 'special_piece', multi: 'true'}}= glyphicon('loop-circular', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+        %span.pointer.ms-2.action-selected.edit_selected_preseizures.hide{ title: 'Edition multiple', data: { type: 'piece' } }= glyphicon('pencil', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+      %span.pointer.ms-2.action-selected.download_pieces.hide{title: 'Télécharger la séléction',multi: 'true'}= glyphicon('data-transfer-download', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+      %span.pointer.ms-2.action-selected.update_tags.hide{title: 'Tagger', multi: 'true'}= glyphicon('tag', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+      - if @user.has_collaborator_action?
+        %span.pointer.ms-2.action-selected.delete_piece.hide{title: 'Supprimer', multi: 'true'}= glyphicon('trash', { size: '14',  color:'#FF4848'})
+      %span.pointer.form-check.d-inline.ms-2      
+        %input.form-check-input.pointer.float-none.select-all{ type: :checkbox, value: "" }
+
+  .all-results.animatedGroups
+    = javascript_declare_var 'has_next_page', (@pieces.size > 0 && @pieces.total_count > @pieces.size).to_s
+    = javascript_declare_var 'is_from_operation_page', @is_operations? true : false
+    - if @pieces.size > 0
+      = render partial: 'piece_box'
+    - else
+      .no-data-found.grey-label.semibold.box= t('global.no-data-found')
+
+= render partial: 'document_dialog'
+= render file: Rails.root.join('app/templates/front/documents/views/documents/preseizures/_preseizures_dialog.html.haml')
+= render file: Rails.root.join('app/templates/front/compta_analytics/views/compta_analytics/_analytics.html.haml'), locals: { with_validate_button: true }
+
+= javascript_include_tag 'front/documents/assets/javascripts/pieces_details'

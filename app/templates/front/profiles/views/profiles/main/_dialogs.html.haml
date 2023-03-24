@@ -1,0 +1,35 @@
+.modal.fade.in#change-password
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Changer mon mot de passe
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        .col-md-12
+          = form_for true_user, url: profiles_path, html: { id: 'edit_user' } do |f|
+            %input{ type: 'hidden', name: 'user[h_change_password]', value: 'true' }
+            .form-group.clearfix              
+              = f.label 'Mot de passe actuel :'
+              .select-container.no-padding.w-100
+                = f.password_field :current_password, label: 'Mot de passe actuel'
+            .form-group.clearfix              
+              = f.label 'Nouveau mot de passe :'
+              .select-container.no-padding.w-100
+                = f.password_field :password, label: 'Nouveau mot de passe'
+            .form-group.clearfix              
+              = f.label 'Confirmation du mot de passe :'
+              .select-container.no-padding.w-100
+                = f.password_field :password_confirmation, label: 'Confirmation du nouveau mot de passe'
+      .modal-footer
+        - idoc_params = param_encode({ url: '/profiles', method: 'put', form: { id: 'edit_user' }, modal: { id: 'change-password' } })
+        %button.as_idocus_ajax.btn.btn-primary.semibold{ idocus: idoc_params } Valider
+
+.modal.fade.in#external-file-storage
+  .modal-dialog{ style: 'max-width: 1280px' }
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Stockage externe des documents
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.back-grey
+        = render file: Rails.root.join('app/templates/front/external_file_storages/views/external_file_storages/main/_efs_management.html.haml'), locals: { external_file_storage: @external_file_storage }
+      .modal-footer.p-4

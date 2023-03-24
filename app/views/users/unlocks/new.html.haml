@@ -1,0 +1,27 @@
+!!!
+%html
+  %head
+    %title
+      Idocus | Connexion
+    %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-type" }
+    %meta{ name: "viewport", content: "width=device-width, initial-scale=1" }
+
+    %link{ :rel => 'shortcut icon', :type => "image/ico", :href => image_path('favicon.ico') }
+    = stylesheet_link_tag 'front/main'
+
+  .body_content
+    .container-fluid.text-center.login
+      .box.text-center.fadein
+        %h4.regular.m-3.p-4.semibold
+          Déverrouiller mon compte
+
+        %p
+          Veuillez saisir votre adresse e-mail.
+          Ensuite, vérifiez votre boîte aux lettres, nous vous envoyons immédiatement
+          un mail qui vous indiquera la démarche à suivre pour déverrouiller votre compte.
+        %br
+
+        = simple_form_for resource, url: unlock_path(resource_name) do |f|
+          = f.input :email, label: 'Votre adresse e-mail :'
+          .form-actions.padding0bottom
+            = f.submit 'Valider', class: 'btn btn-primary float-left'

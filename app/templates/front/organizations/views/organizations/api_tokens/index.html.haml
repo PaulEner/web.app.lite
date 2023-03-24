@@ -1,0 +1,23 @@
+#api_tokens
+  .row-fluid
+    .span12.box
+      %h3 Gestion des clés API iDocus
+  .row-fluid
+    .span9
+      .box.derivationRight
+        %table.table.table-striped
+          %thead
+            %tr
+              %th Date de création
+              %th Token
+              %th
+          %tbody
+            - @api_tokens.each do |api_token|
+              %tr
+                %td= l(api_token.created_at)
+                %td= api_token.token
+                %td= link_to "Supprimer le jeton", organization_api_token_path(@organization, api_token), method: :delete, data: { confirm: 'Êtes-vous sûr(e) de vouloir supprimer cette clé ? Toutes les intégrations la consommant ne fonctionneront plus' }, class: 'btn btn-light'
+
+        %hr
+        .text-end
+          = link_to "Créer un jeton", organization_api_tokens_path(@organization), method: :post, class: 'btn btn-primary'

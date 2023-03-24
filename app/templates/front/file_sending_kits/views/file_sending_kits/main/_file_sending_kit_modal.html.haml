@@ -1,0 +1,24 @@
+- validation_param = param_encode({ url: generate_organization_file_sending_kit_path(@organization), method: 'post', form:{ id: 'fsk_paper_set_orders' }, modal: { id: 'select_for_orders', close_after_success: false, close_after_error: false }, redirect_to: { url: select_organization_file_sending_kit_path(@organization), method: 'get', html: { target: '.file_sending_kits_select', target_dest: '#file_sending_kits_select_for_multiple.modal-body' }, after_send: 'select_for_multiple_result' } })
+.modal.fade.in#select_for_orders
+  .modal-dialog{:role => 'document'}
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Sélection des options du kit d'envoi de documents
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body#file_sending_kits_select_for_multiple
+        Chargement ...
+      .modal-footer
+        %button.btn.btn-light.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' } Annuler
+        %input.btn.btn-primary.bold.as_idocus_ajax{:type => 'submit', name: 'commit', value: 'Générer', 'data-disable-with' => 'Générer', idocus: validation_param}
+
+.modal.fade.in#file_sending_kits_edit
+  .modal-dialog{:role => 'document'}
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Edition du kit d'envoi de documents
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.back-grey#file_sending_kits_edit_body
+        Chargement ...
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', type: :button } Annuler
+        %button.btn.btn-primary.bold.validate_file_sending_kits_edit Valider les modifications

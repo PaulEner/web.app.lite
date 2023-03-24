@@ -1,0 +1,28 @@
+%table.table.table-striped.table-bordered-inner.table-condensed.margin0bottom
+  - if address
+    %tbody
+      %tr
+        %th= t('activerecord.models.address.attributes.company')
+        %td= address.company
+      %tr
+        %th= t('activerecord.models.address.attributes.first_name')
+        %td= address.first_name
+      %tr
+        %th= t('activerecord.models.address.attributes.last_name')
+        %td= address.last_name
+      %tr
+        %th= t('activerecord.models.address.attributes.address_1')
+        %td= address.address_1
+      %tr
+        %th= t('activerecord.models.address.attributes.address_2')
+        %td= address.address_2
+      %tr
+        %th= t('activerecord.models.address.attributes.city')
+        %td= address.city
+      %tr
+        %th= t('activerecord.models.address.attributes.zip')
+        %td= address.zip
+
+.form-group.no-margin.text-end  
+  = link_to glyphicon('trash', { size: '15', color: '#FF4848'}) + ' Supprimer', organization_address_path(@organization, address), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'red-label btn btn-danger semibold delete-address'
+  = link_to glyphicon('pencil', { size: '15', color: '#FFF'}) + ' Éditer', edit_organization_address_path(@organization, address), class: 'btn btn-primary semibold valid-adresse-modification'

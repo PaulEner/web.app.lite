@@ -1,0 +1,36 @@
+#dematboxes
+  .row.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-10
+      %h3
+        Services et Groupes
+        %span.badge.bg-dark= @dematbox_services.count
+    .col-md-2.text-end.readonly-container
+      = link_to 'Mettre à jour', load_from_external_admin_dematbox_services_path, class: 'btn btn-primary w-50', data: { method: :post }
+
+  .row.box.derivationRight
+    .col-md-12#table-dematboxes
+      %table.table.table-striped.table-condensed
+        %thead
+          %tr
+            %th Id
+            %th Type
+            %th Nom
+            %th Etat
+            %th.text-end Action
+        %tbody
+          - @dematbox_services.each do |dematbox_service|
+            %tr
+              %td= dematbox_service.pid
+              %td= dematbox_type dematbox_service.type
+              %td= dematbox_service.name
+              %td= dematbox_state dematbox_service.state
+              %td.text-end.pointer.align-middle.readonly-container           
+                .action.sub_edit_delete
+                  %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+                .sub_menu.text-start.hide
+                  %ul.no-margin.no-padding.regular
+                    %li                              
+                      = link_to admin_dematbox_service_path(dematbox_service), data: { method: 'delete', confirm: t('actions.confirm') }, class: 'no-style black-label' do
+                        %span.me-2= glyphicon('trash', size: 12)
+                        %span Supprimer
+      = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: admin_dematbox_services_path, target: '#table-dematboxes', total_pages: @dematbox_services.total_pages, filter: 'form-filter' }

@@ -1,0 +1,77 @@
+.modal.fade.in#form-bank-account
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Filtre opération bancaire
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ type: :button } Annuler
+        %button.btn.btn-primary.semibold.validate{ type: :button } Valider
+
+.modal.fade.in#filter-documents-selection
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Filtre séléction document restant
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        %form#filter-documents-selection-form
+          .form-group
+            %label.semibold Service
+            .select-container.no-padding.w-100
+              %input{name: 'document_contains[service_name]', type: :text, value: params[:document_contains].try(:[], :service_name) }
+
+          .form-group
+            %label.semibold Date
+            .select-container.no-padding.w-100.date
+              %input.date.daterange#select-document{name: 'document_contains[date]', type: :text, value: params[:document_contains].try(:[], :date) }
+
+          .form-group
+            %label.semibold Nom original
+            .select-container.no-padding.w-100.date
+              %input{name: 'document_contains[original_file_name]', type: :text, value: params[:document_contains].try(:[], :original_file_name) }
+
+          .form-group
+            %label.semibold Montant
+            .select-container.no-padding.w-100.date
+              %input{name: 'document_contains[amount]', type: :text, value: params[:document_contains].try(:[], :amount) }
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ type: :button } Annuler
+        %button.btn.btn-primary.semibold.validate{ type: :button } Valider
+
+.modal.fade.in#filter-banks-params
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Filtre paramètre bancaire
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        %form#filter-banks-params-form
+          .form-group
+            %label.semibold Banque
+            .select-container.no-padding.w-100.date
+              %input{ name: 'bank_account_contains[bank_name]', type: :text, value: params[:bank_account_contains].try(:[], :bank_name) }
+
+          .form-group
+            %label.semibold Nom
+            .select-container.no-padding.w-100.date
+              %input{ name: 'bank_account_contains[name]', type: :text, value: params[:bank_account_contains].try(:[], :name) }
+
+          .form-group
+            %label.semibold Numéro de compte
+            .select-container.no-padding.w-100.date
+              %input{ name: 'bank_account_contains[number]', type: :text, value: params[:bank_account_contains].try(:[], :number) }
+
+          .form-group
+            %label.semibold Code journal
+            .select-container.no-padding.w-100.date
+              %input{ name: 'bank_account_contains[journal]', type: :text, value: params[:bank_account_contains].try(:[], :journal) }
+
+          .form-group
+            %label.semibold Compte de trésorerie
+            .select-container.no-padding.w-100.date
+              %input{ name: 'bank_account_contains[accounting_number]', type: :text, value: params[:bank_account_contains].try(:[], :accounting_number) }
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ type: :button } Annuler
+        %button.btn.btn-primary.semibold.validate{ type: :button } Valider

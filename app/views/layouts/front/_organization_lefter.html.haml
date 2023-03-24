@@ -1,0 +1,113 @@
+- if request.env["SERVER_NAME"].include?("axelium")
+  = stylesheet_link_tag 'front/organization_lefter_axelium'
+- elsif request.env["SERVER_NAME"].include?("censial")
+  = stylesheet_link_tag 'front/organization_lefter_censial'
+- elsif request.env["SERVER_NAME"].include?("dkpartners")
+  = stylesheet_link_tag 'front/organization_lefter_dk_partners'
+- elsif request.env["SERVER_NAME"].include?("orial")
+  = stylesheet_link_tag 'front/organization_lefter_orial'
+- else
+  = stylesheet_link_tag 'front/organization_lefter'
+
+- organization_edit             = controller_path == 'organizations/main' && action_name == 'edit'
+- file_naming_policy_edit       = controller_path == 'file_naming_policies/main' && action_name == 'edit'
+- reminder_emails_index         = controller_path == 'reminder_emails/main' && action_name == 'index'
+- api_tokens_index              = controller_path == 'organizations/api_tokens' && action_name == 'index'
+- addresses_index               = controller_path == 'organizations/addresses' && action_name == 'index'
+- organization_software_setting = controller_path == 'software_setting/main' && action_name == 'index'
+- organization_efs              = controller_path == 'external_file_storages/efs_organization' && action_name == 'index'
+- organization_edit_payment     = controller_path == 'payments/main' && action_name == 'edit_payment'
+- organization_subscription     = controller_path == 'organizations/subscriptions' && action_name == 'show'
+- organization_file_sending_kit = controller_path == 'file_sending_kits/main' && ( action_name == 'select' || action_name == 'edit' || action_name == 'show' )
+
+- toggle_submenu = organization_edit || file_naming_policy_edit || reminder_emails_index || addresses_index || organization_software_setting || organization_efs || organization_edit_payment || organization_subscription || organization_file_sending_kit
+
+.organizations.mb-5
+  .lefter    
+    %ul.principal
+      %li.direct_links{ data: { href: 'organization_home' } }
+        %a{href: organization_path(@organization) }
+          %span.link_principal{class: (controller_path == 'organizations/main' && action_name == 'show')? 'active' : ''}= t('organizations.home')
+
+      // ======================== PARAMETERS ===============================
+      %li.direct_links{ data: { href: "parametres" } }
+        %span.chevron= glyphicon('chevron-right', { color: "#1A1A1A"})
+        %span.chevron{ style: "display: none;" }= glyphicon('chevron-bottom', { color: "#1A1A1A"})
+        %span.link_principal.parameters{class: (toggle_submenu ? 'active' : '')}= t('views.standards.setting').capitalize.pluralize
+        %ul.slave.hide{style: (toggle_submenu ? 'display: block' : 'display: none')}
+          %li{ data: { href: "#{@organization.id}/edit" } }
+            %a{href: edit_organization_path(@organization) }
+              %span.link_slave{class: (organization_edit ? 'active' : '')}= t('organizations.general')
+          - if @organization.is_active
+            %li{ data: { href: "#{@organization.id}/addresses/" } }
+              %a{href: organization_addresses_path(@organization) }
+                %span.link_slave{class: (addresses_index ? 'active' : '')}= t('organizations.address_management')
+            %li{ data: { href: "#{@organization.id}/api_tokens/" } }
+              %a{href: organization_api_tokens_path(@organization) }
+                %span.link_slave{class: (api_tokens_index ? 'active' : '')}= t('organizations.api_tokens')
+            - unless @organization.specific_mission
+              %li{ data: { href: "#{@organization.id}/file_naming_policy/edit" } }
+                %a{href: edit_organization_file_naming_policy_path(@organization) }
+                  %span.link_slave{class: (file_naming_policy_edit ? 'active' : '')}= t('organizations.pdf_naming')
+              %li{ data: { href: "#{@organization.id}/reminder_emails" } }
+                %a{href: organization_reminder_emails_path(@organization) }
+                  %span.link_slave{class: (reminder_emails_index ? 'active' : '')}= t('organizations.reminder_emails')
+              %li{ data: { href: "#{@organization.id}/efs" } }
+                %a{href: organization_efs_path(@organization) }
+                  %span.link_slave{class: (organization_efs ? 'active' : '')}= t('organizations.efs')
+              %li{ data: { href: "#{@organization.id}/softwares" } }
+                %a{href: softwares_list_path(@organization) }
+                  %span.link_slave{class: (organization_software_setting ? 'active' : '')}= t('organizations.software')
+              - if @user.is_admin
+                %li{ data: { href: "#{@organization.id}/subscription" } }
+                  %a{href: organization_organization_subscription_path(@organization) }
+                    %span.link_slave{class: (organization_subscription ? 'active' : '')}= t('organizations.subscription')
+              - if CustomUtils.is_manual_paper_set_order?(@organization) && @user.is_prescriber
+                %li{ data: { href: "#{@organization.id}/file_sending_kit" } }
+                  %a{href: select_organization_file_sending_kit_path(@organization) }
+                    %span.link_slave{class: (organization_file_sending_kit ? 'active' : '')} Kit d'envoi de numérisation
+              - elsif @user.is_admin
+                %li{ data: { href: "#{@organization.id}/file_sending_kit" } }
+                  %a{href: organization_file_sending_kit_path(@organization) }
+                    %span.link_slave{class: (organization_file_sending_kit ? 'active' : '')} Kit d'envoi de documents
+              - if @user.leader?
+                %li{ data: { href: "#{@organization.id}/edit_payment" } }
+                  %a{href: edit_payment_organization_path(@organization) }
+                    %span.link_slave{class: (organization_edit_payment ? 'active' : '')}= t('organizations.payment_method')
+      // =================== PARAMETERS ===============================
+
+      - if @user.leader? || @user.manage_collaborators || @user.manage_groups
+        %li.direct_links{ data: { href: "#{@organization.id}/collaborateurs" } }
+          %a{href: organization_collaborators_path(@organization) }
+            %span.link_principal{class: (controller_path == 'collaborators/main')? 'active' : ''}= t('organizations.collaborators')
+      - if @organization.is_active
+        - if (@user.leader? || @user.manage_journals) && !@organization.specific_mission
+          %li.direct_links{ data: { href: "#{@organization.id}/journals" } }
+            %a{href: organization_journals_path(@organization) }
+              %span.link_principal{class: (controller_path == 'journals/main')? 'active' : ''}= t('organizations.journals')
+      %li.direct_links{ data: { href: "#{@organization.id}/customers" } }
+        %a{href: organization_customers_path(@organization) }
+          - active_customer_tab = ((controller_path == 'customers/main' && (action_name == 'index' || action_name == 'show' || action_name == 'edit_setting_options')) || (controller_path == 'subscriptions/main' && action_name == 'edit') || (controller_path == 'orders/main' && action_name == 'index') || (controller_path == 'my_company_files/user_mcf_storage' && action_name == 'index') || (controller_path == 'ibiza/box_documents' && action_name == 'index') || (controller_path == 'external_file_storages/efs_user' && action_name == 'index') || (controller_path == 'accounting_plans/main' && (action_name == 'show' || action_name == 'import_fec')) || (controller_path == 'software_setting/user' && action_name == 'index') || (controller_path == 'journals/user' && action_name == 'index') || (controller_path == 'addresses/user' && action_name == 'index'))
+          %span.link_principal{class: active_customer_tab ? 'active' : ''}= t('organizations.customers')
+      - if @organization.is_active && !@organization.specific_mission
+        %li.direct_links{ data: { href: "#{@organization.id}/account_number_rules" } }
+          %a{href: organization_account_number_rules_path(@organization) }
+            %span.link_principal{class: (controller_path == 'account_number_rules/main')? 'active' : ''}= t('organizations.bank_assignment')
+      - unless @organization.specific_mission
+        %li.direct_links{ data: { href: "#{@organization.id}/paper_set_orders" } }
+          %a{href: organization_paper_set_orders_path(@organization) }
+            %span.link_principal{class: (controller_path == 'paper_set_orders/main')? 'active' : ''}= CustomUtils.is_manual_paper_set_order?(@organization)? 'Kits de numérisation' : t('organizations.paper_set_order')
+      %li.direct_links{ data: { href: "#{@organization.id}/account_sharing" } }
+        %a{href: account_sharings_organization_path(@organization) }
+          %span.link_principal{class: (controller_path == 'account_sharings/organization')? 'active' : ''}= t('folders.shared_folders')
+      %li.direct_links{ data: { href: "#{@organization.id}/invoices" } }
+        %a{href: organization_invoices_path(@organization) }
+          %span.link_principal{class: (controller_path == 'invoices/main')? 'active' : ''}= t('organizations.invoices')
+
+  .content
+    - if @is_customer_layout && !(controller_path == 'customers/main' && (action_name == 'index' || action_name == 'new'))
+      = render partial: 'layouts/front/customer_header'
+    - else
+      != content_for?(:content) ? yield(:content) : yield
+
+= javascript_include_tag 'front/organization_lefter'

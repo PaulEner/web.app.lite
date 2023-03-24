@@ -1,0 +1,14 @@
+.mb-3
+
+.row
+  .col-md-12     
+    %table.table.table-condensed.table-striped
+      %thead
+        %tr.text-center
+          %th Name
+          %th Iban
+      %tbody
+        - @accounts.bank_accounts.each do |account|
+          %tr.text-center
+            %td= account.name
+            %td= account.iban.presence || 'Non renseigné'

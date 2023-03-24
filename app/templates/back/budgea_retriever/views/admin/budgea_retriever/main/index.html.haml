@@ -1,0 +1,45 @@
+#budgea_retriever_template
+  .row.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-4   
+      %h3
+        Suivi budgea retriever        
+    .col-md-6.text-start
+      %button.btn.btn-primary.small-shadow#normal.font-weight-bold.onglets
+        Normal
+      %button.btn.btn-warning.small-shadow#failed.font-weight-bold.onglets
+        Failed
+      %button.btn.btn-danger.small-shadow#bug.font-weight-bold.onglets
+        Bug
+      %button.btn.btn-secondary.small-shadow#all_users.font-weight-bold.onglets
+        Check all users
+      %button.btn.btn-success.small-shadow#launcher.font-weight-bold.onglets.float-right
+        Lancer le suivi
+    .col-md-2.text-end
+      = link_to image_tag('application/icon-xls.png', alt: 'Export XLS', style: '') + ' Export XLS', "/admin/budgea_retriever/export_xls", title: 'Export XLS', class: 'btn btn-dark w-75'
+
+
+  .row.box.derivationRight
+    .col-md-12      
+      #body_table
+        %table.table.table-condensed.table-striped
+          %thead
+            %tr
+              %th N°
+              %th.text-center User code
+              %th.text-center Active?
+              %th.text-center Nom retriever
+              %th.text-center Journal retriever
+              %th.text-center Identifier
+              %th.text-center.word_wrap Access token
+              %th.text-center Etat
+              %th.text-center Service name
+              %th.text-center Etat retriever
+              %th.text-center Message retriever
+              %th.text-center Etat budgea
+              %th.text-center Id connecteur Budgea
+              %th.text-center.word_wrap Message erreur budgea
+              %th.text-center Code reponse
+              %th.text-center ID connection
+              %th.text-center User ID
+
+= javascript_include_tag 'admin/budgea_retriever'

@@ -1,0 +1,103 @@
+#events
+  .bg-dark.details.focusable.focused
+    .box.bg-brown.show
+      %h3.semibold Détails
+      %label
+        Cliquer sur une ligne du tableau pour en afficher les détails ici.
+
+  .row.box.clearfix.derivationLeft
+    .col-md-10      
+      .float-start
+        %h3 
+          Liste des événements
+          %span.badge.bg-dark= @events.total_count
+    .col-md-2.text-end
+      %button.btn.btn-warning.events-filter.w-50
+        %span.me-2= glyphicon('transfer', { size: '10', color: '#000', style: 'transform: rotate(90deg)'})
+        %span Filtrer
+  .row.derivationRight.mb-5
+    .col-md-12
+      .box.clearfix#table_events      
+        .row
+          .col-md-12
+            %table.table.table-condensed.table-striped
+              %thead
+                %tr
+                  %th.text-center= sortable :id,          'ID'
+                  %th.text-center= sortable :created_at,  'Date'
+                  %th.text-center= sortable :user_id,     t('activerecord.models.event.attributes.user')
+                  %th.text-center= sortable :action,      t('activerecord.models.event.attributes.action')
+                  %th.text-center= sortable :target_type, t('activerecord.models.event.attributes.target_type')
+                  %th.text-center= sortable :target_name, t('activerecord.models.event.attributes.target_name')
+              %tbody
+                - @events.each do |event|
+                  - event_presenter = EventPresenter.new(event, self)
+                  %tr{ data: { id: event_presenter.id.to_s } }
+                    %td.do-show.number
+                      = event_presenter.id
+                    %td.do-show.text-center
+                      = event_presenter.created_at
+                    %td.text-center
+                      = event_presenter.user_code
+                    %td.do-show.text-center
+                      = event_presenter.action
+                    %td.do-show.text-center
+                      = event_presenter.target_type
+                    %td.do-show.target_name
+                      = event_presenter.target_name
+            = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: admin_events_path, target: '#table_events', total_pages: @events.total_pages, filter: 'form-filter' }
+
+.modal#filter-orders
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h5.modal-title.bold Filtrer
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      = form_tag admin_events_path, method: :get, class: 'form-filter' do
+        .modal-body
+          = hidden_field_tag :direction, sort_direction
+          = hidden_field_tag :sort,      sort_column
+          = hidden_field_tag :per_page,  per_page
+          .form-group
+            %label.semibold
+              .badge.bg-dark
+                Total :
+                - if @events.total_count != Event.count
+                  %b= @events.total_count
+                  sur
+                  = Event.count
+                - else
+                  %b= Event.count
+          .form-group
+            %label.semibold
+              = label_tag 'event_contains[id]', 'ID'
+            .select-container.w-100.no-padding  
+              = number_field_tag 'event_contains[id]', (params[:event_contains][:id] rescue ''), min: 1, class: 'input-small input-event-id'
+          .form-group
+            %label.semibold
+              = label_tag 'event_contains[created_at]', 'Date'
+            .select-container.w-100.no-padding  
+              = text_field_tag 'event_contains[created_at]', (params[:event_contains][:created_at] rescue ''), class: 'input-small daterange'
+          .form-group
+            %label.semibold
+              = label_tag 'event_contains[user_contains][code]', t('activerecord.models.event.attributes.user')
+            .select-container.w-100.no-padding  
+              = text_field_tag 'event_contains[user_contains][code]', (params[:event_contains][:user_contains][:code] rescue ''), class: 'input-small'
+          .form-group
+            %label.semibold
+              = label_tag 'event_contains[action]', t('activerecord.models.event.attributes.action')
+            = select_tag 'event_contains[action]', event_action_options_for_select, include_blank: true, class: 'input-small form-select'
+          .form-group
+            %label.semibold
+              = label_tag 'event_contains[target_type]', t('activerecord.models.event.attributes.target_type')
+            = select_tag 'event_contains[target_type]', event_target_type_options_for_select, include_blank: true, class: 'input-small form-select'
+          .form-group
+            %label.semibold
+              = label_tag 'event_contains[target_name]', t('activerecord.models.event.attributes.target_name')
+            .select-container.w-100.no-padding  
+              = text_field_tag 'event_contains[target_name]', (params[:event_contains][:target_name] rescue ''), class: 'input-small'
+        .modal-footer
+          = link_to 'Reinitialiser', admin_events_path, class: 'btn btn-light', title: t('filters.reset')
+          = submit_tag t('filters.action'), class: 'btn btn-primary'
+
+= javascript_include_tag 'back/events/assets/javascripts/main'

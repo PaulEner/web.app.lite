@@ -1,0 +1,27 @@
+!!!
+%html
+  %head
+    %title [iDocus] Modification de l'abonnement du client : #{@user}
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    %table
+      %tr
+        %th{ style: 'text-align:left' } Demandeur :
+        %td= @collaborator
+      %tr
+        %th{ style: 'text-align:left' } Client :
+        %td= @user
+      %tr
+        %th{ style: 'text-align:left' } Date de modification :
+        %td= l(@user.subscription.updated_at)
+      %tr
+        %th{ style: 'text-align:left' } Lien :
+        %td
+          - link = edit_organization_customer_subscription_url(@user.organization, @user)
+          = link_to link, link
+      %tr
+        %th{ style: 'text-align:left' } Option(s) :
+        %td
+          %ul{ style: 'padding-left:14px' }
+            - @options.each do |option|
+              %li= option

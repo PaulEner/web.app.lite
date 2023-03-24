@@ -1,0 +1,58 @@
+= stylesheet_link_tag 'front/file_naming_policies/assets/stylesheets/main'
+
+.nommage_pdf
+  .row.derivationLeft
+    %h3.bold Paramètres : Nommage PDF
+
+  .box.mt-4.derivationRight
+    .form-group
+      %label.semibold Sélectionnez les éléments à incorporer pour composer le nom de sortie PDF
+      .select-container.no-padding.w-100
+        %input.book-code-software.preview{ placeholder: "Ajoutez des éléments pour voir le résultat" }
+
+    .form-group.clearfix
+      %ul#sortable_parent
+        %li.sortable_child.btn-light.clickable.code{ data: { name: 'code', ex: 'TS%0001' } }
+          Code client iDocus
+        %li.sortable_child.btn-light.clickable.company{ data: { name: 'company', ex: 'iDocus' } }
+          Nom de la société
+        %li.sortable_child.btn-light.clickable.journal{ data: { name: 'journal', ex: 'AC' } }
+          Journal iDocus
+        %li.sortable_child.btn-light.clickable.period{ data: { name: 'period', ex: Time.now.strftime("%Y%m") } }
+          Période iDocus
+        %li.sortable_child.btn-light.clickable.piece_number{ data: { name: 'piece_number', ex: '001' } }
+          N° de pièce iDocus
+        %li.sortable_child.btn-light-secondary.clickable.third_party{ data: { name: 'third_party', ex: 'Google' } }
+          Nom du tiers
+        %li.sortable_child.btn-light-secondary.clickable.invoice_number{ data: { name: 'invoice_number', ex: '001002' } }
+          N° de la facture d’origine
+        %li.sortable_child.btn-light-secondary.clickable.clear.invoice_date{ data: { name: 'invoice_date', ex: Time.now.strftime("%Y-%m-%d") } }
+          Date de la facture
+
+    .form-group
+      %label 
+        Les options 
+        %strong [Nom du tiers, N° de facture d'origine, Date de la facture]
+        ne sont disponibles que sur les dossiers en pré-affectation comptable.
+        %br
+        En les activant, votre fichier ne vous sera livré qu'après le traitement en pré-affectation comptable, sous réserve que la donnée soit disponible.
+
+    .form-group
+      %label.semibold Portée
+      %select.form-select#scope{ name: 'scope', multiple: false }
+        %option{ value: 'organization', selected: true } Collaborateurs et clients
+        %option{ value: 'collaborators'} Collaborateurs uniquement
+
+    .form-group
+      %label.semibold Séparer les éléments par
+      %select.form-select#element-separator{ name: 'element-separator', multiple: false }
+        %option{ value: '_', selected: true } Underscore “_”
+        %option{ value: '-'} Tirait "-"
+
+    .form-group.no-margin
+      .w-100.text-end
+        - idocus_param = param_encode({ url: "/organizations/#{@organization.id}/file_naming_policy", method: 'put', before_send: 'create_policy_parameter' })
+        %button.btn.btn-primary.as_idocus_ajax{ idocus: idocus_param } Valider les modifications
+
+%input#current_policy_name{ type: 'hidden', value: @file_naming_policy.to_json }
+= javascript_include_tag 'front/file_naming_policies/assets/javascripts/main'

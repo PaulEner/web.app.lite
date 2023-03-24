@@ -1,0 +1,32 @@
+.box
+  .form-group
+    .row         
+      .col-md-12
+        %label.semibold Connecteurs
+    %hr
+
+  .more-connector
+    .form-group
+      %label.semibold Fournisseur/Banque
+      .select-container.no-padding.w-100
+        %input#connector-search-name{ type: :text, name: 'connector-search-name' }
+        .urls-box
+
+    .form-group
+      .row
+        .col-md-6
+          %label.semibold
+            Choisissez parmis la liste suivante :
+          %i.badge.badge-success.semibold.connectors-size 0
+        .col-md-6
+          .row.bank_and_document_selector.hide
+            .col-md-3.pt-2
+              %label Type :
+            .col-md-9
+              %select.form-select#choose-selector{ name: 'choose-selector', "aria-label" => "Default select"  }
+                %option{ value: 'all' } Tous
+                %option{ value: 'bank' } Banques
+                %option{ value: 'document' } Fournisseurs
+    .form-group
+      %select.form-select#connectors-list{ name: 'connectors-list', "aria-label" => "Default select", "size" => '15' }
+        %option Chargement en cours ...

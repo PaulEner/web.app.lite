@@ -1,0 +1,30 @@
+#import_dialog.modal .modal-dialog{
+  min-width: 1024px;
+}
+
+.search-content {
+  background: #FFFFFF;
+  border: 1px solid rgba(26, 26, 26, 0.1);
+  box-sizing: border-box;
+  border-radius: 6px;
+}
+
+.search-content input{
+  border: none;
+  width: 100%;
+  padding: 2%;
+}
+
+.search-content .glass{
+  margin-top: 1.5%;
+}
+
+@media (max-width: 1280px) {
+  .filestyle.form-control{
+    font-size: 0.7rem;
+  }
+
+  .badge.bg-info{
+    font-size: 0.55em;
+  }
+}

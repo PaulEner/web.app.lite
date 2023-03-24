@@ -1,0 +1,63 @@
+#subscription_options
+  .row.box.small-shadow.clearfix.derivationLeft
+    .col-md-8
+      %h3
+        Options        
+    .col-md-4.text-end
+      %span.readonly-container
+        %button.btn.btn-dark.new-subscription
+          %span.me-2= glyphicon('plus', { size: '10', color: '#FFF', style: 'transform: rotate(90deg)'})
+          %span Nouveau
+
+  .row.derivationRight
+    .col-md-12#table-subscription
+      .box
+        %table.table.table-condensed.table-striped
+          %thead
+            %tr
+              %th.position.text-center=              t('activerecord.models.subscription_option.attributes.position')
+              %th.updated_at.text-center=            t('activerecord.models.common.attributes.updated_at')
+              %th.name=                              t('activerecord.models.subscription_option.attributes.name')
+              %th.price_in_cents_wo_vat.text-center= t('activerecord.models.subscription_option.attributes.price_in_cents_wo_vat')
+              %th.period_duration.text-center=       t('activerecord.models.subscription_option.attributes.period_duration')
+              %th.text-center Abonnés
+              %th.text-center Actions
+          %tbody
+            - @subscription_options.each do |option|
+              %tr
+                %td.text-center=            option.position
+                %td.text-center=            l option.updated_at
+                %td=            option.name
+                %td.alignright.text-center= option.price_in_cents_wo_vat
+                %td.text-center=            option.period_duration == 0 ? 'Continuelle' : 'Une période'
+                %td.text-center=            option.subscribers.count
+                %td.text-end.pointer.align-middle.readonly-container
+                  .action
+                    %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+                  .sub_menu.text-start.hide
+                    %ul.no-margin.no-padding.regular
+                      %li.edit-subscription-option{ data: { id: option.id } }
+                        = link_to '#' do
+                          %span.me-2= glyphicon('pencil', size: 12)
+                          %span Editer                                          
+                      %li.delete
+                        = link_to admin_subscription_option_path(option), { data: { method: 'DELETE', confirm: t('actions.confirm') } }  do
+                          %span.me-2= glyphicon('trash', size: 12, color: 'red')
+                          %span Supprimé
+        = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: admin_subscription_options_path, target: '#table-subscription', total_pages: @subscription_options.total_pages}
+
+.modal#create-new-subscription-option
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h5.modal-title.bold Nouvelle option d'abonnement
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}      
+      .modal-body   
+            
+      .modal-footer
+        %button.btn.btn-light.cancel{ type: :button, 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal' } Annuler
+        - idocus_params = param_encode({ url: "#create-new-subscription-option", method: 'POST', form: { id: 'new_subscription_option', dump_action: true }, modal: { id: 'create-new-subscription-option' }, after_send: 'show_subscription_option' })
+        %button.btn.btn-primary.as_idocus_ajax{ type: :button, idocus: idocus_params } Valider
+
+
+= javascript_include_tag 'back/subscription_options/assets/javascripts/main'

@@ -1,0 +1,149 @@
+#reporting .organization_quota {
+  cursor: pointer; 
+}
+
+#reporting .organization_quota:hover .details {
+  position: absolute;
+  z-index: 100;
+  margin-left: -11%;
+  margin-top: -240px;
+  display: block !important; 
+}
+
+.table-dark {
+  background-color: #343a40;
+}
+
+.table-dark th, .table-dark td{
+  color: #fff;
+}
+
+#periodModal .actions .btn{
+  max-width: 40px;
+}
+
+.list-legend{
+  font-size: 13px;
+}
+
+.delivery_state {
+  border-radius: 7px;
+  margin-top: 6px;
+  margin-right: 6px;
+  float: left;
+  width: 10px;
+  height: 10px;
+}
+
+.back_red {
+  background-color: red;
+}
+
+.half-delivery_state {
+  float: left;
+  width: 5px;
+  height: 10px;
+}
+
+.half-delivery_state.left {
+  border-top-left-radius: 7px;
+  border-bottom-left-radius: 7px;
+}
+
+.delivery_state .received {
+  background-color: green;
+}
+
+.delivery_state .not_received {
+  background-color: whiteSmoke;
+}
+
+.half-delivery_state.right {
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
+}
+
+.table.reporting thead a, .table.reporting tfoot a{
+  color: #CCC !important;
+}
+
+.actif-year{
+  color: #BC183A !important;
+}
+
+.table tbody{
+  font-size: 14px;  
+}
+
+.table tbody a{
+  color: rgba(26, 26, 26, 0.7) !important;
+}
+
+.period {
+  text-align: right;
+  min-height: 24px;
+  border: 3px solid #BBBBBB;
+  margin: 0;
+  padding: 2px 3px 3px;
+  font-weight: normal;
+  text-transform: uppercase;
+  border-radius: 3px;
+}
+
+.do-show .period:hover{
+  background-color: #C1D837;
+  color: white !important;
+}
+
+.table .border-right{
+  border-right: 1px solid rgba(26, 26, 26, 0.32);
+}
+
+#periodModal.modal .modal-dialog{
+  min-width: 1024px;
+}
+
+#periodModal.modal .modal-body{
+  max-height: 780px;
+  overflow: auto;
+}
+
+.label-legend{
+  font-size: 17px;
+}
+
+#invoiceDialog.modal{
+  height: 500px;
+}
+
+#invoiceDialog.modal .modal-body{
+  max-height: 450px;
+}
+
+#invoiceDialog.modal .modal-body iframe{
+  width:843px; 
+  height:415px;
+}
+
+@media (max-width: 1280px) {
+  .table tbody {
+    font-size: 11px;
+  }
+
+  .form-select{
+    padding: 0.3rem 2rem 0.3rem 0.4rem;
+    font-size: 0.7rem;
+  }
+
+  .form-select option, label.red-label{  
+    font-size: 11px;
+  }
+
+  .label-legend {
+    font-size: 13px;
+  }
+
+  .list-legend {
+    font-size: 11px !important;
+  }
+}

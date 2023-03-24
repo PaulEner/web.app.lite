@@ -1,0 +1,44 @@
+.derivationRight
+  %input#documents-size{ type: 'hidden', value: documents.total_count }
+  .row
+    .col-md-12
+      %table.table.table-striped.table_integration#tbl_documents
+        %thead            
+          %th= sortable :created_at, 'Date de la récupération'
+          %th= sortable :retriever_id, "#{@user.collaborator? ? 'Service' : 'Banque' }"
+          %th= sortable :date, 'Date'
+          %th= sortable :name, 'Nom original'
+          %th= 'Nom iDocus'
+          %th= sortable :pages_number, 'Nb pages'
+          %th= sortable :amount, 'Montant'
+        %tbody
+          - if documents.any?
+            - documents.each do |document|
+              %tr
+                %td= l(document.created_at)
+                %td.semibold
+                  - if document.retriever.nil?
+                    %span.label supprimé
+                  = document.retriever_name
+                %td= l(document.metadata['date'], format: '%d %b %Y') rescue ''
+                %td= link_to document.metadata['name']+ '.pdf', '#', class: 'do-showDocument', data: { url: document.get_access_url }
+                %td= document.piece.try(:name)
+                %td= document.pages_number
+                %td= document.metadata['amount'].to_s + ' €'
+          - else
+            %tr
+              %td{ colspan: 7 }= t('global.no-data-found')
+
+
+  = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { name: 'documents', mark: 'retrieved_data', total_pages: documents.total_pages }
+
+  .modal.fade.in#retrieved_document
+    .modal-dialog{style: 'min-width: 1024px'}
+      .modal-content
+        .modal-header
+          %h5.modal-title.bold Document récupéré
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        .modal-body
+          %iframe{ :src => "", :id => "retrieved-document", style: "height: 700px; width: 100%" }
+        .modal-footer
+

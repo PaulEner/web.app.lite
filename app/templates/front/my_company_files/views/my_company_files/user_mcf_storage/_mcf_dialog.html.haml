@@ -1,0 +1,13 @@
+- validation_param = param_encode({ url: update_mcf_organization_customer_path(@organization, @customer), method: 'post', form: {id: 'edit_mcf_customer'}, html: { target: '#my_company_files_content' }, modal: { id: 'edit_mcf_customer_modal' } })
+.modal.fade.in#edit_mcf_customer_modal
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Choix du dossier My Company Files à lier au dossier client :
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        Chargement ...
+        
+      .modal-footer
+        %button.btn.btn-light.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' } Annuler
+        %button.btn.btn-primary.bold.validate_user_mcf_storage.as_idocus_ajax{ type: :button, idocus: validation_param, disabled: true } Valider

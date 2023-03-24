@@ -1,0 +1,36 @@
+= form_tag organization_collaborators_path(@organization), method: :get, class: 'form-filter member_f search_contains_filter' do
+  .form-group
+    .label-section
+      = label_tag 'user_contains[company]', t('activerecord.models.user.attributes.company'), class: 'semibold'
+    .control-section
+      .select-container.no-padding.w-100
+        = text_field_tag 'user_contains[company]', (params[:user_contains][:company] rescue '')
+  .form-group
+    .label-section
+      = label_tag 'user_contains[code]', t('activerecord.models.user.attributes.code'), class: 'semibold'
+    .control-section
+      .select-container.no-padding.w-100
+        = text_field_tag 'user_contains[code]', (params[:user_contains][:code] rescue '')
+  .form-group
+    .label-section
+      = label_tag 'user_contains[last_name]', t('activerecord.models.user.attributes.last_name'), class: 'semibold'
+    .control-section
+      .select-container.no-padding.w-100
+        = text_field_tag 'user_contains[last_name]', (params[:user_contains][:last_name] rescue '')
+  .form-group
+    .label-section
+      = label_tag 'user_contains[first_name]', t('activerecord.models.user.attributes.first_name'), class: 'semibold'
+    .control-section
+      .select-container.no-padding.w-100
+        = text_field_tag 'user_contains[first_name]', (params[:user_contains][:first_name] rescue '')
+  .form-group
+    .label-section
+      = label_tag 'user_contains[email]', t('activerecord.models.user.attributes.email'), class: 'semibold'
+    .control-section
+      .select-container.no-padding.w-100
+        = text_field_tag 'user_contains[email]', (params[:user_contains][:email] rescue '')
+  .form-group
+    .label-section
+      = label_tag 'user_contains[role]', t('activerecord.models.member.attributes.role'), class: 'semibold'
+    .control-section
+      = select_tag 'user_contains[role]', options_for_select(organization_role_options, (params[:user_contains][:role] rescue '')), include_blank: true, class: 'form-select form-select-sm', 'aria-label' => '.form-select-sm'

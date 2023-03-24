@@ -1,0 +1,53 @@
+#ftp.derivationRight
+  - if @ftp.try(:error_message).present?
+    %h5.semibold Dérnière message d'erreur rencontré
+    %span.badge.bg-danger
+      le #{@ftp.error_fetched_at.strftime("%d-%m-%Y %H:%M:%S")} :
+    %span
+      = @ftp.error_message
+    .mb-4
+  = simple_form_for @ftp, url: organization_update_ftps_path(@organization, 'ftp'), html: { id: 'edition_ftp_organization', class: 'form form-horizontal margin0' } do |f|    
+    .row
+      .col-md-5
+        .form-group
+          .select-container.no-padding.w-100
+            = f.input :host
+        .form-group   
+          .select-container.no-padding.w-100
+            = f.input :port, as: :integer        
+          = f.input :is_passive, as: :boolean, input_html: { class: 'form-check-input m-2' }, wrapper: :inline_checkbox
+        .form-group  
+          .select-container.no-padding.w-100
+            = f.input :login
+        .form-group
+          .select-container.no-padding.w-100
+            = f.input :password
+      .col-md-7
+        .form-group
+          .select-container.no-padding.w-100
+            = f.input :root_path, input_html: { class: 'input-xlarge' }
+        .form-group
+          %label.semibold Chemin d'import
+          .select-container.no-padding.w-100
+            = text_field_tag :input_path, "INPUT > CODE%001 - JOURNAL (Société)", disabled: true, class: 'input-xlarge'
+            %i.help-block Ce chemin est relatif au chemin racine.
+        .form-group
+          .select-container.no-padding.w-100
+            = f.input :path, label: ("Chemin de livraison #{link_to(('<i class="icon-info-sign"></i>').html_safe, '#', class: 'do-popover', title: 'Informations', 'data-content' => "Choisissez l’ordre de classement de vos documents en modifiant leur positionnement dans le champ ci-contre.<br>Exemple : <b>:code/:account_book/:year:month/</b><br><br>Attention à respecter le contenu de chacun des champs:<br><b>:code</b> pour Code iDocus<br><b>:year:month</b> pour la date du lot iDocus<br><b>:account_book</b> pour le journal comptable iDocus")} : ").html_safe, hint: 'Ce chemin est relatif au chemin racine.', input_html: { class: 'input-xlarge' }        
+        .form-group
+          %label.semibold Prévisualisation du chemin de livraison :
+          .select-container.no-padding.w-100
+            = text_field_tag :prev_output_path, '', disabled: true, class: 'input-xlarge'
+  
+  - if @user.leader?
+    %hr
+    .text-end
+      - if @ftp.try(:configured?)
+        - idocus_params = param_encode({ url: organization_ftps_fetch_now_path(@organization, 'ftp'), method: 'POST', confirm: 'Êtes-vous sûr de vouloir récupérer maintenant ?' })
+        %button.btn.btn-light.as_idocus_ajax{ type: 'button', idocus: idocus_params } Récupérer maintenant
+
+        - idocus_params = param_encode({ url: organization_destroy_ftps_path(@organization, 'ftp'), method: 'DELETE', confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres FTP ?', redirect_to: { url: organization_efs_path(@organization, tab: 'ftp'), method: 'GET', html: { target: '.general' } } })
+        %button.btn.btn-default.as_idocus_ajax{ type: 'button', idocus: idocus_params } Réinitialiser mes paramètres
+
+      - idocus_params = param_encode({ url: '#url', method: 'POST', form: { id: 'edition_ftp_organization', dump_action: true } })
+      %btn.btn.btn-primary.as_idocus_ajax{ type: 'button', idocus: idocus_params } Valider les modifications

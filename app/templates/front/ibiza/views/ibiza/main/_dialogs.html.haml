@@ -1,0 +1,81 @@
+.modal.fade.in#piece-name-modal
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Modifier le format du nom de la pièce iDocus dans iBiZa
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        .form-group
+          %label.semibold Sélectionnez les éléments à incorporer pour composer le nom de la pièce
+          .select-container.no-padding.w-100
+            %input.piece_name_preview
+
+        .form-group.clearfix
+          %ul#piece_name_sortable
+            %li.btn-light.piece_name_sortable_child.clickable.code{ data: { name: 'code', ex: 'IDO%TEST' } }
+              Code complet
+            %li.btn-light.piece_name_sortable_child.clickable.code_wp{ data: { name: 'code_wp', ex: 'TEST' } }
+              Code dossier sans cabinet
+            %li.btn-light.piece_name_sortable_child.clickable.journal{ data: { name: 'journal', ex: 'AC' } }
+              Journal
+            %li.btn-light.piece_name_sortable_child.clickable.period{ data: { name: 'period', ex: Time.now.strftime("%Y%m") } }
+              Période de traitement
+            %li.btn-light.piece_name_sortable_child.clickable.number{ data: { name: 'number', ex: "001" } }
+              Numéro
+
+        .form-group
+          %label.semibold Séparer les éléments par
+          %select.form-control#piece_name_separator{ name: 'piece_name_separator', multiple: false }
+            - selected = ibiza.try(:piece_name_separator)
+            %option{ value: '_', selected: (selected == '_') } Underscore “_”
+            %option{ value: '-', selected: (selected == '-') } Tirait "-"
+
+      .modal-footer
+        .w-100.text-end
+          %button.btn.btn-primary.valid#piece_name_validation{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'} Valider
+
+.modal.fade.in#description-modal
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Modifier le format de l’écriture comptable iBiZa
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        .form-group
+          %label.semibold Sélectionnez les éléments à incorporer pour composer le format de l'écriture comptable
+          .select-container.no-padding.w-100
+            %input.description_preview
+
+        .form-group.clearfix
+          %ul#description_sortable
+            %li.btn-light.description_sortable_child.clickable.operation_label{ data: { name: 'operation_label', ex: 'test' } }
+              Libellé de l'opération bancaire
+            %li.btn-light.description_sortable_child.clickable.date{ data: { name: 'date', ex: Time.now.strftime('%Y-%m-%d') } }
+              Date réelle
+            %li.btn-light.description_sortable_child.clickable.third_party{ data: { name: 'third_party', ex: 'Google' } }
+              Tiers
+            %li.btn-light.description_sortable_child.clickable.amount{ data: { name: 'amount', ex: '1000' } }
+              Montant d’origine
+            %li.btn-light.description_sortable_child.clickable.currency{ data: { name: 'currency', ex: 'usd' } }
+              Devise
+            %li.btn-light.description_sortable_child.clickable.conversion_rate{ data: { name: 'conversion_rate', ex: '1' } }
+              Taux de conversion
+            %li.btn-light.description_sortable_child.clickable.observation{ data: { name: 'observation', ex: 'test' } }
+              Remarque
+            %li.btn-light.description_sortable_child.clickable.journal{ data: { name: 'journal', ex: 'AC' } }
+              Journal
+            %li.btn-light.description_sortable_child.clickable.piece_name{ data: { name: 'piece_name', ex: 'idoc' } }
+              Nom de la pièce iDocus
+            %li.btn-light.description_sortable_child.clickable.piece_number{ data: { name: 'piece_number', ex: '001' } }
+              N° de pièce
+
+        .form-group
+          %label.semibold Séparer les éléments par
+          %select.form-control#description_separator{ name: 'description_separator', multiple: false }
+            - selected = ibiza.try(:description)
+            %option{ value: '_', selected: (selected == '_') } Underscore “_”
+            %option{ value: '-', selected: (selected == '-') } Tirait "-"
+
+      .modal-footer
+        .w-100.text-end
+          %button.btn.btn-primary.valid#description_validation{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'} Valider

@@ -1,0 +1,943 @@
+@import "../new_application"
+
+body
+  font-family: Raleway-Regular
+  background: rgba(26, 26, 26, 0.04)
+  line-height: 1.5
+  margin-bottom: 2%
+  overflow: hidden
+  scrollbar-width: thin
+
+footer
+  position: fixed
+  bottom: 0
+  width: 100%
+  background-color: #1d67be
+  .contact_number
+    width: 190px
+  .open-time
+    font-family: helvetica
+    font-weight: bold
+    background-color: white
+    color: #a8197d
+    padding: 1px 7px
+    border-radius: 3px
+    font-size: 15px
+
+
+.budgea_hint_notification
+  position: absolute;
+  z-index: 1500;
+  color: #FFF;
+  font-size: 0.6rem;
+  bottom: 0;
+  left: 1%;
+
+li
+  list-style: none
+
+h1
+  font-family: Raleway-Bold
+  font-size: 34px
+  line-height: 40px
+  letter-spacing: -0.5px
+  color: #1A1A1A
+
+h3
+  font-family: Raleway-Bold
+  font-size: 22px
+  line-height: 22px
+  letter-spacing: -0.5px
+  color: #1A1A1A
+
+label
+  font-size: 13px
+  display: inline
+
+hr
+  color: #CCC !important
+
+abbr
+  color: red
+  font-family: Raleway-semiBold
+
+fieldset
+  border: 1px solid #f6f6f6
+  padding: 2%
+  legend
+    font-size: 1rem
+    text-align: center
+    font-family: Raleway-semiBold
+
+.form-group 
+  label
+    font-family: Raleway-semiBold
+
+.to-delete
+  border: 1px solid red
+
+.regular
+  font-family: Raleway-Regular
+
+.bold
+  font-family: Raleway-Bold
+
+.italic
+  font-family: Raleway-Italic
+
+.semibold
+  font-family: Raleway-semiBold
+
+.hide
+  display: none
+
+.no-border
+  border: none !important
+
+.body_content
+  margin-top: 75px
+  padding: 2%
+  overflow-y: auto
+  overflow-x: hidden
+  margin-bottom: 2%
+
+.btn
+  font-family: Raleway-semiBold
+
+.btn:hover  
+  -moz-box-shadow: 1px 1px 4px -2px rgb(0, 0, 0);
+  -webkit-box-shadow: 1px 1px 4px -2px rgb(0, 0, 0);
+  box-shadow: 1px 1px 4px -2px rgb(0, 0, 0);
+
+.btn-primary
+  background: linear-gradient(90deg, #666666 0%, #1d67be 100%)
+  box-shadow: 0px 1px 3px rgba(26, 26, 26, 0.1)
+  border-radius: 8px
+  border: none
+
+.btn-light
+  background: inherit
+  border: 1px solid #1d67be
+  box-sizing: border-box
+  border-radius: 8px
+  color: #1d67be
+
+.btn-light:hover
+  background: #FFFFFF
+  color: #1d67be
+
+.btn-dark
+  border-radius: 8px
+
+
+.btn-light-primary
+  background: #FFFFFF
+  border: 1px solid #0d6efd
+  color: #0d6efd
+
+.btn-light-primary:hover
+  color: #0d6efd
+
+.btn-light-secondary
+  background: #FFFFFF
+  border: 1px solid rgba(26, 26, 26, 0.32)
+  box-sizing: border-box
+  border-radius: 8px
+  color: rgba(26, 26, 26, 0.32)
+
+.btn-light-secondary:hover
+  background: #FFFFFF
+  color: rgba(26, 26, 26, 0.32)
+
+.btn-secondary
+  background: rgba(26, 26, 26, 0.1)
+  border-radius: 8px
+  border: none
+  color: rgba(26, 26, 26, 0.32)
+
+.btn-secondary:hover
+  background: #FFFFFF
+  color: #888
+
+.btn-default
+  color: #1d67be
+  font-size: 17px
+  margin-right: 5%
+  a
+    color: #1d67be
+    text-decoration: none
+
+
+.btn-default:hover
+  color: #1d67be
+  border: 1px solid #1d67be
+  border-radius: 5px
+
+.btn-default-danger
+  color: #FF4848
+  font-size: 17px  
+
+.btn-default-danger:hover
+  color: #FF4848
+  border: 1px solid #FF4848
+  border-radius: 5px
+
+.btn-danger
+  background: #FFFFFF
+  border-radius: 8px
+  border: 1px solid #FF4848
+  color: #FF4848
+
+.btn-danger:hover
+  color: #FF4848
+  background: #FFFFFF
+
+.btn-sm
+  font-size: 12px
+
+.badge
+  box-shadow: 0px 1px 3px rgba(26, 26, 26, 0.1)
+  border-radius: 4px
+  color: #FFFF
+
+.badge-success
+  background: #1d67be 
+
+.badge-danger
+  background: #FF4848
+  border-radius: 8px
+
+.badge-secondary
+  background: rgba(26, 26, 26, 0.1)
+  border-radius: 8px
+  color: rgba(26, 26, 26, 0.7)
+
+.badge-warning
+  background: #FDAF3A
+
+.badge.count
+  font-size: 17px
+
+.bg-dark
+  background-color: rgba(26, 26, 26, 0.7) !important
+  box-shadow: 0px 1px 3px rgba(26, 26, 26, 0.1)
+  border-radius: 4px
+
+.bg-yellow
+  background-color: #FDAF3A !important
+
+.no-padding
+  padding: 0 !important
+
+.no-margin
+  margin: 0 !important
+
+.back-white
+  background-color: #FFFFFF
+
+.nav-item
+  margin: 0.5% 1%;
+
+.datepicker-dropdown
+  min-width: 10rem !important
+  padding: 1%
+  width: 15%  
+  margin-top: 0.6%
+  .table-condensed
+    width: 100%
+    td.active.disabled
+      background-color: "#1d67be !important"
+
+table thead
+  color: rgba(26, 26, 26, 0.32)
+  border-bottom: 2px solid rgba(26, 26, 26, 0.25)
+
+table tfoot
+  color: rgba(26, 26, 26, 0.32)
+  border-top: 2px solid rgba(26, 26, 26, 0.25)
+
+table td
+  color: rgba(26, 26, 26, 0.7)
+
+.box
+  background: #FFFFFF
+  box-shadow: 0px 1px 3px rgba(26, 26, 26, 0.1)
+  border-radius: 16px
+  padding: 2%
+  margin: 1%
+  .content-box
+    font-size: 13px
+    color: rgba(26, 26, 26, 0.7)
+
+.dropdown-menu
+  background: #FFFFFF
+  box-shadow: 0px 4px 16px rgba(26, 26, 26, 0.24)
+  border-radius: 8px
+  min-width: 20rem
+
+.dropdown-item
+  padding: 2% 5%
+
+.navbar
+  background: #FFFFFF
+
+.navbar-brand img
+  max-width: 100%
+  margin: 10% auto
+
+.menu 
+  .navbar-nav
+    .nav-item a
+      color: #1A1A1A
+    .active, .nav-link:hover  
+      border-bottom: 3px solid #1d67be
+    .active:hover
+      border-bottom: none
+  .dropdown-item:active, .dropdown-item.active
+    background-color: #1d67be
+    color: #FFFFFF !important
+    font-family: Raleway-semiBold
+
+.user-menu
+  .navbar-nav
+    margin-right: 1.5rem
+    margin-top: 0.5rem
+
+.rotate
+  transform: rotate(90deg)
+  transition: .3s
+
+.rotate-reset
+  transform: rotate(0deg)
+  transition: .5s
+
+.modal
+  .modal-body
+    max-height: 750px
+    overflow: auto
+
+#csv_descriptor_modal
+  .modal-dialog
+    min-width: 1340px  
+
+.modal-dialog
+  min-width: 700px
+
+.modal-content
+  background: #FFFFFF
+  box-shadow: 0px 4px 16px rgba(26, 26, 26, 0.24)
+  border-radius: 16px
+
+.container
+  cursor: pointer
+
+.container-fluid
+  margin-bottom: 2%
+
+.select-container
+  padding: 2%
+  width: 70%
+  position: relative  
+  border-radius: 6px
+  .label-titre
+    color: #1A1A1A
+    opacity: 0.4
+  .arrow-bottom
+    padding-right: 2.3%
+  input, textarea
+    border: none
+    width: 100%
+    padding: 1%
+    background: rgba(26, 26, 26, 0.04)
+  textarea
+    font-size: 13px
+
+
+.input-group-text
+  display: flex
+  align-items: center
+  padding: 0.375rem 0.75rem  
+  font-weight: 400
+  line-height: 1.5
+  color: #1d67be
+  text-align: center
+  white-space: nowrap
+  background-color: #FFF
+  border: 1px solid #ced4da
+      border-right-color: rgb(206, 212, 218)
+      border-right-style: solid
+      border-right-width: 1px
+  border-radius: 8px
+      border-top-right-radius: 8px
+      border-bottom-right-radius: 8px
+  border-right: none
+
+.input-group-text-right
+  display: flex
+  align-items: center
+  padding: 0.375rem 0.75rem  
+  font-weight: 400
+  line-height: 1.5
+  color: #1d67be
+  text-align: center
+  white-space: nowrap
+  background-color: #FFF
+  border: 1px solid #ced4da
+      border-right-color: rgb(206, 212, 218)
+      border-right-style: solid
+      border-right-width: 1px
+  border-radius: 8px
+      border-top-right-radius: 8px
+      border-bottom-right-radius: 8px
+  border-left: none
+
+.input-group input
+  border-left: none
+  border-bottom-right-radius: 8px
+  border-top-right-radius: 8px
+
+.input-group input.daterange
+  border-right: none !important
+
+.datepicker-dropdown.datepicker-orient-bottom:before, .datepicker-dropdown.datepicker-orient-bottom:after
+  top: 0
+
+.upload-content
+  border: 1px dashed rgba(26, 26, 26, 0.32)
+  border-radius: 4px
+  font-family: Raleway-semiBold
+  .import-process
+    background: rgba(26, 26, 26, 0.04)
+  .import-success
+    background: #EEF8B8  
+
+.notice
+  position: fixed
+  bottom: 4%
+  width: 100%
+
+.notice-internal-error
+  z-index: 1800
+  .message-alert
+    max-height: 300px
+    margin-top: 20px
+    overflow-y: auto
+
+.notice-internal-success
+  background: #1d67be
+  box-shadow: 0px 2px 2px rgba(26, 26, 26, 0.24)
+  border-radius: 6px
+  padding: 0.5% 1%
+  width: 35%
+  max-height: 350px
+  z-index: 1800
+  margin: 0.5% 33%
+
+.pointer
+  cursor: pointer
+
+.cancel-action
+  font-size: 1vw
+
+.account-log-out
+  color: #FF4848
+
+.dropdown-menu-setting
+  left: -151px
+
+.parameters_notifications
+  padding: 2% !important
+  min-width: 200px !important
+  border-radius: 3px !important
+  a
+    padding: 3% 6%
+    font-size: 13px
+    color: rgba(26, 26, 26, 0.7)
+
+.support-chat
+  position: fixed
+  right: 2%
+  height: 7%
+  width: 3%
+  bottom: 10%
+  background: linear-gradient(90deg, #666666 0%, #1d67be 100%)
+  box-shadow: 0px 2px 2px rgba(26, 26, 26, 0.24)
+  border-radius: 50%
+
+.label_idocus
+  color: #1d67be
+
+.form-check-input  
+  background-color: rgba(26, 26, 26, 0.1)
+  border-color: rgba(26, 26, 26, 0.1)
+
+.form-check-input:checked
+  background-color: #1d67be
+  border-color: #1d67be
+
+.login
+  width: 40%
+  padding: 5% 0
+  max-width: 450px
+
+  a
+    font-size: 0.8rem
+    opacity: 0.8
+
+  p
+    font-size: 0.8rem
+
+  input.email, input.password
+    width: 100%
+    padding: 0.375rem 0.75rem
+    border: 1px solid #ced4da
+
+  .label-section
+    display: none
+
+  .form-group
+    margin: 0 !important
+
+  .user_email, .user_password
+    width: 85%
+
+  .alert a
+    display: none
+
+  .alert
+    font-familly: Raleway-semiBold
+
+  .box
+    padding: 2% 7%
+
+.form-group
+  margin-bottom: 3%
+
+.notification-content-list
+  min-height: 216px
+  .dropdown-notif-items
+    left: -7%;
+    position: relative
+    .notification-link
+      padding: 0px
+    li.notification-list
+      list-style-type: none
+      padding-top: 5%
+    .text-right
+      width: 8px
+      height: 8px
+      right: 16px
+      top: 6px
+      background: linear-gradient(90deg, #DDE357 0%, #1d67be 100%)
+      border-radius: 100px
+ 
+  .notification-date, .notification-content
+    color: #b7b1b1
+    font-size: 9px
+    font-style: italic
+    line-height: 12px
+.notif-badge
+  color: white
+  background-color: red
+  position: absolute
+  margin-left: 45%  
+  border-radius: 20%
+  font-weight: bold
+  z-index: 100
+
+.text-table-green
+  color: #1d67be
+
+.table
+  a  
+    color: #1d67be
+    text-decoration: none
+  a:hover
+    font-family: Raleway-semiBold
+
+.pagination
+  color: rgba(26, 26, 26, 0.7)
+  .form-select
+    width: 70%
+    padding: 0.1rem
+    background-position: right 0.3rem center
+    border: 0px solid
+    cursor: pointer
+    font-size: 1rem
+  .pt-1
+    padding-top: 0.18rem !important
+
+.form-select
+  background-color: rgba(26, 26, 26, 0.04)
+  color: #1A1A1A
+  border: 0px solid #ced4da
+  option
+    font-family: Raleway-Regular
+    font-size: 13px
+
+.nav-tabs .nav-link  
+  border-top-right-radius: 10px
+  border-top-left-radius: 10px
+
+.nav-tabs .nav-link
+  color: #1d67be
+  a
+    color: rgba(0, 0, 0, 0.5)
+
+.nav-tabs .nav-link.active
+  color: rgba(0, 0, 0, 0.5)
+
+.pagination .form-select
+  background-color: #FFF
+
+i
+  font-size: 12px
+
+i.remark
+  font-size: 0.55rem
+
+.sub_menu
+  position: absolute
+  min-width: 12%
+  background: #FFFFFF
+  box-shadow: 0px 4px 16px rgba(26, 26, 26, 0.24)
+  border-radius: 8px
+  z-index: 5
+  font-size: 0.8rem
+  right: 0%
+
+.sub_menu li
+  display: block !important
+  padding: 1% 0
+  cursor: pointer
+
+.sub_menu li a
+  display: inline-block
+  width: 100%
+  padding: 5% 9%
+
+.sub_menu li:hover
+  background: rgba(26, 26, 26, 0.04)
+
+.modal .back-grey
+  background: rgba(26, 26, 26, 0.04)
+
+.drp-calendar.right
+  display: none !important
+
+.daterangepicker td.active, .daterangepicker td.active.end-date, .daterangepicker td.active:hover  
+  background: #1d67be  
+  color: #FFFFF
+
+.daterangepicker td.in-range
+  background-color: #eaf4aa
+
+.modal .btn:hover, .btn-default:hover
+  -moz-box-shadow: 0px 0px 0px 0px
+  -webkit-box-shadow: 0px 0px 0px 0px
+  box-shadow: 0px 0px 0px 0px
+
+.user-menu 
+  a
+    font-size: 15px
+  .nav-link
+    color: rgba(26, 26, 26, 0.7)
+
+.red-label
+  color: #1d67be !important
+  
+.green-label
+  color: #1d67be !important
+
+.green-label-dark
+  color: #1d67be !important
+
+.grey-label
+  color: rgba(26, 26, 26, 0.4) !important
+
+.primary-label
+  color: #1d67be !important
+
+.black-label
+  color: rgba(26, 26, 26, 0.7) !important
+
+.as-user-with-overlay
+  position: fixed
+  display: none
+  width: 100%
+  height: 100%
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5)
+  z-index: 1024
+  cursor: pointer
+
+.as-user-notification
+  width: 340px
+  position: fixed
+  top: 10%
+  left: 40%
+  display: none
+  z-index: 1050
+  a
+    text-decoration: none
+    color: #1d67be !important
+  .for-margin-right
+    border-right: 1px solid #CCC
+    padding-top: 6px !important
+
+  .btn-default, .btn-default:hover
+    border: none !important
+
+.border-bottom-red
+  border-bottom: 2px solid #FFD9D9
+
+.loading_box  
+  position: fixed  
+  width: 100%
+  height: 100%
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.1)
+  z-index: 1100
+  cursor: pointer
+  .box
+    padding: 1%
+    max-width: 150px
+    max-height: 150px    
+    position: fixed
+    z-index: 1500
+    bottom: 10%
+    left: 45%
+    img
+      width: 50px
+      height: 50px
+
+.more-result
+  position: fixed
+  bottom: 5.5%
+  left: 37.5%
+
+.scroll-on-top
+  position: fixed
+  bottom: 10%
+  right: 2%
+  background: linear-gradient(90deg, #666666 10%, #1d67be 90%)
+  border: 1px solid #CCC
+  padding: 0.5%
+  border-radius: 20%
+
+.oi-icon.colored:hover
+  fill: #1d67be !important
+  cursor: pointer
+
+#wrap.extern
+  .text-grey
+    color: rgba(26, 26, 26, 0.7)
+  .current
+    background-color: #1d67be
+    color: white
+    font-family: Raleway-semiBold
+  .present
+    background-color: #667cff
+    color: white
+    font-family: Raleway-semiBold
+
+.no-style
+  text-decoration: none !important
+
+input[type=radio], input[type=checkbox], select
+  cursor: pointer
+
+.organizations
+  table
+    tbody
+      font-size: 13px
+
+.w-15
+  width: 15%
+
+#news_box
+  position: absolute
+  right: 0px
+  top: 75px
+  z-index: 2000
+
+.heading_customer .nav-tabs .nav-link
+  white-space: nowrap
+
+.icon-actions span svg
+  transition: all .2s ease-in-out
+
+.icon-actions span svg:hover
+  transform: scale(1.5) !important
+
+.form-control:focus, .select-container input:focus
+  border-color: #cad953 !important
+  box-shadow: 0 0 0 0.25rem rgb(211, 222, 85)
+
+.select-container input:focus-visible
+  border-color: #cad953 !important
+
+#wrap
+  .user-action
+    margin-top: 10px !important
+
+//Override multiselect max-height
+.multi-select-menu
+  max-height: 300px !important
+  overflow-y: scroll !important
+
+@media (max-width: 1280px)
+  // HEADER
+  h1
+    font-size: 20px
+  h3
+    font-size: 14px
+  nav.main_menu 
+    padding: 0 !important
+    font-size: 13px
+    li      
+      a.dropdown-item
+        font-size: 11px
+      svg.oi-icon
+        width: 14px !important
+        height: 14px !important
+    .dropdown-menu
+      min-width: 10rem      
+      box-shadow: 1px 1px 2px rgba(26, 26, 26, 0.24);
+      a
+        padding: 0.25rem 1rem
+  .user-menu 
+    .navbar-nav
+      margin-top: 4px !important
+    #notifications_notifier
+      width: 285px
+      .notification
+        padding: 1px 6px
+        .media-body
+          a
+            padding: 0
+          ul 
+            padding: 0
+          strong
+            font-size: 13px
+          p
+            font-size: 11px
+    #see_all_notifications
+      .btn
+        font-size: 11px
+  .content-logo
+    padding-top: 5px
+  //FOOTER
+  .main_footer
+    padding: 13px !important
+    .contact-number, p
+      font-size: 12px
+    .open-time
+      padding: 2px 3px
+      font-size: inherit
+    .number
+      img
+        width: 150px
+    a svg
+      height: 12px
+
+  //BODY
+  .body_content
+    margin-top: 50px
+    h1
+      font-size: 26px
+    h3
+      font-size: 18px
+    h5
+      font-size: 14px
+  //AS USER
+  .as-user-notification
+    width: 260px
+    input
+      font-size: 15px
+      padding: 5px
+    a, input.btn
+      font-size: 13px
+    .for-margin-right
+      padding-top: 1px !important
+  //LOADING
+  .loading_box
+    .box
+      max-width: 100px
+      max-height: 100px
+      img
+        width: 40px
+        height: 40px
+      label
+        font-size: 11px
+  .modal-dialog
+    min-width: 770px
+
+  .form-check-input
+    width: 1em
+    height: 1em    
+
+  .form-switch 
+    .form-check-input
+      width: 2em
+      height: 1.2em
+      margin-top: 50%
+
+  .nav-tabs li.nav-item, .dropdown-menu
+    font-size: 0.8rem !important
+
+  .form-select    
+    font-size: 0.7rem !important
+    margin-top: 3px
+
+  .btn, .select-container input, .control-section input, .form-select option, table
+    font-size: 11px !important
+
+  .modal p, .modal i
+    font-size: 11px !important
+
+  .action li
+    font-size: 11px
+
+  .sol-inner-container
+    height: 40px
+    font-size: 13px
+
+  .sol-selected-display-item
+    font-size: 0.7em
+
+  .sol-label
+    font-size: 11px
+
+  .table
+    .form-check-input
+      width: 1em
+      height: 1em
+
+  i
+    font-size: 10px
+
+  .search-content
+    input
+      font-size: 0.7rem
+    .glass
+      margin-top: 1% !important
+
+  span, .sub_menu
+    svg
+      width: 12px !important
+      height: 12px !important
+
+  #wrap
+    .navbar-brand
+      img
+        margin: 13% auto
+    .user-action
+      margin-top: 10px !important
+      padding: 0 !important

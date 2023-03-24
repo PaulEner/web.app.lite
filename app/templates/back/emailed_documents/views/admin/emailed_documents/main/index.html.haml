@@ -1,0 +1,121 @@
+#emails
+  .row.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-6      
+      %h3
+        Liste des mails d'envoi de documents
+        %span.badge.bg-dark= @emails_count
+    .col-md-6.text-end
+      %button.btn.btn-warning.filter-emailed-document
+        %span.me-2= glyphicon('transfer', { size: '10', color: '#000', style: 'transform: rotate(90deg)'})
+        %span Filtrer     
+
+  .row.box.derivationRight
+    .col-md-12#emailed_document_table
+      %table.table.table-condensed.table-striped
+        %thead
+          %tr
+            %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+            %th= sortable :state,      t('activerecord.models.email.attributes.state')
+            %th= sortable :from,       t('activerecord.models.email.attributes.from')
+            %th= sortable :to,         t('activerecord.models.email.attributes.to')
+            %th= sortable :subject,    t('activerecord.models.email.attributes.subject')
+            %th= sortable :size,       t('activerecord.models.email.attributes.size') + ' (Mo)'
+            %th= t('activerecord.models.email.attributes.attachment_names_count')
+            %th.text-end Action
+        %tbody
+          - @emails.each do |email|
+            %tr
+              %td= l(email.created_at, format: '%d %b %Y %H:%M')
+              %td= email_state email
+              %td
+                - if email.from_user
+                  = link_to(email.from_user.code, [:admin, email.from_user])
+                  \-
+                = email.from
+              %td
+                - if email.to_user
+                  = link_to(email.to_user.code, [:admin, email.to_user])
+                  \-
+                = email.to
+              %td= email.subject
+              %td= file_size email.size
+              %td= email.attachment_names.try(:count)              
+              %td.text-end.pointer
+                .action.sub_edit_delete
+                  %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+                .sub_menu.text-start.hide
+                  %ul.no-margin.no-padding.regular
+                    - if email.errors_list.try(:any?)
+                      %li
+                        //=link_to show_errors_admin_emailed_document_path(email), class: 'no-style black-label' do
+                        %a.list-errors{data: {id: email.id}}
+                          %span.me-2= glyphicon('warning', size: 12)
+                          %span Afficher les erreurs
+                    - if email.cloud_original_content_object.try(:path).present?
+                      %li                               
+                        = link_to admin_emailed_document_path(email), class: 'no-style black-label' do
+                          %span.me-2= glyphicon('data-transfer-download', size: 12)
+                          %span Télécharger le mail original
+      = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: admin_emailed_documents_path, target: '#emailed_document_table', total_pages: @emails.total_pages, filter: 'filter-emailed-document' }
+
+
+.modal.fade.in#email_errors_list
+  .modal-dialog{ style: "min-width: 860px;"}
+    .modal-content
+      .modal-header.clearfix
+        %h5.modal-title.bold Liste des erreurs
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.back-grey
+      
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' } Fermer
+
+
+
+.modal.fade.in#filter-emailed-document
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h5.modal-title.bold Filtrer
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      = form_tag admin_emailed_documents_path, method: :get, class: 'form-filter' do
+        .modal-body
+          = hidden_field_tag :direction, sort_direction
+          = hidden_field_tag :sort, sort_column
+          = hidden_field_tag :per_page, per_page
+          .form-group
+            .label-section
+              = label_tag 'emailed_document_contains[created_at]', t('activerecord.models.common.attributes.created_at')
+            .control-section
+              = text_field_tag 'emailed_document_contains[created_at]', (params[:emailed_document_contains][:created_at] rescue ''), class: 'form-control daterange'
+          .form-group
+            .label-section
+              = label_tag 'emailed_document_contains[state]', t('activerecord.models.email.attributes.state')
+            .control-section
+              = select_tag 'emailed_document_contains[state]', options_for_select([['Traité', 'processed'], ['Untraitable', 'unprocessable'], ['En erreur', 'error']], (params[:emailed_document_contains][:state] rescue '')), include_blank: true, class: 'form-control'
+          .form-group
+            .label-section
+              = label_tag 'emailed_document_contains[user_contains][code]', t('activerecord.models.user.name') + ' (code)'
+            .control-section
+              = text_field_tag 'emailed_document_contains[user_contains][code]', (params[:emailed_document_contains][:user_contains][:code] rescue ''), class: 'form-control'
+          .form-group
+            .label-section
+              = label_tag 'emailed_document_contains[from]', t('activerecord.models.email.attributes.from')
+            .control-section
+              = text_field_tag 'emailed_document_contains[from]', (params[:emailed_document_contains][:from] rescue ''), class: 'form-control'
+          .form-group
+            .label-section
+              = label_tag 'emailed_document_contains[to]', t('activerecord.models.email.attributes.to')
+            .control-section
+              = text_field_tag 'emailed_document_contains[to]', (params[:emailed_document_contains][:to] rescue ''), class: 'form-control'
+          .form-group
+            .label-section
+              = label_tag 'emailed_document_contains[subject]', t('activerecord.models.email.attributes.subject')
+            .control-section
+              = text_field_tag 'emailed_document_contains[subject]', (params[:emailed_document_contains][:subject] rescue ''), class: 'form-control'
+        .modal-footer
+          .form-actions
+            = link_to "Réinitialiser", admin_emailed_documents_path, class: 'btn btn-light', title: t('filters.reset')
+            = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+
+= javascript_include_tag 'back/emailed_documents/assets/javascripts/main'

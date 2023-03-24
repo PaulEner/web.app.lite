@@ -1,0 +1,256 @@
+#accounting_plan
+  = stylesheet_link_tag 'front/accounting_plans/assets/stylesheets/main'
+
+  - options = { size: '15', color: 'rgba(26, 26, 26, 0.7);'}
+
+  %input#organization_id{type: :hidden, value: @organization.id, name: 'organization_id'}
+  %input#customer_id{type: :hidden, value: @customer.id, name: 'customer_id'}
+  = stylesheet_link_tag 'front/customers/assets/stylesheets/main'
+  .box.no-margin.derivationRight.pb-1
+    .row.form-group.mb-1
+      - if @customer.try(:ibiza).try(:ibiza_id?) && @customer.uses?(:ibiza)
+        - to_show        = true
+        - software       = "iBiza"
+        - software_value = @customer.ibiza.try(:auto_update_accounting_plan?)
+        - software_id    = @customer.ibiza.ibiza_id
+      - elsif @customer.uses?(:my_unisoft)
+        - to_show        = true
+        - software       = "My Unisoft"
+        - software_value = @customer.my_unisoft.try(:auto_update_accounting_plan?)
+        - software_id    = @customer.my_unisoft.society_id
+      - elsif @customer.uses?(:sage_gec)
+        - to_show        = true
+        - software       = "Sage GEC"
+        - software_value = @customer.sage_gec.try(:auto_update_accounting_plan?)
+        - software_id    = @customer.sage_gec.sage_private_api_uuid
+      - elsif @customer.uses?(:acd)
+        - to_show        = true
+        - software       = "ACD"
+        - software_value = @customer.acd.try(:auto_update_accounting_plan?)
+        - software_id    = @customer.acd.code
+
+      .col-md-12
+        = form_tag import_fec_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form-horizontal clearfix label-auto' do
+          .w-100.text-end
+            .row
+              .col-md-4
+                .form-group.clearfix.text-start
+                  .control-section
+                    = file_field_tag :fec_file, class: 'filestyle form-control', data: { classButton: 'btn btn-secondary', input: true, buttonText: glyphicon('file') + '' }, accept: "text/plain"
+                  %i.help-block Encodage accepté : UTF-8
+              .col-md-2
+                %select.separate_verif.form-select{name: "separator", title: 'Séparateur', "data-bs-toggle" => "tooltip", "data-bs-placement" => "top"}
+                  %option{ value: "\t"} Séparateur Tab
+                  %option{ value: "|" }= "Séparateur Tube |"
+              .col-md-6.text-start
+                .form-actions
+                  = submit_tag 'Importer FEC', class: 'btn btn-dark semibold'
+                  %span.badge.bg-info.semibold .txt
+                  %button.btn.btn-default.ms-5
+                    %span.me-2= glyphicon('data-transfer-download', size: '13', color: '#72AA42')
+                    %span= link_to "Télécharger le modèle d'import .csv", import_model_organization_customer_accounting_plan_path(@organization, @customer), class: 'no-style'
+    .row.form-group.no-margin
+      .col-md-12
+        - if to_show
+          = form_tag "#", class: 'form-horizontal clearfix label-auto', id: 'auto_update_accounting_plan' do
+            = hidden_field_tag 'user[software_id]', software_id
+            .row.form-group.alert.alert-warning
+              .col-md-10.form-group.no-margin
+                %label.semibold Activer la mise à jour automatique du plan comptable avec #{software} ?
+                %br
+                %i.help-block Attention: si cette option est activée, les modifications manuelles du plan comptable seront écrasées automatiquement par la mise à jour auto.
+              .col-md-2.form-check.form-switch
+                %label.form-check-label Non
+                = check_box_tag 'user[software]', true, software_value, info: "#{@organization.id}-#{@customer.id}-#{software}", class: 'form-check-input input_switch auto-update-accounting-plan', id: 'auto-update-accounting-plan'
+    
+  - autoliquidation_exist = @accounting_plan.active_providers.select{ |prov| prov.vat_autoliquidation }.size > 0
+  - # autoliquidation_exist = false
+  .mb-4
+  %hr
+  .fadein
+    .search-content.float-end.me-3
+      .row.no-margin
+        .col-md-2.no-padding.text-center.glass
+          = glyphicon('magnifying-glass', { size: '16', color: 'background: rgba(26, 26, 26, 0.7)' })
+        .col-md-10.no-padding.no-margin
+          %input#acc_plan_search{ name:'acc_plan_search', placeholder: 'Rechercher' }
+    %ul.nav.nav-tabs.ms-3{ "role" => "tablist" }
+      %li.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link#check-provider-tab{ "data-bs-toggle" => "tab", "data-bs-target" => "#provider", type: :button, "role" => "tab", "aria-controls" => "provider-selection", "aria-selected" => "true", class: ((params[:tab] == 'provider' || !params[:tab].present?) ? 'active': '') } 
+          Fournisseurs
+          %span.ms-1.badge.badge-secondary.regular= @accounting_plan.active_providers.size
+      %li.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link#check-customer-tab{ "data-bs-toggle" => "tab", "data-bs-target" => "#customer", type: :button, "role" => "tab", "aria-controls" => "customer-selection", "aria-selected" => "false", class: (params[:tab] == 'customer' ? 'active': '')} 
+          Clients
+          %span.ms-1.badge.badge-secondary.regular= @accounting_plan.active_customers.size
+      %li.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link#check-vat_accounts-tab{ "data-bs-toggle" => "tab", "data-bs-target" => "#vat_accounts", type: :button, "role" => "tab", "aria-controls" => "vat_accounts-selection", "aria-selected" => "false", class: (params[:tab] == 'vat_accounts' ? 'active': '')}
+          TVA
+          %span.ms-1.badge.badge-secondary.regular.vat_accounts_count 0
+
+    .tab-content
+      .tab-pane.box.no-margin#provider{ "role" => "tabpanel", "aria-labelledby" => "provider-tab", class: ((params[:tab] == 'provider' || !params[:tab].present?) ? 'active': '') }
+        .row.derivationLeft
+          .col-md-3
+            .form-group
+              .select-container.row.w-100
+                .col-md-8
+                  %label.semibold Compte général
+                  %input.account.general-account-provider.p-1{ type: :text, id: "general_account_#{@customer.id}", placeholder: "ex: 401xxxx", value: "#{@accounting_plan.try(:general_account_providers)}"}
+                .col-md-4.pt-4
+                  %button.btn.btn-primary.add-general-account-provider{ type: :button } Valider
+
+          .col-md-3.text-end.pt-4
+            = link_to glyphicon('trash', { size: '15', color: "#FF4848" }) + ' Supprimer tout', destroy_providers_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn btn-danger', data: { method: :delete, confirm: 'Vous êtes sur le point de supprimer tous les fournisseurs, êtes-vous sûr ?' }
+            %button.edit-accounting-plan.btn.btn-light.provider{ type: :button, "data-account-id" => "" }
+              %span.me-2= glyphicon('plus', { size: '15', color: '#72AA42'})
+              %span Ajouter
+          .col-md-6.pt-4
+            = form_tag import_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true do
+              .row
+                .col-md-7
+                  = file_field_tag :providers_file, class: 'filestyle form-control', data: { classButton: 'btn btn-warning import_accounting', input: true, buttonText: glyphicon('file') + ' CSV' }
+                .col-md-5
+                  %button.btn.btn-dark.import_accounting#import_providers_account.w-100
+                    %span.me-2= glyphicon('cloud-download', { size: '16', color: 'white'})
+                    %span Importer un CSV
+
+        .row.mb-3.derivationRight
+          .col-md-12
+            .float-end
+              %button.btn.btn-warning.manage-conterpart-accounts.w-100.provider
+                %span.me-2= glyphicon('plus', { size: '10', color: 'white'})
+                %span.text-white Gestion des comptes associés par catégorie
+
+        .row.derivationRight
+          .col-md-12
+            %table.table.table-striped
+              %thead
+                %tr.header
+                  %th= t('activerecord.models.accounting_plan_item.attributes.third_party_name')
+                  %th= t('activerecord.models.accounting_plan_item.attributes.third_party_account')
+                  %th= t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
+                  %th= t('activerecord.models.accounting_plan_item.attributes.code')
+                  %th{ class: autoliquidation_exist ? '' : 'hide' }= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation')
+                  %th{ class: autoliquidation_exist ? '' : 'hide' }= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation_debit_account')
+                  %th{ class: autoliquidation_exist ? '' : 'hide' }= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation_credit_account')
+                  %th.text-end Actions
+              %tbody
+                - @accounting_plan.active_providers.each do |provider|                  
+                  %tr                    
+                    %td.semibold= provider.third_party_name
+                    %td= provider.third_party_account
+                    %td= provider.conterpart_account
+                    %td= provider.code
+                    %td{ class: autoliquidation_exist ? '' : 'hide' }= provider.vat_autoliquidation ? icon_ok(options) : icon_not_ok(options)
+                    %td{ class: autoliquidation_exist ? '' : 'hide' }= provider.vat_autoliquidation_debit_account
+                    %td{ class: autoliquidation_exist ? '' : 'hide' }= provider.vat_autoliquidation_credit_account
+                    %td.text-end.pointer.allow-action
+                      .action.sub_edit_delete
+                        %span.glyph= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+                      .sub_menu.text-start.hide
+                        %ul.no-margin.no-padding.regular
+                          %li.edit-accounting-plan.provider{ "data-account-id" => provider.id }
+                            = link_to glyphicon('pencil', { size: '15', color: "rgba(26, 26, 26, 0.7)" }) + ' Éditer', '#'
+                          %li
+                            = link_to glyphicon('trash', { size: '15', color: "#FF4848" }) + ' Supprimer', organization_customer_accounting_plan_path(@organization, @customer, { _id: provider.id, type: 'provider' }), data: { method: :delete, confirm: 'Voulez-vous vraiment supprimer ce fournisseur ?' }, class: 'red-label'
+
+      .tab-pane.box.no-margin#customer{ "role" => "tabpanel", "aria-labelledby" => "customer-tab", class: (params[:tab] == 'customer' ? 'active': '') }
+        .row.derivationRight
+          .col-md-3
+            .form-group
+              .select-container.row.w-100
+                .col-md-8
+                  %label.semibold Compte général
+                  %input.account.general-account-customer.p-1{ type: :text, id: "general_account_#{@customer.id}", placeholder: "ex: 411xxxx", value: "#{@accounting_plan.try(:general_account_customers)}"}
+                .col-md-4.pt-4
+                  %button.btn.btn-primary.add-general-account-customer{ type: :button } Valider
+          .col-md-3.text-end.pt-4
+            = link_to glyphicon('trash', { size: '15', color: "#FF4848" }) + ' Supprimer tout', destroy_customers_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn btn-danger', data: { method: :delete, confirm: 'Vous êtes sur le point de supprimer tous les clients, êtes-vous sûr ?' }
+            %button.edit-accounting-plan.btn.btn-light.customer{ type: :button, "data-account-id" => "" }
+              %span.me-2= glyphicon('plus', { size: '15', color: '#72AA42'})
+              %span Ajouter
+          .col-md-6.pt-4
+            = form_tag import_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true do
+              .row
+                .col-md-7
+                  = file_field_tag :customers_file, class: 'filestyle form-control', data: { classButton: 'btn btn-warning import_accounting', input: true, buttonText: glyphicon('file') + ' CSV' }
+                .col-md-5
+                  %button.btn.btn-dark.import_accounting#import_providers_account.w-100
+                    %span.me-2= glyphicon('cloud-download', { size: '16', color: 'white'})
+                    %span Importer un CSV
+
+        .row.mb-3.derivationRight
+          .col-md-12
+            .float-end
+              %button.btn.btn-warning.manage-conterpart-accounts.w-100.customer
+                %span.me-2= glyphicon('plus', { size: '10', color: 'white'})
+                %span.text-white Gestion de comptes associés par catégorie
+
+        .row.derivationLeft
+          .col-md-12
+            %table.table.table-striped.table_integration
+              %thead
+                %tr.header
+                  %th= t('activerecord.models.accounting_plan_item.attributes.third_party_name')
+                  %th= t('activerecord.models.accounting_plan_item.attributes.third_party_account')
+                  %th= t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
+                  %th= t('activerecord.models.accounting_plan_item.attributes.code')
+                  %th.text-end Actions
+              %tbody
+                - @accounting_plan.active_customers.each do |customer|
+                  %tr
+                    %td.semibold= customer.third_party_name
+                    %td= customer.third_party_account
+                    %td= customer.conterpart_account
+                    %td= customer.code
+                    %td.text-end.pointer.allow-action
+                      .action.sub_edit_delete
+                        %span.glyph= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+                      .sub_menu.text-start.hide
+                        %ul.no-margin.no-padding.regular
+                          %li.edit-accounting-plan.customer{ "data-account-id" => customer.id }
+                            = link_to glyphicon('pencil', { size: '15', color: "rgba(26, 26, 26, 0.7)" }) + ' Éditer', '#'
+                          %li
+                            = link_to glyphicon('trash', { size: '15', color: "#FF4848" }) + ' Supprimer', organization_customer_accounting_plan_path(@organization, @customer, { _id: customer.id, type: 'customer' }), data: { method: :delete, confirm: 'Voulez-vous vraiment supprimer ce client ?' }, class: 'red-label'
+
+      .tab-pane.box.no-margin#vat_accounts{ "role" => "tabpanel", "aria-labelledby" => "vat_accounts-tab", class: (params[:tab] == 'vat_accounts' ? 'active': '') }
+    
+  .modal.fade.in#edit-provider-customer
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %h5.modal-title.bold Éditer un fournisseur
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        .modal-body
+          
+        .modal-footer
+          - idocus_params = param_encode({ url: "#update_accounting", method: 'POST', form: { id: 'accounting_edit_form', dump_action: true }, modal: { id: 'edit-provider-customer' }, after_send: 'show_accounting_plan' })
+          %button.btn.btn-primary.submit_customer.as_idocus_ajax{ type: :button, idocus: idocus_params } Valider
+
+  .modal.fade.in#conterpart_accounts
+    .modal-dialog{ style: 'min-width: 1024px' }
+      .modal-content
+        .modal-header
+          %h5.modal-title.bold Gestion des comptes associés par catégorie
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        .modal-body.back-grey
+          .account-item
+            %input#conterpart-kind.conterpart-kind{ type: 'hidden', value: 'provider' }
+            %input.conterpart-accounts-list{ type: 'hidden', value: accounts_list_organization_customer_conterpart_account_path(@organization, @customer, 'type') }
+            %input.conterpart-show{ type: 'hidden', value: organization_customer_conterpart_account_path(@organization, @customer) }
+            %input.conterpart-edition{ type: 'hidden', value: edit_organization_customer_conterpart_account_path(@organization, @customer) }
+            %input.conterpart-deletion{ type: 'hidden', value: delete_organization_customer_conterpart_account_path(@organization, @customer) }
+            %input.conterpart-add-from-customer{ type: 'hidden', value: select_from_customer_organization_customer_conterpart_account_path(@organization, @customer) }
+          .conterpart-body-form
+        .modal-footer
+
+  - if @params_fec.present?
+    #import_dialog.modal.fade.in
+      .modal-dialog
+        .modal-content
+          .modal-header
+            %h3 Paramétrage import FEC
+          = render :partial => "/accounting_plans/main/dialog_box", locals: { organization: @organization, customer: @customer, params_fec: @params_fec }
+
+  = javascript_include_tag 'front/accounting_plans/assets/javascripts/main'

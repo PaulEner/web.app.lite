@@ -1,0 +1,68 @@
+#subscripiton_organization
+  .derivationLeft
+    %h3 Abonnement
+  .mb-4
+  .box.derivationRight
+    %table.table.table-striped
+      %thead
+        %th Option
+        %th Choix
+        %th.price Prix HT
+        %th.price Prix TTC
+      %tbody
+        %tr
+          %td Clients
+          %td= @customers.count
+          %td.price= format_price_00(@customers_prices) + ' €'
+          %td.price= format_price_00(@customers_prices) + ' €'
+        - @extra_orders.each do |order|
+          %tr
+            %td Autres
+            %td= order.name
+            %td.price= format_price_00(order.price * 100) + ' €'
+            %td.price= format_price_00(order.price_w_vat * 100) + ' €'
+        %tr
+          %td
+          - total_price = @total + @customers_prices
+          %th Total
+          %td.price= format_price_00(total_price) + ' €'
+          %td.price= format_price_00(total_price * @subscription.tva_ratio) + ' €'
+        %tr
+          %td
+          %th TVA (20 %)
+          %td
+          %td.price= format_price_00((total_price * @subscription.tva_ratio) - total_price) + ' €'
+
+    %hr
+    .text-end
+      - idocus_params = param_encode({ url: edit_organization_organization_subscription_path(@organization), method: 'GET', html: { target: '#organization_subscriptions', target_dest: '#modal-body-edition' } })
+      %button.btn.btn-light.as_idocus_ajax{ idocus: idocus_params, 'data-bs-target' => '#subscriptions_edition', 'data-bs-toggle' => 'modal', :type => 'button' }= t('actions.edit')
+
+      - idocus_params = param_encode({ url: select_options_organization_organization_subscription_path(@organization), method: 'GET', html: { target: '#organization_subscriptions', target_dest: '#modal-body-propagation' } })
+      %button.btn.btn-primary.as_idocus_ajax{ idocus: idocus_params, 'data-bs-target' => '#subscriptions_propagation', 'data-bs-toggle' => 'modal', :type => 'button' } Propager les quotas
+
+.modal.fade.in#subscriptions_edition 
+  .modal-dialog{ style: 'min-width: 800px'}
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Quelle(s) option(s) ajouter à la facture de l'organisation ?
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        #modal-body-edition
+      .modal-footer
+        .w-100.text-end
+          - idocus_params = param_encode({ url: "#url", method: 'patch', form:{ id: 'edit_subscription_form', dump_action: true }, modal: { id: 'subscriptions_edition' }, redirect_to: { url: organization_organization_subscription_path(@organization), method: 'GET', html: { target: '#subscripiton_organization' } } })
+          %button.btn.btn-primary.valid.as_idocus_ajax{ idocus: idocus_params } Valider
+
+.modal.fade.in#subscriptions_propagation 
+  .modal-dialog{ style: 'min-width: 1024px'}
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Propager les quotas
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.back-grey
+        #modal-body-propagation
+      .modal-footer
+        .w-100.text-end
+          - idocus_params = param_encode({ url: "#url", method: 'post', form:{ id: 'subscription_propagation_form', dump_action: true}, modal: { id: 'subscriptions_propagation' } })
+          %button.btn.btn-primary.valid.as_idocus_ajax{ idocus: idocus_params } Valider

@@ -1,0 +1,3 @@
+#customer.edit.mcf.derivationRight
+  = simple_form_for @customer, url: update_mcf_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal label-medium', id: 'edit_mcf_customer' } do |f|
+    = f.input :mcf_storage, label: 'Sélectionner le dossier correspondant dans My Company Files', collection: [], input_html: { class: 'form-select', style: 'display:none', data: { original_value: @customer.mcf_storage, users_list_url: organization_mcf_users_path(@organization, format: 'json'), placeholder: 'Choisir un dossier' } }

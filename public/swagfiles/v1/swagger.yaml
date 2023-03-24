@@ -1,0 +1,100 @@
+---
+openapi: 3.0.1
+info:
+  title: API V3
+  version: v3
+paths:
+  "/api/v3/inbound_documents":
+    post:
+      summary: 'Creates document. Identify user by user_id OR idocus code OR legal_identifier
+        (SIREN). Identify ledger by name (ex: AC) OR ledger_id'
+      tags:
+      - Inbound Documents
+      security:
+      - bearer: []
+      parameters: []
+      responses:
+        '201':
+          description: Successfully saved the document
+        '422':
+          description: Unable to store document
+        '404':
+          description: User and/or ledger have not been found
+        '403':
+          description: This organization does not own this user
+        '401':
+          description: Token is invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                content_base64:
+                  type: string
+                user_id:
+                  type: integer
+                user_code:
+                  type: string
+                user_legal_identifier:
+                  type: string
+                ledger_name:
+                  type: string
+                ledger_id:
+                  type: integer
+  "/api/v3/users/{user_id}/ledgers":
+    get:
+      summary: Returns the list of ledgers for a user
+      tags:
+      - Ledgers
+      security:
+      - bearer: []
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: returns the list of ledgers for the given user
+        '403':
+          description: This organization does not own this user
+        '401':
+          description: Token is invalid
+  "/api/v3/organizations/current":
+    get:
+      summary: Returns the authenticated organization informations
+      tags:
+      - Organizations
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: returns the current organization
+        '401':
+          description: Token is invalid
+  "/api/v3/users":
+    get:
+      summary: Returns the list of users for the authenticated organization
+      tags:
+      - Users
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: returns the list of users
+        '401':
+          description: Token is invalid
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+servers:
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: my.idocus.com

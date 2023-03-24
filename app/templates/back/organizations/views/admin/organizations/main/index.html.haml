@@ -1,0 +1,156 @@
+#organizations.container-fluid
+  .row.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-6      
+      %h3
+        Liste des organisations 
+        %span.badge.bg-dark= @organizations.total_count
+    .col-md-6.text-end
+      %button.btn.btn-warning.organization-filter
+        %span.me-2= glyphicon('transfer', { size: '10', color: '#000', style: 'transform: rotate(90deg)'})
+        %span Filtrer
+      %span.readonly-container
+        %button.btn.btn-dark
+          = link_to admin_organizations_groups_path, class: 'no-style' do
+            %span.me-2= glyphicon('share', size: 10, color: 'white')
+            %span Groupes d'organisation
+        %button.btn.btn-primary.create-organization
+          %span.me-2= glyphicon('plus', size: 10, color: "white")
+          %span Nouveau
+
+  .row.derivationRight
+    .col-md-12
+      .box.clearfix#table_organizations
+        .row
+          .col-md-12
+            %table.table.table-condensed.table-striped
+              %thead
+                %tr
+                  %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+                  %th.text-center= sortable :is_test, t('activerecord.models.organization.attributes.is_test')
+                  %th.text-center= sortable :is_for_admin, 'Est client ?'
+                  %th.text-center= sortable :is_active, 'Est inactif ?'
+                  %th.text-center= sortable :is_suspended, t('activerecord.models.organization.attributes.is_suspended')
+                  %th.text-center Sans adresse ?
+                  %th.text-center Prélèvement non configuré ?
+                  %th= sortable :name, t('activerecord.models.organization.attributes.name')
+                  %th= t('activerecord.models.organization.attributes.leader')
+                  %th.text-end Action
+              %tbody.readonly-link-container
+                - @organizations.each do |organization|
+                  %tr
+                    %td= l(organization.created_at)
+                    %td.text-center= organization.is_test ? glyphicon('check', size: 13) : ''
+                    %td.text-center= organization.is_for_admin ? '' : glyphicon('check', size: 13)
+                    %td.text-center= organization.is_active ? '' : glyphicon('check', size: 13)
+                    %td.text-center= organization.is_suspended ? glyphicon('check', size: 13) : ''
+                    %td.text-center= organization.addresses.select { |a| a.is_for_billing }.count == 0 ? glyphicon('check', size: 13) : ''
+                    %td.text-center= organization.try(:debit_mandate).try(:configured?) ? '' : glyphicon('check', size: 13)
+                    %td= link_to organization.name, organization_path(organization)
+                    %td
+                      - if (admin_member = organization.admin_members.first)
+                        = link_to admin_member.info, organization_collaborator_path(organization, admin_member)                    
+                    %td.text-end.pointer
+                      - if organization.active?
+                        %span.readonly-container
+                          .action.sub_edit_delete
+                            %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+                          .sub_menu.text-start.hide
+                            %ul.no-margin.no-padding.regular
+                              - if organization.is_suspended
+                                %li.edit
+                                  = link_to admin_organizations_unsuspend_path(organization), method: 'put', data: { confirm: "Voulez-vous réellement reprendre l'organisation #{organization.name} ?" }, class: 'no-style black-label' do
+                                    %span.me-2= glyphicon('timer', size: 12)
+                                    %span Reprendre
+                              - else
+                                %li
+                                  = link_to admin_organizations_suspend_path(organization), method: 'put', data: { confirm: "Voulez-vous réellement suspendre l'organisation #{organization.name} ?" }, class: 'no-style black-label' do
+                                    %span.me-2= glyphicon('media-pause', size: 12)
+                                    %span Suspendre
+                              %li.delete
+                                = link_to admin_organizations_deactivate_path(organization), method: 'put', data: { confirm: "Voulez-vous réellement clôturer l'organisation #{organization.name} ?" }, class: 'no-style black-label' do
+                                  %span.me-2= glyphicon('x', size: 12, color: 'red')
+                                  %span.red-label Clôturer                            
+                      - else
+                        %label.red-label.semibold Clôturé
+            = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: admin_organizations_path, target: '#table_organizations', total_pages: @organizations.total_pages, filter: 'form-organizations-filter', no_per_page: true }
+
+.modal#filter-organizations
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h5.modal-title.bold Filtrer
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      = form_tag admin_organizations_path, method: :get, id: 'form-organizations-filter' ,class: 'form-filter' do  
+        .modal-body         
+          .form-group
+            %label.semibold
+              = label_tag 'organization_contains[name]', t('activerecord.models.organization.attributes.name')
+            .select-container.w-100.no-padding
+              = text_field_tag 'organization_contains[name]', (params[:organization_contains][:name] rescue ''), class: 'input-small'
+          .form-group
+            %label.semibold
+              = label_tag 'organization_contains[code]', t('activerecord.models.organization.attributes.code')
+            .select-container.w-100.no-padding
+              = text_field_tag 'organization_contains[code]', (params[:organization_contains][:code] rescue ''), class: 'input-small'
+          .form-group
+            %label.semibold
+              = label_tag 'organization_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+            .select-container.w-100.no-padding
+              .input-append.date.datepicker
+                = text_field_tag 'organization_contains[created_at]', (params[:organization_contains][:created_at] rescue ''), class: 'input-small daterange', placeholder: 'Début - Fin'          
+          .form-group
+            %label.semibold
+              = label_tag 'organization_contains[is_test]', t('activerecord.models.organization.attributes.is_test')
+              %span.badge.badge-info.ml-md-2{ style: "font-size: 10px" }
+                = Organization.not_billed.count            
+            = select_tag 'organization_contains[is_test]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_test] rescue nil)), include_blank: true, class: 'select form-select'
+          .form-group
+            %label.semibold
+              = label_tag 'organization_contains[is_for_admin]', 'Est client ?'
+              %span.badge.badge-info.ml-md-2{ style: "font-size: 10px" }
+                = Organization.client.count            
+            = select_tag 'organization_contains[is_for_admin]', options_for_select([['Oui', 0], ['Non', 1]], (params[:organization_contains][:is_for_admin] rescue nil)), include_blank: true, class: 'select form-select'
+          .form-group
+            %label.semibold
+              = label_tag 'organization_contains[is_active]', 'Est inactif ?'
+              %span.badge.badge-info.ml-md-2{ style: "font-size: 10px" }
+                = Organization.inactive.count            
+            = select_tag 'organization_contains[is_active]', options_for_select([['Oui', 0], ['Non', 1]], (params[:organization_contains][:is_active] rescue nil)), include_blank: true, class: 'select form-select'
+          .form-group
+            %label.semibold
+              = label_tag 'organization_contains[is_suspended]', t('activerecord.models.organization.attributes.is_suspended')
+              %span.badge.badge-info.ml-md-2{ style: "font-size: 10px" }
+                = Organization.suspended.count            
+            = select_tag 'organization_contains[is_suspended]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_suspended] rescue nil)), include_blank: true, class: 'select form-select'
+          .form-group
+            %label.semibold
+              = label_tag 'organization_contains[is_without_address]', "Sans adresse ?"
+              %span.badge.badge-info.ml-md-2{ style: "font-size: 10px" }
+                = @without_address_count            
+            = select_tag 'organization_contains[is_without_address]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_without_address] rescue nil)), include_blank: true, class: 'select form-select'
+          .form-group
+            %label.semibold
+              = label_tag 'organization_contains[is_debit_mandate_not_configured]', "Prélèvement non configuré ?"
+              %span.badge.badge-info.ml-md-2{ style: "font-size: 10px" }
+                = @debit_mandate_not_configured_count            
+            = select_tag 'organization_contains[is_debit_mandate_not_configured]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_debit_mandate_not_configured] rescue nil)), include_blank: true, class: 'select form-select'
+        .modal-footer
+          = link_to 'Reinitialiser', admin_organizations_path, class: 'btn btn-light', title: t('filters.reset')
+          = submit_tag t('filters.action'), class: 'btn btn-primary'
+
+
+.modal#create-new-organizations
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h5.modal-title.bold Création d'une nouvelle organisation
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}      
+      .modal-body   
+            
+      .modal-footer
+        %button.btn.btn-light.cancel{ type: :button, 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal' } Annuler
+        - idocus_params = param_encode({ url: "#create-organization", method: 'POST', form: { id: 'new_organization', dump_action: true }, modal: { id: 'create-new-organizations' }, after_send: 'show_organization' })
+        %button.btn.btn-primary.as_idocus_ajax{ type: :button, idocus: idocus_params } Valider     
+
+
+= javascript_include_tag 'back/organizations/assets/javascripts/main'

@@ -1,0 +1,32 @@
+table tr td {
+  text-align: center;
+}
+
+table.statistic_table tr:nth-child(even) > td.subscription{
+  background-color: rgba(0,0,0,0.1) !important;
+}
+
+table.statistic_table tr:nth-child(odd) > td.subscription{
+  background-color:  rgba(0,0,0,0.3) !important;
+}
+
+table.statistic_table tr:nth-child(even) > td.options{
+  background-color: rgba(77, 6, 149, 0.1) !important;
+}
+
+table.statistic_table tr:nth-child(odd) > td.options{
+  background-color: rgba(77, 6, 149, 0.3) !important;
+}
+
+table.statistic_table td.subscription, table.statistic_table td.options{
+  font-weight: bold;
+}
+
+table.statistic_table tr.total{
+  border: 1px solid #000;
+  border-top-width: 5px;
+}
+
+input.search_organization{
+  padding: 0.20rem 2.25rem 0.20rem 0.75rem;
+}

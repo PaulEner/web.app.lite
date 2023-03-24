@@ -1,0 +1,48 @@
+#conterpart-accounts-body
+  .box
+    .row
+      .col-sm-4.text-start
+        %span.bold Nouvelle catégorie
+      .col-sm-8.text-end
+        - ajax_emit = param_encode({ name: 'ca.edit-conterpart-account' , events: 'click'})
+        %button.btn.btn-primary.me-3.as_idocus_emit{ idocus: ajax_emit } Ajouter
+        - ajax_emit = param_encode({ name: 'ca.show-customers-selection' , events: 'click'})
+        %button.btn.btn-light.me-3.as_idocus_emit{ idocus: ajax_emit } Ajouter à partir d'un dossier
+        %button.btn.btn-secondary.hide Ajouter à partir d'une activité
+
+  .mb-4
+    .additionnal-fields.hide
+    %form.select-from-customer.hide{ id: 'from_customer_form', action: validate_from_customer_organization_customer_conterpart_account_path(@organization, @customer), method: 'POST' }
+      - ajax_emit = param_encode({ name: 'ca.add-from-customer' , events: 'change'})
+      .box
+        = select_tag 'from_customer[customer]', options_for_select((customers - [@customer]).map{|cu| [cu.info, cu.id]}), include_blank: true,  class: 'as_idocus_emit chosen-list w-100', idocus: ajax_emit
+        .mb-4
+        = label_tag 'conterpart_account[accounting_plan_items][]', 'Catégories'
+        .select-conterpart-customer-container.select-container.no-padding.w-100
+          = select_tag 'from_customer[conterpart_accounts][]', options_for_select([]), include_blank: true,  class: 'select-conterpart-customer multiple', multiple: true
+        .select-from-customer-button.text-center.w-100.hide
+          - idocus_params = param_encode({ url: "#from_customer", method: 'POST', form: { id: 'from_customer_form', dump_action: true }, after_send: 'ca.refresh_accounts_list' })
+          %button.btn.btn-primary.as_idocus_ajax{ type: 'button', idocus: idocus_params }= glyphicon('plus', { size: '10', color: '#ffff'}) + ' Ajouter'
+  %hr
+  .box
+    %form{ id: 'conterpart_account_link_form', action: link_organization_customer_conterpart_account_path(@organization, @customer), method: 'POST' }
+      .row
+        .col-sm-5
+          %label.semibold Catégories
+          .account-item-selector-container.select-container.no-padding.w-100
+            - ajax_emit = param_encode({ name: 'ca.select-conterpart' , events: 'dblclick'})
+            %select.account-item-selector.multiple.as_idocus_emit{ name: "conterpart_account[conterpart_accounts][]", multiple: true, idocus: ajax_emit }
+          %i.hint Double cliquez pour éditer / voir détails
+        .col-sm-2
+          .mt-4
+          - idocus_params = param_encode({ url: "#conterpart_accounts", events: 'click', method: 'POST', confirm: 'Etes vous sûr de vouloir associer les catégories séléctionnées de droite aux comptes séléctionnés de gauche ?', form: { id: 'conterpart_account_link_form', dump_action: true } })
+          %button.btn.btn-dark.as_idocus_ajax.w-100{ type: 'button', idocus: idocus_params }= glyphicon('chevron-left', { size: '10', color: '#FFFF'}) + "  Associer " + glyphicon('chevron-right', { size: '10', color: '#FFFF'})
+          %hr
+          - idocus_params = param_encode({ name: 'ca.delete-conterpart-account', events: 'click' })
+          %button.btn.btn-danger.as_idocus_emit{ type: 'button', idocus: idocus_params }= glyphicon('chevron-left', {size: '10', color: '#FF4848'}) + "  Supprimer les catégories séléctionnés "
+        .col-sm-5
+          %label.semibold Comptes de tiers
+          - ajax_emit = param_encode({ name: 'ca.select-third-part' , events: 'dblclick'})
+          .select-container.no-padding.w-100
+            = select_tag 'conterpart_account[accounting_plan_items][]', options_for_select(@accounting_plan_items), include_blank: false,  class: 'as_idocus_emit multiple', id: 'account-third-part-selector', multiple: true, idocus: ajax_emit
+          %i.hint Double cliquez pour éditer / voir détails

@@ -1,0 +1,16 @@
+.mb-3
+
+.row
+  .col-md-12     
+    %table.table.table-condensed.table-striped
+      %thead
+        %tr.text-center
+          %th Date
+          %th Libellé
+          %th Montant
+      %tbody
+        - @transactions.bank_accounts.each do |transaction|
+          %tr.text-center
+            %td= transaction.date
+            %td= transaction.raw_description
+            %td= transaction.amount

@@ -1,0 +1,116 @@
+.row.view-documents
+  .col-md-4
+    = button_tag 'Voir mes documents', type: 'button', class: 'btn btn-primary view-documents-btn'
+.row.my-favorite-customers
+  .col-md-9
+    %strong
+      Mes dossiers favoris
+      %span.my-favorite-customers-count
+  .col-md-3
+    %button.btn.btn-default.add-to-favorite{'data-target' => '#add-to-favorite', 'data-toggle' => 'modal', 'data-original-value' => '455', :type => 'button'}
+      + Ajouter un dossier aux favoris
+    #add-to-favorite.modal-window.modal.fade{'aria-hidden' => 'true', 'aria-labelledby' => 'myFavoriteModalLabel', :role => 'dialog', :tabindex => '-1'}
+      .modal-dialog{:role => 'document'}
+        .modal-content
+          .modal-header
+            %h5#myFavoriteModalLabel.modal-title Ajouter un dossier aux favoris
+            %button.close{'aria-label' => 'Close', 'data-dismiss' => 'modal', :type => 'button'}
+              %span{'aria-hidden' => 'true'} ×
+          .modal-body
+            = form_tag('front/add_customer_to_favorite/', method: :post, id: 'send_customer_to_favorite', multipart: true) do |f|
+              .form-group
+                .label-section
+                  = label_tag 'my_favorite_customers_list', 'Rechercher un dossier', class: 'select control-label'
+                .control-section
+                  = select_tag 'my_favorite_customers_list', options_for_select(['Test test', 'iDocus test'], 'iDocus test'), class: 'select-customer searchable-option-list', id: 'select-customer-to-favorite', include_blank: false, multiple: true
+          .modal-footer
+            %button.cancel-btn{'data-dismiss' => 'modal', :type => 'button'} Annuler
+            %button.validate-btn{:type => 'button', id: 'add-customer-to-favorite'} Ajouter
+#my-favorite-customers-list
+  .row.my-favorite-customers-list
+    .col-md-6
+      .favorite-list
+        .row
+          .col-md-10.float-start
+            %span TEST
+            %br
+            %i.text-muted
+              TEST
+              %span.text-muted-light Test test fake data
+
+            .favorite-customer-content.hidden-content.d-none{id: 'c-details-id-1'}
+              .row
+                .col-md-10.customer-configuration-section
+                  %h6.text-h6 État de la configuration
+                  .text-small-content
+                    %p
+                      Le dossier client est configuré de façon optimale
+                      %span.configure-client
+                        = link_to glyphicon('cog', {size: '11', color: '#b5a6a6'}), '#todo', class: 'support-chat-link'
+                .col-md-2
+                  %span.badge.badge-success.status-sucess Bonne
+              .row
+                .col-md-10.customer-activities-section
+                  %h6.text-h6 Activité du dossier
+                  .row
+                    .col-md-12
+                      .row
+                        .col-md-3
+                          %span.text-left.text-small-content
+                            %span Dernier lot ajouté :
+                        .col-md-3
+                          %span.text-right.text-small2-content
+                            %span NDF 202011
+                            = link_to glyphicon('chevron-right', {size: '11', color: '#b5a6a6'}), '#todo', class: 'support-chat-link'
+
+                      .row
+                        .col-md-3
+                          %span.text-left.text-small-content
+                            %span Dernière activité :
+                        .col-md-3.last-activities
+                          %span.text-right.text-small2-content
+                            %span 06/11/20
+                            = link_to glyphicon('chevron-right', {size: '11', color: '#b5a6a6'}), '#todo', class: 'support-chat-link'
+                .col-md-2
+                  %span.badge.badge-success.status-sucess Bonne
+              .row
+                .col-md-10.add-documents-section
+                  %h6.text-h6 Ajout de documents
+                  .row
+                    .col-md-6.text-small-content
+                      .row
+                        .col-md-8
+                          %span Erreurs détectées :
+                        .col-md-4.align-add-document-info
+                          %span 8
+                          = link_to glyphicon('chevron-right', {size: '11', color: '#b5a6a6'}), '#todo', class: 'support-chat-link'
+                      .row
+                        .col-md-8
+                          %span Pannes d’automates :
+                        .col-md-4.align-add-document-info
+                          %span 1
+                          = link_to glyphicon('chevron-right', {size: '11', color: '#b5a6a6'}), '#todo', class: 'support-chat-link'
+                      .row
+                        .col-md-8
+                          %span Doublons en pré-affectation :
+                        .col-md-4.align-add-document-info
+                          %span 0
+                          = link_to glyphicon('chevron-right', {size: '11', color: '#b5a6a6'}), '#todo', class: 'support-chat-link'
+                .col-md-2
+                  %span.badge.badge-success.status-critical Critiqué
+
+          .col-md-2.float-end.text-right
+            %span.badge.badge-success.status-sucess.favorite-status bon
+            = link_to glyphicon('chevron-right', {size: '17', color: '#b5a6a6'}), '#', class: 'favorite-customer-details-link', id: 'f-customer-details-id-1'
+    .col-md-6
+      .favorite-list
+        .row
+          .col-md-10.float-start
+            %span iDocus
+            %br
+            %i.text-muted
+              iDocus
+              %span.text-muted-light iDocus test
+          .col-md-2.float-end.text-right
+            %span.badge.badge-success.status-critical.favorite-status critiqué           
+            = link_to glyphicon('chevron-right', {size: '17', color: '#b5a6a6'}), '#todo', class: 'favorite-customer-details-link', id: 'f-customer-details-id-2'

@@ -1,0 +1,240 @@
+= simple_nested_form_for @journal, url: journal_form_url(@organization, @customer, @journal), html: { class: 'form-horizontal', id: 'edit-journal-form' } do |f|
+  
+  - authorize_preassignment = !@customer || is_preassignment_authorized? || (@customer && @customer.my_package.try(:bank_active))
+
+  .carousel.slide#carousel-journal-form{ class: 'carousel slide', "data-bs-touch" => "false", "data-bs-interval" => "false" }
+    .carousel-inner
+      .carousel-item.active
+        .journal-first-step-form
+          - if @organization.specific_mission
+            = f.label :name, label: 'Attribuez un nom de code dossier iDocus', hint: 'Ce code sera repris dans la charte de nommage de tous vos fichiers transmis.', :class => "semibold"
+            .select-container.p-1.w-100
+              = f.input :name, label: false, :placeholder => 'ex: AC', input_html: { class: 'required_field'}
+            = f.label :description, label: 'Nom du dossier iDocus', hint: 'Inscrivez ici un nom familier pour votre dossier.', :class => "semibold"
+            .select-container.p-1.w-100
+              = f.input :description, label: false, :placeholder => 'ex: Achats', hint: 'Libellé qui sera visible pour les clients', input_html: { class: 'required_field'}
+          - else
+            = f.label :name, :class => "semibold"
+            .select-container.p-1.w-100
+              = f.input :name, label: false, hint: journal_name_hint, input_html: { class: 'required_field', disabled: is_journal_name_disabled }
+            = f.label :description, :class => "semibold"
+            .select-container.p-1.w-100
+              = f.input :description, label: false, hint: 'Libellé visible pour les dossiers clients',  input_html: { class: 'required_field'}
+
+          - unless @organization.specific_mission
+            - if @customer && @customer.uses?(:ibiza)
+              - if @organization.ibiza.configured?
+                = f.label :pseudonym, :class => "semibold"
+                .select-container.p-1.w-100
+                  = f.input :pseudonym, label: false, hint: 'Si différent de "Code journal iDocus"'
+                .form-group.clearfix{ style: 'margin-bottom: 18px; padding: 0 25px' }
+                  .label-section
+                    %label
+                  .control-section
+                    .block_selection_journals.w-100.p-1
+                      .help-block.mt-1.semibold Journaux Ibiza :
+                      - ajax_emit = param_encode({ name: 'journal.select_external_journal' , events: 'change'})
+                      = select_tag 'select_external_journal', options_for_select(journals_for_select(@journal.try(:pseudonym)), @journal.try(:pseudonym)), size: 8, style: "height: auto", class: 'form-control select form-select form-select-sm optional as_idocus_emit', idocus: ajax_emit
+                .form-group.row
+                  .col-md-11
+                    = f.label :use_pseudonym_for_import, :class => "semibold"
+                  .col-md-1
+                    .form-check.form-switch
+                      = f.input :use_pseudonym_for_import, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field pseudonyme_for_import', id: 'account_book_type_pseudonyme_for_import' }
+                      %label.semibold{class: 'form-check-label label_check_field', for: 'account_book_type_pseudonyme_for_import'} Non
+                  %i.help-block.mt-2 Utiliser le code journal comptable comme répértoire d'import (Ibiza box), Si non, utiliser le code journal iDocus
+              - else
+                .form-group.clearfix
+                  .label-section
+                    %label.control-label.semibold= t('simple_form.labels.account_book_type.pseudonym')
+                  .control-section
+                    %select.select.disabled{ disabled: 'disabled', class: 'form-control select form-select form-select-sm optional' }
+                    %p
+                      = render 'shared/ibiza_not_configured_warning'
+            - elsif @customer && (@customer.uses?(:exact_online) || @customer&.my_unisoft.try(:used?) || @customer&.sage_gec.try(:used?)  || @customer&.acd.try(:used?))
+              - if @customer.exact_online.try(:fully_configured?)
+                - text_journal = "Journaux Exact Online :"
+              - elsif @customer&.my_unisoft.try(:used?)
+                - text_journal = "Journaux My Unisoft :"
+              - elsif @customer&.sage_gec.try(:used?)
+                - text_journal = "Journaux Sage GEC :"
+              - elsif @customer&.acd.try(:used?)
+                - text_journal = "Journaux ACD :"
+
+              .block_input.clearfix
+                .row
+                  .col-md-10
+                    = f.label :pseudonym, :class => "semibold"
+                    .select-container.p-1.w-100
+                      = f.input :pseudonym, label: false, wrapper_html: { class: "external_account_book_type" }
+                  .col-md-2
+                    %a{href: '#',  style: "padding: 0 5px 10px 5px", id: "toogle_external_journal_list"}
+                      = glyphicon('chevron-bottom', size: '13')
+              .form-group.clearfix{ style: 'margin-bottom: 18px' }
+                .label-section
+                  %label
+                .control-section
+                  .block_selection_journals
+                    .help-block{style: 'margin-top: 2px; margin-left: 0px'}
+                      = text_journal
+                    - ajax_emit = param_encode({ name: 'journal.select_external_journal' , events: 'change'})
+                    = select_tag 'select_external_journal', options_for_select(journals_for_select(@journal.try(:pseudonym)), @journal.try(:pseudonym)), size: 8, style: "height: auto", class: 'form-control select form-select form-select-sm optional as_idocus_emit', idocus: ajax_emit
+                  %i.help-block si différent de "Code journal" ci-dessus
+            - else
+              = f.label :pseudonym, :class => "semibold"
+              .select-container.p-1.w-100
+                = f.input :pseudonym, label: false, hint: 'Si différent de "Code journal iDocus"'
+
+          - if authorize_preassignment
+            = f.input :entry_type, collection: account_book_type_entry_type_for_select(@organization, @customer), include_blank: false, label_html: { class: 'semibold' }, input_html: { class: 'form-control select form-select form-select-sm optional'}
+
+      .carousel-item
+        - if @organization.knowings.try(:is_configured?)
+          .knowings-configuration.hide
+            = f.input :domain, collection: journal_domain_for_select, include_blank: false, label_html: { class: 'semibold' }, input_html: { class: 'form-control select form-select form-select-sm optional'}
+        .no_entry_selected.hide Aucun type de pré-saisie comptable.
+        - if authorize_preassignment
+          .pre-assignment-attributes.hide
+            = f.input :currency, collection: journal_currencies, include_blank: false, selected: (@journal.try(:currency) || "EUR"), hint: "Les écritures seront converties vers cette devise avec le taux de change de la date de facture", label_html: { class: 'control-label semibold' }, input_html: { class: 'form-control select form-select form-select-sm optional'}
+            .form-group
+              .row
+                .col-md-6.semibold
+                  = f.label :account_type, label: 'Configuration du journal'
+                  %span.pointer{ "data-bs-toggle": "tooltip", "data-bs-placement": "bottom", "data-bs-html": "true", "title": "<u>Compte d’attente</u> : la pré-saisie comptable sera effectuée avec les informations issues du plan comptable de votre outil comptable. Si il n’y a pas d’informations dans ce plan de compte, iDocus saisira les écritures dans les comptes d’attente paramétrés ici. <b>Compte par défaut</b> : iDocus saisira systématiquement toutes les factures déposées dans le journal comptable sur les comptes paramétrés sans se référer au plan comptable." }= glyphicon('info', { size: '15', color: 'rgba(26, 26, 26, 0.32)'} )          
+                .col-md-6
+                  .form-check.form-check-inline                 
+                    %label.form-check-label Compte d'attente
+                    = radio_button_tag 'account_book_type[account_type]', 'waiting', @journal.try(:account_type) == 'waiting', class: 'form-check-input'
+                  .form-check.form-check-inline               
+                    %label.form-check-label Compte par défaut
+                    = radio_button_tag 'account_book_type[account_type]', 'default', @journal.try(:account_type) == 'default', class: 'form-check-input'
+
+            = f.label :meta_account_number, :class => "semibold"
+            .select-container.no-padding.w-100
+              = f.input :meta_account_number, label: false, input_html: { class: 'can_be_required' }
+            = f.label :meta_charge_account, :class => "semibold"
+            .select-container.no-padding.w-100
+              = f.input :meta_charge_account, label: false, input_html: { class: 'can_be_required' }
+            - if !@customer || @customer.options.is_taxable
+              %fieldset.mb-3{class: 'border p-2', style: 'border:1px solid #999; border-radius:0px; padding: 17px !important'}
+                %h5.semibold.vat_account_field Compte de TVA
+                .form-group.clearfix.string.optional.account_book_type_vat_accounts#vat_account_exonorated.hide
+                  .row
+                    .col-md-6
+                      %label.semibold Compte exonéré de TVA
+                    .col-md-6
+                      .select-container.no-padding.w-100
+                        %input.mb-2.p-2{type: 'text', name: 'account_book_type[vat_account_exonorated]', id: 'account_book_type_vat_account_exonorated', class: 'form-control string optional vat_account_exonorated', placeholder: 'Compte exonoré de TVA ex: 452137', title: 'Compte exonéré de TVA', data: { toggle: 'tooltip', placement: 'top'}}
+                - hint = !@customer ? 'obligatoire mais ne sera utilisé que pour les clients assujettis à la TVA' : ''
+                #account_book_type_with_default_vat_accounts
+                  - default_vat = { '0' => [ "", "" ] }
+                  - JSON.parse(@journal.vat_accounts.presence || default_vat.to_json).each do |key, vat_account|
+                    - if key.to_i == 0
+                      .form-group.clearfix.string.optional.account_book_type_vat_accounts
+                        .row
+                          .col-md-6
+                            .select-container.no-padding.w-100
+                              %input.book-code-software.p-2{ type: 'text', name: 'account_book_type[vat_accounts_label]', value: "Compte de TVA par défaut (TVA #{CustomUtils.list_vat_of(@organization.code)["0"]}%)", disabled: 'disabled', :class => 'form-control string optional vat_accounts_label', id: 'account_book_type_default_label_vat_accounts' }
+                              %i.help-block=  "Compte de TVA par défaut appliqué à tous les documents dans le journal comptable iDocus (TVA #{CustomUtils.list_vat_of(@organization.code)["0"]}%)"
+                          .col-md-6
+                            .select-container.no-padding.w-100
+                              %input.book-code-software.mb-2.p-2{ type: 'text', name: 'account_book_type[vat_accounts_rate]', :class => 'form-control string optional vat_accounts', id: 'account_book_type_default_vat_accounts', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Compte de TVA relative au taux', value: vat_account[0] }
+                              %i.help-block= "Compte de TVA relative au taux : #{hint}"
+                          .col-md-3.hide
+                            .select-container.no-padding.w-100
+                              %input.book-code-software.mb-2.p-2{ type: 'text', name: 'account_book_type[vat_accounts_conterpart]', :class => 'form-control string optional vat_accounts_conterpart', id: 'account_book_type_default_conterpart_accounts', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Compte contre partie relative au taux', value: vat_account[1] }
+                              %i.help-block Compte contre partie relative au taux
+                    - else
+                      .form-group.clearfix.string.optional.account_book_type_vat_accounts.more_vat_accounts
+                        .row
+                          .col-md-3
+                            = select_tag 'account_book_type[vat_accounts_label]', options_for_select(list_vat_accounts_for(@organization.code), key), class: 'form-select vat_accounts_label p-2', data: { toggle: 'tooltip', placement: 'top'}, title: 'Taux de TVA'
+                            %i.help-block.vat_accounts_label_error
+                          .col-md-4
+                            .select-container.no-padding.w-100.tva_rate
+                              %input.book-code-software.mb-2.p-2{ name: 'account_book_type[vat_accounts_rate]', :class => 'form-control string optional vat_accounts', type: 'text', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Compte de TVA relative au taux', value: (key.to_i == -1) ?  "" : vat_account[0] , disabled: (key.to_i == -1)}
+                              %i.help-block Compte de TVA relative au taux
+                          .col-md-4
+                            .select-container.no-padding.w-100
+                              %input.book-code-software.mb-2.p-2{ name: 'account_book_type[vat_accounts_conterpart]', :class => 'form-control string optional vat_accounts_conterpart', type: 'text', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Compte contre partie relative au taux', value: vat_account[1] }
+                              %i.help-block Compte contre partie relative au taux
+                          .col-md-1
+                            %button.btn.btn-light-danger.remove_vat_accounts_field{type: :button}
+                              %span= glyphicon('trash', { size: '14', color: "#FF4848" })
+
+                = hidden_field_tag 'required_new_vat_accounts_element', 'can_be_required', hint_input: hint, hint_label: 'Compte de TVA par défaut appliqué à tous les documents dans le journal comptable iDocus'
+                = f.input :vat_accounts, as: :hidden, input_html: { id: 'account-book-type-vat-accounts-hidden' }
+                = link_to glyphicon('plus', size: '12', color: '#FFF') + ' Ajouter un compte de TVA', '#', class: 'btn btn-primary bold add_vat_account_field float-end no-margin'
+            - # Disabled for now
+            - if false && @user.is_admin
+              .form-group.row
+                .col-md-10
+                  = f.label :is_expense_categories_editable, :class => "semibold"
+                .col-md-2
+                  .form-check.form-switch.idocus-custom-form-check
+                    = f.input :is_expense_categories_editable, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, wrapper_html: { class: 'form-check-input input_switch input_check_field pseudonyme_for_import', id: 'account_book_type_is_expense_categories_editable' }
+                    %label.semibold{class: 'form-check-label label_check_field', for: 'account_book_type_is_expense_categories_editable'} Non
+            - if false && @journal.persisted? && @journal.is_expense_categories_editable && authorize_preassignment
+              .control-group
+                %label.control-label.semibold= t('simple_form.labels.account_book_type.expense_categories')
+                .controls
+                  = f.fields_for :expense_categories do |category|
+                    .well
+                      = category.link_to_remove icon_destroy, class: 'btn btn-mini'
+                      = category.label :name, label: t('simple_form.labels.account_book_type.expense_category.name'), :class => "semibold"
+                      .select-container.no-padding.w-100
+                        = category.input :name, label: false
+                      = category.label :description, label: t('simple_form.labels.account_book_type.expense_category.description'), :class => "semibold"
+                      .select-container.no-padding.w-100
+                        = category.input :description, label: false, as: :text, input_html: { rows: 3 }
+                  = f.link_to_add 'Ajouter une catégorie', :expense_categories, class: 'btn btn-primary add_expense_categories_fields text-end'
+
+            = f.label :anomaly_account, :class => "semibold"
+            .select-container.no-padding.w-100
+              = f.input :anomaly_account, label: false, input_html: { class: 'can_be_required'}, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
+            .form-group
+              .row
+                .col-md-10
+                  = f.label :jefacture_enabled, :class => "semibold"
+                .col-md-2
+                  .form-check.form-switch.idocus-custom-form-check
+                    = f.input :jefacture_enabled, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'book-type-jefacture-enabled' }
+                    %label.semibold{class: 'form-check-label label_check_field', for: 'book-type-jefacture-enabled'} Non
+
+      .carousel-item
+        .carousel_item_last_slide
+          - if !@customer || (@customer && @customer.is_package?('mail_active'))
+            .ido-instruction
+              = f.label :instructions, :class => "semibold"
+              .select-container.no-padding.w-100
+                = f.input :instructions, as: :text, label: false, input_html: { maxlength: 400 }
+          - else
+            Aucune information << option courrier >>
+
+          - unless @customer
+            .default-options
+              .form-group.row
+                .col-md-10
+                  = f.label :is_default, :class => "semibold"
+                .col-md-2
+                  .form-check.form-switch.idocus-custom-form-check
+                    = f.input :is_default, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'book-type-default-options' }
+                    %label.semibold{class: 'form-check-label label_check_field', for: 'book-type-default-options'} Non
+
+.account_book_type_vat_accounts_field.hide
+  .form-group.clearfix.string.optional.account_book_type_vat_accounts.more_vat_accounts
+    .row
+      .col-md-3
+        = select_tag 'account_book_type[vat_accounts_label]', options_for_select(list_vat_accounts_for(@organization.code)), class: 'form-select vat_accounts_label p-2', data: { toggle: 'tooltip', placement: 'top'}, title: 'Taux de TVA'
+        %i.help-block.vat_accounts_label_error
+      .col-md-4
+        .select-container.no-padding.w-100.tva_rate
+          %input.book-code-software.mb-2.p-2{ name: 'account_book_type[vat_accounts_rate]', :class => 'form-control string optional vat_accounts', type: 'text', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Compte de TVA relative au taux', disabled: true }
+          %i.help-block Compte de TVA relative au taux
+      .col-md-4
+        .select-container.no-padding.w-100
+          %input.book-code-software.mb-2.p-2{ name: 'account_book_type[vat_accounts_conterpart]', :class => 'form-control string optional vat_accounts_conterpart', type: 'text', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Compte contre partie relative au taux' }
+          %i.help-block Compte contre partie relative au taux
+      .col-md-1
+        %button.btn.btn-light-danger.remove_vat_accounts_field{type: :button}
+          %span= glyphicon('trash', { size: '14', color: "#FF4848" })

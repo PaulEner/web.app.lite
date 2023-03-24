@@ -1,0 +1,120 @@
+.modal.fade.in#filter-ignored-pre-assignment
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Filtre pieces ignorées
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        %form#filter-ignored-pre-assignment-form
+          .form-group
+            %label.semibold Date de création
+            .select-container.no-padding.w-100.date
+              = text_field_tag 'filter_contains[created_at]', (params[:filter_contains][:created_at] rescue ''), class: 'daterange'
+
+          .form-group
+            %label.semibold N° pièce
+            .select-container.no-padding.w-100
+              = text_field_tag 'filter_contains[piece_name]', (params[:filter_contains][:piece_name] rescue '')
+
+          .form-group
+            %label.semibold N° facture
+            .select-container.no-padding.w-100
+              = text_field_tag 'filter_contains[piece_number]', (params[:filter_contains][:piece_number] rescue '')
+
+          .form-group
+            %label.semibold Nom du lot
+            .select-container.no-padding.w-100
+              = text_field_tag 'filter_contains[pack_name]', (params[:filter_contains][:pack_name] rescue '')
+
+          .form-group
+            %label.semibold Statut
+            .select-container.no-padding.w-100
+              = select_tag 'filter_contains[pre_assignment_state]', options_for_select([['Pré-affectation ignorée', 'ignored'], ['En cours de renvoi à la pré-affectation', 'force_processing']], (params[:filter_contains][:pre_assignment_state] rescue '')), include_blank: true, class: 'form-select'
+
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ type: :button } Annuler
+        %button.btn.btn-primary.semibold.validate{ type: :button } Filtrer
+
+.modal.fade.in#filter-duplicated-pre-assignment
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Filtre séléction document restant
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        %form#filter-duplicated-pre-assignment-form
+          .form-group
+            %label.semibold Date de création
+            .select-container.no-padding.w-100.date
+              = text_field_tag 'duplicate_contains[created_at]', (params[:duplicate_contains][:created_at] rescue ''), class: 'daterange'
+
+          .form-group
+            %label.semibold Nom de la société
+            .select-container.no-padding.w-100
+              = text_field_tag 'duplicate_contains[company]', (params[:duplicate_contains][:company] rescue '')
+
+          .form-group
+            %label.semibold N° pièce
+            .select-container.no-padding.w-100
+              = text_field_tag 'duplicate_contains[piece_name]', (params[:duplicate_contains][:piece_name] rescue '')
+
+          .form-group
+            %label.semibold N° facture
+            .select-container.no-padding.w-100
+              = text_field_tag 'duplicate_contains[piece_number]', (params[:duplicate_contains][:piece_number] rescue '')
+
+          .form-group
+            %label.semibold Tiers
+            .select-container.no-padding.w-100
+              = text_field_tag 'duplicate_contains[third_party]', (params[:duplicate_contains][:third_party] rescue '')
+
+          .form-group
+            %label.semibold Montant
+            .select-container.no-padding.w-100
+              = text_field_tag 'duplicate_contains[amount]', (params[:duplicate_contains][:amount] rescue '')
+
+          .form-group
+            %label.semibold Date d'opération
+            .select-container.no-padding.w-100.date
+              = text_field_tag 'duplicate_contains[date]', (params[:duplicate_contains][:date] rescue ''), class: 'daterange'
+        
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ type: :button } Annuler
+        %button.btn.btn-primary.semibold.validate{ type: :button } Filtrer
+
+.modal.fade.in#show_ignored_pieces
+  .modal-dialog{ style: 'min-width: 1024px;' }
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Pièces ignorées à la pré-affectation
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        .row
+          .col-md-8.text-start
+            %h5.name
+          .col-md-4.text-end#navigation
+            = check_box_tag 'checker', 0, false, class: 'checkbox_checker form-check-input m-2', style: 'font-size: 150%;'
+            %a.left.btn.btn-light
+              = glyphicon('chevron-left', size: '13')
+            %a.right.btn.btn-light
+              = glyphicon('chevron-right', size: '13')
+        .text-center
+          %iframe.piece.w-100{ src: '', style: 'min-height: 600px;' }
+
+.modal.fade.in#show_duplicated_pieces
+  .modal-dialog{ style: 'min-width: 1180px;' }
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Différence : doublons de pré-affectation
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        .row
+          .col-md-6.text-center
+            %h5 Doublon
+          .col-md-6.text-center
+            %h5 Original
+        .row
+          .col-md-6.text-center
+            %iframe.duplicate.w-100{ src: '', style: 'min-height: 600px;' }
+          .col-md-6.text-center
+            %iframe.original.w-100{ src: '', style: 'min-height: 600px;' }

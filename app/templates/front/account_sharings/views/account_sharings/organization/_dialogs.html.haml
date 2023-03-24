@@ -1,0 +1,78 @@
+.modal.fade.in#account-sharing
+  .modal-dialog
+    .modal-content{style: 'min-height: 350px'}
+      .modal-header
+        %h5.modal-title.bold Partager un dossier
+        %button.btn-close{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' }
+      .modal-body
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' } Annuler
+        %button.btn.btn-primary.semibold.validate{ type: 'button' } Valider
+
+.modal.fade.in#filter_shared_accounts
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Filtres : dossiers
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        = form_tag "/account_sharings/organization/#{@organization.id}/accounts", method: :get, class: 'form-filter', id: 'filter_shared_accounts_form' do
+          = hidden_field_tag :direction, sort_direction
+          = hidden_field_tag :sort, sort_column
+          = hidden_field_tag :per_page, per_page
+          .form-group
+            .label-section
+              = label_tag 'account_sharing_contains[account]', 'Dossier', class: 'semibold'
+            .control-section
+              .select-container.no-padding.w-100
+                = text_field_tag 'account_sharing_contains[account]', (params[:account_sharing_contains][:account] rescue '')
+          .form-group
+            .label-section
+              = label_tag 'account_sharing_contains[collaborator]', 'Client ou contact', class: 'semibold'
+            .control-section
+              .select-container.no-padding.w-100
+                = text_field_tag 'account_sharing_contains[collaborator]', (params[:account_sharing_contains][:collaborator] rescue '')
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' } Annuler
+        - idocus_params = param_encode({ url: '#url', form:{ id: 'filter_shared_accounts_form', dump_action: true }, modal: { id: 'filter_shared_accounts' }, html: { target: '#tbl_accounts'} })
+        %button.btn.btn-primary.semibold.filter.as_idocus_ajax{ type: :button, idocus: idocus_params }= t('filters.action')
+
+.modal.fade.in#filter_contacts
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Filtres : contacts
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        = form_tag "/account_sharings/organization/#{@organization.id}/contacts", method: :get, class: 'form-filter', id: 'filter_contacts_form' do
+          = hidden_field_tag :direction, sort_direction
+          = hidden_field_tag :sort, sort_column
+          = hidden_field_tag :per_page, per_page
+          .form-group
+            .label-section
+              = label_tag 'guest_collaborator_contains[email]', 'Email', class: 'semibold'
+            .control-section
+              .select-container.no-padding.w-100
+                = text_field_tag 'guest_collaborator_contains[email]', (params[:guest_collaborator_contains][:email] rescue '')
+          .form-group
+            .label-section
+              = label_tag 'guest_collaborator_contains[company]', 'Société', class: 'semibold'
+            .control-section
+              .select-container.no-padding.w-100
+                = text_field_tag 'guest_collaborator_contains[company]', (params[:guest_collaborator_contains][:company] rescue '')
+          .form-group
+            .label-section
+              = label_tag 'guest_collaborator_contains[first_name]', 'Prénom', class: 'semibold'
+            .control-section
+              .select-container.no-padding.w-100
+                = text_field_tag 'guest_collaborator_contains[first_name]', (params[:guest_collaborator_contains][:first_name] rescue '')
+          .form-group
+            .label-section
+              = label_tag 'guest_collaborator_contains[last_name]', 'Nom', class: 'semibold'
+            .control-section
+              .select-container.no-padding.w-100
+                = text_field_tag 'guest_collaborator_contains[last_name]', (params[:guest_collaborator_contains][:last_name] rescue '')
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' } Annuler
+        - idocus_params = param_encode({ url: '#url', form:{ id: 'filter_contacts_form', dump_action: true }, modal: { id: 'filter_contacts' }, html: { target: '#tbl_contacts'} })
+        %button.btn.btn-primary.semibold.filter.as_idocus_ajax{ type: :button, idocus: idocus_params }= t('filters.action')

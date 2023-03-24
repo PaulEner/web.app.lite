@@ -1,0 +1,29 @@
+= simple_form_for @accounting_plan_item, url: organization_customer_accounting_plan_path(@organization, @customer), html: { id: 'accounting_edit_form' }, wrapper: :form_v3 do |f|
+  = f.input :id, :as => :hidden
+  = f.input :type, as: :hidden, :input_html => { :value => params[:type] }
+  = f.input :third_party_account, required: true
+  = f.input :third_party_name
+  = f.input :conterpart_account, label: 'Compte de contrepartie par défaut'
+  = f.input :code
+  .row.my-4
+    .col-md-10.form-group.no-margin
+      = f.label :vat_not_recoverable, class: 'control-label semibold form-check-label'
+    .col-md-2
+      .form-check.form-switch.idocus-custom-form-check
+        = f.input :vat_not_recoverable, as: :boolean, label: false, input_html: { class: 'input_check_field check-vat-recoverable', id: 'check-vat-recoverable' }
+
+  .mb-3.form-group.string.required
+    = label_tag 'accounting_plan_item[conterpart_accounts][]', 'Comptes associés par catégorie'
+    .select-container.no-padding.w-100
+    = select_tag 'accounting_plan_item[conterpart_accounts][]', options_for_select(@conterpart_accounts, @accounting_plan_item.conterpart_accounts.map(&:id)), include_blank: false,  class: 'w-100 searchable-option-list', multiple: true
+
+  - if params[:type] == 'provider'
+    = f.input :vat_autoliquidation_debit_account
+    = f.input :vat_autoliquidation_credit_account
+    .row
+      .col-md-10.form-group.no-margin
+        = f.label :vat_autoliquidation, class: 'control-label semibold form-check-label'
+      .col-md-2
+        .form-check.form-switch.idocus-custom-form-check
+          = f.input :vat_autoliquidation, as: :boolean, label: false, input_html: { class: 'input_check_field check-vat-autoliquidation', id: 'check-vat-autoliquidation' }
+          / #%label.semibold{class: 'form-check-label label_check_field', for: 'check-vat-autoliquidation'} Non

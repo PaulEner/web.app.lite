@@ -1,0 +1,32 @@
+.mb-3
+.row
+  .col-md-12#table_pieces
+    %table.table.table-condensed.table-striped
+      %thead
+        %tr.text-center
+          %th.text-center
+            .form-check
+              = check_box_tag 'master_checkbox', 0, false, class: 'form-check-input pointer float-none check-all', data: { action: 'piece'}
+          %th= sortable :created_at, 'Créé le'
+          %th Nom
+          %th Etat          
+          %th.text-end Action
+      %tbody
+        - @pieces.each do |piece|          
+          %tr.text-center
+            %th.text-center
+              .form-check
+                = check_box_tag 'pieces[ids][]', piece.id, false, id: "rule_#{piece.id}", class: 'form-check-input pointer float-none check check-piece checkbox', data: { action: 'piece' }
+            %td= l(piece.created_at, format: '%d %b %Y %H:%M')
+            %td= piece.name
+            %td= piece.pre_assignment_state
+            %td.text-end.pointer
+              .action.sub_edit_delete.list-collaborators
+                %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+              .sub_menu.text-start.hide
+                %ul.no-margin.no-padding.regular
+                  %li.resend_to_preassignment{ data: { piece_id: piece.id, title: "Re-envoyer" } }
+                    = link_to '#' do
+                      %span.me-2= glyphicon('media-record', size: 12)
+                      %span Re-envoyer en pré-aff
+    = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: get_pieces_admin_supports_path, target: '#table_pieces', total_pages: @pieces.total_pages, filter: 'piece-filter' }

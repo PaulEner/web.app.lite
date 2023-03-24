@@ -1,0 +1,46 @@
+.container-fluid.main-content
+  .row
+    .col-md-10.derivationLeft
+      %h3.bold
+        %span.me-2 Mes Documents
+        %span.badge.badge-secondary.regular.datas_size= @temp_documents.total_count
+        %span.filter-info.badge.bg-info.regular.datas_size.blink.hide Filtre actif
+    - if @user.still_active?
+      .col-md-2.derivationRight
+        %button.btn.btn-primary.add-document.w-100.semibold
+          %span.me-3= glyphicon('plus', { size: '12', color: '#FFFF'})
+          %span Ajouter des documents
+  .mb-4
+
+  .row
+    .col-md-2
+      .w-100.text-center
+        = link_to documents_path, target: "_blank", class: 'no-style btn btn-light' do
+          %span.me-2= glyphicon('grid-two-up', {size: 13, color: '#72AA42'})
+          %span.semibold Interface classique
+    .col-md-3
+      .row
+        .col-md-3.pt-2
+          .semibold Dossier
+        .col-md-9
+          = select_tag 'customers', options_for_select(@users.reverse.map{ |e| [e.short_info, e.id] }, params[:uid].present? ? params[:uid] : @user.id), id: 'customers', class: 'form-select', include_blank: false
+
+    .col-md-3
+    .col-md-3
+      .search-content
+        .row.no-margin
+          .col-md-1.no-padding.text-center.glass
+            = glyphicon('magnifying-glass', { size: '16', color: 'background: rgba(26, 26, 26, 0.7)' })
+          .col-md-11.no-padding.no-margin
+            %input#search_input{ name:'pack_name', placeholder: 'Recherche (contenu, dossier)', value: @options.try(:[], :text) }
+    .col-md-1
+      %button.btn.btn-light.more-filter.w-100.semibold
+        %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+        %span Filtrer
+
+  .customer-document-content
+    = render partial: 'body_customer' 
+
+= render partial: 'upload_dialog_customer' if @render_upload
+
+= javascript_include_tag 'front/documents_reloaded/assets/javascripts/customer'

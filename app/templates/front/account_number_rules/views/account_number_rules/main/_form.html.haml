@@ -1,0 +1,39 @@
+= simple_form_for [@organization, @account_number_rule], html: { class: 'form-horizontal account-number-rule-form', id: 'account-number-rule-form' } do |f|
+  = f.label :name, :class => "semibold"
+  .select-container.no-padding.w-100
+    = f.input :name, label: false, input_html: { class: 'rule-name required_field', placeholder: "ex: Amazon" }
+  .form-group
+    .row
+      .col-md-6
+        = f.input :rule_target, collection: rule_target_options_for_select, include_blank: false, label_html: { class: 'semibold' }, input_html: { class: 'form-control select form-select form-select-sm optional required_field'}, hint: "Spécifiez si la règle est à appliquer aux opérations de type: Recette, Dépense, ou les deux"
+      .col-md-6
+        = f.label :categorization, :class => "semibold"
+        .select-container.no-padding.w-100
+          = f.input :categorization, label: false, input_html: { class: 'rule-category', placeholder: "ex: Banque, impôt, chèques..." }, required: false, hint: "Donnez un nom de catégorie à votre règle afin de pouvoir filtrer plus simplement. Ex: banque, impôts, chèques…"
+  .form-group
+    .row
+      .col-md-6
+        = f.input :affect, collection: affect_options_for_select, include_blank: false, label_html: { class: 'semibold' }, input_html: { class: 'form-control select form-select form-select-sm optional required_field', id: 'affect-to'}, hint: "Ne pourra plus être changé par la suite"
+      .col-md-6
+        = f.input :rule_type, collection: rule_type_options_for_select, include_blank: false, label_html: { class: 'semibold' }, input_html: { class: 'form-control select form-select form-select-sm optional required_field', id: 'rule-type'}, hint: 'Effectue une recherche ou une correction du plan de compte avec le champ "Contenu" ci-dessous.'
+  = render partial: 'affect_to_form'
+
+  = f.label :content, :class => "semibold"
+  .select-container.no-padding.w-100
+    = f.input :content, as: :text, label: false, input_html: { class: 'account-number-rules-content required_field', placeholder: 'ex: "station" 2015' }
+    %span.pointer.customize_tooltip.no-padding.w-100
+      .account_number_rules_popover_content.alert.alert-warning.hide
+        = set_popover_content
+      = glyphicon('info', { size: '12', color: 'rgba(26, 26, 26, 0.7)'})
+      %i.help-block Utiliser un asterisque (*) pour représenter du texte ou caractère avant/après le contenu recherché
+      
+  .form-group
+    .row
+      .col-md-6
+        = f.label :priority, :class => "semibold"
+        .select-container.no-padding.w-100
+          = f.input :priority, as: :integer, label: false, input_html: { class: 'account-number-rules-priority required_field', placeholder: "ex: 0" }, hint: "Quand deux règles sont similaires, indiquer laquelle est prioritaire sur l'autre. 0 étant prioritaire sur 1, 1 étant prioritaire sur 2..."
+      .col-md-6.third_party_account-section
+        = f.label :third_party_account, :class => "semibold"
+        .select-container.no-padding.w-100
+          = f.input :third_party_account, label: false, input_html: { class: 'account-number-rules-third-party-account', placeholder: "ex: 627000" }, required: true, hint: "Le numéro qui sera assigné si la recherche est un succès."

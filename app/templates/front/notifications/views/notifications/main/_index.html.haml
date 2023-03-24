@@ -1,0 +1,5 @@
+#notifications-lists.container-fluid
+  .row
+    .col-md-12
+      = render partial: 'notifications'
+    = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { name: 'notifications', total_pages: @notifications.total_pages, no_per_page: true }

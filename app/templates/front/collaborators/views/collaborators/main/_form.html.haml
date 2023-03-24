@@ -1,0 +1,31 @@
+= simple_form_for @member, url: collaborator_form_url(@organization, @member), html: { id: 'collaborator_edition_form', class: 'form-horizontal create_update_form' } do |f|
+  - company_value = @member.persisted? ? @member.user.try(:company) : @user.try(:company)
+  = f.simple_fields_for :user do |uf|
+    .form-group
+      .row
+        .col-md-6
+          = uf.label :first_name, :class => "semibold"
+          .select-container.no-padding.w-100
+            = uf.input :first_name, label: false
+        .col-md-6
+          = uf.label :last_name, :class => "semibold"
+          .select-container.no-padding.w-100
+            = uf.input :last_name, label: false
+
+    .form-group
+      .row
+        .col-md-6
+          = uf.label :email, :class => "semibold"
+          .select-container.no-padding.w-100
+            = uf.input :email, label: false, hint: "Correspond à l'identifiant de connexion de votre collaborateur", disabled: @member.user.admin?
+        .col-md-6
+          = uf.label :company, :class => "semibold"
+          .select-container.no-padding.w-100
+            = uf.input :company, label: false, input_html: { value: company_value }
+
+  = f.label :code, :class => "semibold"
+  .select-container.no-padding.w-100
+    = f.input :code, label: false, hint: "Doit impérativement commencer par : #{@organization.code}%", required: true
+  - if @user.leader?
+    = f.input :role, collection: organization_role_options, label_html: { class: 'select semibold ' }, input_html: { class: 'form-select' }, required: true, prompt: ''
+  = f.input :group_ids, collection: @organization.groups, label_html: { class: 'semibold ' }, label: t('activerecord.models.group.name').pluralize, input_html: { class: 'select-organization-group-list', id: 'select-organization-group-list', 'multiple' => 'multiple' }

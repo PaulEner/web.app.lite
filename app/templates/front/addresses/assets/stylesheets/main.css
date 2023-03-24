@@ -1,0 +1,7 @@
+.row_container{
+  min-height: 50px;
+}
+
+.row_container .box_child{
+  min-height: 100%;
+}

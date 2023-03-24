@@ -1,0 +1,25 @@
+- with_validate_button = with_validate_button rescue false
+#comptaAnalysisEdition.modal.fade.in
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3 Édition Compta Analytique
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.back-grey
+        .journal_hint.hide
+          %span.badge.bg-warning.fs-origin Attention : 
+          %span.warning-span Configurer une analyse comptable par défaut sur un journal permet d'attribuer automatiquement l'analyse sur les futures pièces du journal
+        %p.length_alert
+        - if @user.organization.ibiza.try(:configured?)
+          %form#compta_analytic_form_modal
+            .hidden_fields
+              = render file: Rails.root.join('app/templates/front/compta_analytics/views/compta_analytics/main/_hidden_fields.html.haml')
+            = render file: Rails.root.join('app/templates/front/compta_analytics/views/compta_analytics/main/_basic_form.html.haml')
+      .modal-footer
+        .analytic_validation_loading.float-left.hide
+          .feedback.active
+            Traitement en cours ...
+        %a#validate_analysis.btn.btn-primary{ :href => "#", class: (with_validate_button)? '' : 'hide' }
+          Valider
+
+= javascript_include_tag 'front/compta_analytics/assets/javascripts/main'

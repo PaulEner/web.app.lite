@@ -1,0 +1,4 @@
+= simple_form_for AccountBookType.new, url: '#', method: 'POST', html: { class: 'form-horizontal', id: 'edit-rubric-form', base_uri: customer_rubric_addition_path('cst_id') } do |f|
+  = f.label 'Nom de la rubrique', :class => "semibold"
+  .select-container.p-1.w-100
+    = f.input :description, label: false, input_html: { class: 'required_field', require: true }

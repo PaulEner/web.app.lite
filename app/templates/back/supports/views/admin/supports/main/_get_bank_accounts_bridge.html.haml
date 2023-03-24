@@ -1,0 +1,22 @@
+.mb-3
+
+.row
+  .col-md-12     
+    %table.table.table-condensed.table-striped
+      %thead
+        %tr.text-center
+          %th API ID
+          %th API NAME
+          %th EBICS
+          %th Nom
+          %th Number
+          %th Journal
+      %tbody
+        - @retriever.bank_accounts.each do |bank_account|
+          %tr.text-center
+            %td= bank_account.api_id
+            %td= bank_account.api_name
+            %td= (bank_account.ebics_enabled_starting.nil?) ? "Non" : "Oui"
+            %td= bank_account.name
+            %td= bank_account.number
+            %td= bank_account.journal

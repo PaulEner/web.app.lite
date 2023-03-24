@@ -1,0 +1,26 @@
+- total_price = 0
+.organization_quota.billing
+  %span= format_price_00(billings.sum(&:price).to_f) + " €"
+  .details.box.hide
+    %table.table.table-condensed
+      %thead
+        %tr
+          %th.text-start.semibold Libellé
+          %th.center Valeur
+          %th.center Prix HT
+      %tbody
+        - billings.each do |billing|
+          %tr
+            %td.text-start.semibold= billing.title
+            %td.center
+              - if ['ido_classic_excess', 'ido_micro_plus_excess'].include?(billing.name)
+                = billing.try(:associated_hash).try(:[], :excess).to_i
+            %td.center
+              - total_price += billing.price.to_f
+              = format_price_00(billing.price.to_f) + ' €'
+        %tr
+          %td.text-start.semibold Total
+          %td.center
+            -
+          %td.center
+            = format_price_00(total_price) + ' €'

@@ -1,0 +1,56 @@
+!!!
+%html
+  %head
+    %title
+      - if content_for?(:title)
+        = yield(:title)
+      - else
+        My Orial | Archivage numérique
+    %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-type" }
+    %meta{ :charset => "UTF-8" }
+    %meta{ name: "viewport", content: "width=device-width, initial-scale=1" }
+    = yield(:head)
+
+    -#
+      %link{ :rel => 'shortcut icon', :type => "image/ico", :href => image_path('favicon_orial.ico') }
+    = csrf_meta_tag
+    = stylesheet_link_tag 'front/main_orial'
+    = javascript_include_tag 'front/main', charset: 'utf-8'
+    = javascript_include_tag Ckeditor.cdn_url, charset: 'utf-8'
+
+  = render partial: 'layouts/front/header_orial'  
+  .body_content
+    - if @is_organization_layout   
+      = render partial: 'layouts/front/organization_lefter'
+    - else
+      != content_for?(:content) ? yield(:content) : yield
+
+  = render partial: 'layouts/front/main_modal'
+  = render partial: 'shared/zendesk_help'
+  = render partial: 'layouts/notice_flush_messages'
+  = render partial: 'shared/as_user'
+
+  - if ['retrievers/main', 'retrieved_datas/main', 'retriever_parameters/main'].include?(controller_path)
+    %span.budgea_hint_notification
+      Idocus est enregistrée sous le numéro 804067726 par l’Autorité de Contrôle Prudentiel et de Résolution comme Agent de Budget Insight, établissement de paiement agréé.
+  = render partial: 'layouts/front/footer'
+
+  #news_box
+
+  .loading_box.hide
+    .box.text-center
+      %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}
+      %label.mt-2.semibold Chargement
+
+  .scroll-on-top.pointer.hide
+    .scroll-arrow= glyphicon('chevron-top', { size: '16', color: 'white' })
+
+  // For more result system (used by "Mes documents" AND "Opération bancaires" AND "Automates")
+  %button.btn.btn-primary.more-result.hide.w-25
+    / %span.me-2= glyphicon('arrow-bottom', {size: '12', color: '#72AA42'})
+    %span Plus de résultats
+    %span.ms-2= glyphicon('arrow-bottom', {size: '12', color: '#FFF'})
+
+  = javascript_include_tag 'front/news/assets/javascripts/main', charset: 'utf-8'
+  = render partial: 'shared/google_analytics'
+  = javascript_declare_var 'rails_env', Rails.env

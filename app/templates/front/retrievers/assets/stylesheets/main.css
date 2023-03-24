@@ -1,0 +1,121 @@
+.retriever-index li{
+  text-align: center;
+  font-size: 13px;  
+  margin: 0 17px 7px 0px;
+  display: inline;
+  font-family: Raleway-semiBold;
+}
+
+.modal#list-retrievers .modal-dialog{
+  min-width: 992px;
+}
+
+.connectors-list li{
+  text-align: center;
+  font-size: 12px;
+  float: left;
+  width: 150px;
+  height: 25px;
+  overflow: hidden;
+  margin: 0 17px 7px 0px;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  background-color: #fff;
+}
+
+.connectors-list li a{
+  text-decoration: none;
+}
+
+.connectors-list{
+  max-height: 385px;
+  overflow: auto;
+}
+
+.modal#showCguBI .modal-dialog{
+  min-width: 1024px;
+}
+
+.modal#showCguBI .modal-body{
+  max-height: 700px;
+  overflow: auto;
+  font-size: 13px;
+}
+
+.modal#form-bank-account .modal-body{
+  max-height: 700px;
+  overflow: auto;  
+}
+
+form.form-group .control-section input, form.form-group .control-section textarea, .simple_form .form-group .control-section input, .simple_form .form-group .control-section textarea{
+  border: none;
+  width: 100%;
+  padding: 1%;
+  background: rgba(26, 26, 26, 0.04);
+}
+
+.retriever-content{
+  min-height: 134px;
+}
+
+.retriever-content .retriever-box{
+  min-height: 89%;
+}
+
+.form-check {
+  display: block;
+  min-height: 0;
+  padding-left: 1.5em;
+  margin-bottom: 0;
+}
+
+@media (max-width: 1280px) {
+  label{
+    font-size: 12px;
+  }
+
+  h6, .operation-count{
+    font-size: 0.8rem;
+  }
+
+  .btn svg, .search-content svg{ 
+    width: 11px !important;
+    height: 11px !important;
+  }
+
+  .search-content{
+    margin-right: 8px;
+  }
+
+  .search-content input{
+    padding: 6px;
+  }
+
+  .badge{
+    font-size: 0.60em;
+    font-weight: 600;
+  }
+
+  .icon-actions svg{
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  .form-select{
+    padding: 0.3rem 2rem 0.3rem 0.4rem;
+    
+  }
+
+  label.red-label{  
+    font-size: 11px;
+  }
+
+  .select-container input, .text-table-green, .search-content input{
+    font-size: 13px;
+  }
+
+  .resp-view{
+    padding-right: 0 !important;
+  }
+
+}

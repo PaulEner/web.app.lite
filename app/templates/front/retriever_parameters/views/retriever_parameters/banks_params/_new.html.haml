@@ -1,0 +1,57 @@
+= simple_form_for @bank_account = BankAccount.new, url: retriever_create_bank_path, html: { id: 'form-bank-params', class: 'form-horizontal label-medium' } do |f|
+  = f.input :user_id, :as => :hidden, :input_html => { :value => @customer.id }, wrapper_html: { :class => "no-margin" }
+  = f.input :api_name, :as => :hidden, :input_html => { :value => 'idocus' }, wrapper_html: { :class => "no-margin" }
+  = f.input :is_used, :as => :hidden, :input_html => { :value => true }, wrapper_html: { :class => "no-margin" }
+  = f.input :bank_name, collection: [['Chargement en cours ...', '']], include_blank: false, label: 'Banque', hint: "Merci de contacter le support (support@idocus.com), si votre compte bancaire ne fait pas partie de la liste, pour une demande d'ajout", :input_html => { class: "form-select"}
+  = f.input :name, required: false, hint: 'Si différent de Banque.'
+  = f.input :type_name, collection: bank_account_type_name, include_blank: false, label: 'Type de compte', selected: "unknown", :input_html => { class: "form-select"}
+  = f.input :number
+  = f.input :bic
+  = f.input :journal
+  - if @customer.uses?(:ibiza)
+    - if @customer.organization.ibiza.configured?
+      = f.input :foreign_journal, collection: journals_for_select(@bank_account.foreign_journal, 'bank'), hint: 'si différent de "Code journal" ci-dessus', :input_html => { class: "form-select"}
+    - else
+      .form-group.clearfix
+        .label-section
+          %label= t('simple_form.labels.bank_account.journal')
+        .control-section
+          %select.select.form-select.disabled{ disabled: 'disabled' }
+          %p
+            = render 'shared/ibiza_not_configured_warning'
+  = f.fields_for :original_currency do |o|
+    = o.input :symbol, collection: original_currencies, label_method: :second, value_method: :first, label: 'Devise originale', selected: 'EUR', include_blank: false, :input_html => { class: "form-select"}
+    = o.input :id, :as => :hidden, :input_html => { :value => 'EUR' }
+    = o.input :prefix, :as => :hidden, :input_html => { :value => false }
+    = o.input :precision, :as => :hidden, :input_html => { :value => 2 }
+    = o.input :marketcap, :as => :hidden, :input_html => { :value => nil }
+    = o.input :datetime, :as => :hidden, :input_html => { :value => nil }
+    = o.input :name, :as => :hidden, :input_html => { :value => 'Euro' }
+  = f.input :currency, collection: journal_currencies, include_blank: false, label: 'Devise de conversion', selected: (@bank_account.currency || "EUR"), hint: "Les écritures seront converties vers cette devise avec le taux de change de la date de valeur", :input_html => { class: "form-select"}
+  = f.input :accounting_number, required: true
+  = f.input :temporary_account, required: true, hint: 'si tiers non identifiable'
+  .form-group.clearfix{ class: ('error' if @bank_account.errors.keys.include?(:start_date)) }
+    .label-section
+      = label_tag 'bank_account[start_date]', content_tag(:abbr, '*', title: 'champ requis') + " Choisir la date de récupération de l'historique bancaire", class: 'required'
+    .control-section
+      .input-prepend.date.datepicker
+        %span.add-on
+          %i.icon-th
+        = text_field_tag @bank_account.start_date.present? ? 'bank_account[start_date_disabled]' : 'bank_account[start_date]', @bank_account.start_date, { class: 'singledate', disabled: @bank_account.start_date.present?, required: true }
+        - if @bank_account.start_date.present?
+          = hidden_field_tag 'bank_account[start_date]', @bank_account.start_date
+      - if @bank_account.operations.count >= 1
+        %p.help-block L'opération bancaire la plus ancienne remontée par l'automate date du #{@bank_account.operations.order(date: :asc).first.date.strftime("%d/%m/%Y")}
+  - if @customer.organization.cedricom_configured?
+    .form-group.clearfix{ class: ('error' if @bank_account.errors.keys.include?(:ebics_enabled_starting)) }
+      .label-section
+        = label_tag 'bank_account[ebics_enabled_starting]'," Activer la récuparation EBICS à compter du"
+      .control-section
+        .input-prepend.date.datepicker
+          = text_field_tag @bank_account.ebics_enabled_starting.present? ? 'bank_account[ebics_enabled_starting_disabled]' : 'bank_account[ebics_enabled_starting]', @bank_account.ebics_enabled_starting, { class: 'singledate', disabled: @bank_account.ebics_enabled_starting.present? }
+          - if @bank_account.ebics_enabled_starting.present?
+            = hidden_field_tag 'bank_account[ebics_enabled_starting]', @bank_account.ebics_enabled_starting
+        - if @bank_account.operations.count >= 1
+          %p.help-block L'opération bancaire la plus ancienne remontée par l'automate date du #{@bank_account.operations.order(date: :asc).first.date.strftime("%d/%m/%Y")}
+  = f.input :lock_old_operation, hint: "Ne s'applique qu'après un mois depuis la création de ce compte bancaire dans iDocus", input_html: { class: 'form-check-input m-2', checked: false }, wrapper: :inline_checkbox
+  = f.input :permitted_late_days, required: true

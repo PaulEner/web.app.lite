@@ -1,0 +1,35 @@
+/ TODO ////
+- if multi_organizations? || @member.user.memberships.count > 1
+  #organization_group.tab-pane.box.no-margin.fade{ class: ('active show' if params[:tab] == 'organization_group') }
+    .derivationLeft
+      - if @user.leader?
+        %p Gérer les accès du collaborateur aux différentes organisations. Supprimer l'accès à une organisation ne supprime pas le compte, seulement les droits d'accès à l'organisation.
+
+      %table.table.table-striped
+        %thead
+          %tr
+            %th Organisation
+            %th Code
+            %th Rôle
+            - if @user.leader?
+              %th.text-center Action
+        %tbody
+          - accessible_organizations_for_user(@member.user).each do |organization|
+            %tr
+              %td.semibold= organization.name
+              - membership = Member.find_by(organization: organization, user: @member.user)
+              - if membership
+                %td= membership.code
+                %td= t('activerecord.models.member.attributes.role_values.' + membership.role)
+                - if @user.leader?
+                  %td
+                    - if membership.organization == @organization
+                      = link_to glyphicon('x', size: '10', color: '#445E2B') + " Retirer l'accès à cette organisation", remove_from_organization_organization_collaborator_path(@organization, @member, oid: organization.id), class: 'btn-default no-style p-1', data: { method: :delete, confirm: t('actions.confirm') }
+                    - else
+                      %i Ne peut pas supprimer l'accès de ce collaborateur à cette organisation.
+              - else
+                %td -
+                %td
+                  %i N'est pas membre de cette organisation
+                - if @user.leader?
+                  %td= link_to "Ajouter l'accès à cette organisation", add_to_organization_organization_collaborator_path(@organization, @member, oid: organization.id), class: 'btn-danger no-style p-1', data: { method: :post, confirm: t('actions.confirm') }

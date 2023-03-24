@@ -1,0 +1,14 @@
+#exercise.edit
+  - if @customer.configured?
+    .row.derivationRight
+      .col-md-12.box
+        %h3 Édition d'un exercice comptable pour le client : #{link_to @customer, organization_customer_path(@organization, @customer, tab: 'accounting_plan')}
+  - else
+    = render 'account/customers/steps'
+    .row.derivationRight
+      .col-md-12.box
+        %h3 Exercices comptables
+
+  .row.derivationLeft
+    .col-md-12.box
+      = render 'form'

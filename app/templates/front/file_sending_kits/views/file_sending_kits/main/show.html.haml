@@ -1,0 +1,39 @@
+= stylesheet_link_tag 'front/organizations/assets/stylesheets/show'
+= stylesheet_link_tag 'front/file_sending_kits/assets/stylesheets/main'
+
+%input#organization_id{type: :hidden, value: @organization.id, name: 'organization_id'}
+
+- if @user.is_admin
+  .derivationLeft
+    %h3 Kit d'envoi de documents
+  .mb-4
+  .box#file_sending_kit.derivationRight
+    %table.table.table-striped.table-condensed
+      %tr
+        %th= t('activerecord.models.file_sending_kit.attributes.folders')
+        %td
+          - if File.exist? File.join(Rails.root, 'files', 'kit', "folders.pdf")
+            = link_to "folders.pdf", folders_organization_file_sending_kit_path(@organization), target: '_blank', class: 'file_sending_kit_path'
+      %tr
+        %th= t('activerecord.models.file_sending_kit.attributes.mails')
+        %td
+          - if File.exist? File.join(Rails.root, 'files', 'kit', "mails.pdf")
+            = link_to "mails.pdf", mails_organization_file_sending_kit_path(@organization), target: '_blank', class: 'file_sending_kit_path'
+      %tr
+        %th= t('activerecord.models.file_sending_kit.attributes.customer_labels')
+        %td
+          - if File.exist? File.join(Rails.root, 'files', 'kit', "customer_labels.pdf")
+            = link_to "customer_labels.pdf", customer_labels_organization_file_sending_kit_path(@organization), target: '_blank', class: 'file_sending_kit_path'
+      %tr
+        %th= t('activerecord.models.file_sending_kit.attributes.workshop_labels')
+        %td
+          - if File.exist? File.join(Rails.root, 'files', 'kit', "workshop_labels.pdf")
+            = link_to "workshop_labels.pdf", workshop_labels_organization_file_sending_kit_path(@organization), target: '_blank', class: 'file_sending_kit_path'
+    
+    .form-group.text-end
+      = link_to t('actions.edit'), '#', link: edit_organization_file_sending_kit_path(@organization), class: 'btn btn-light bold edit-file-sending-kits'
+      = link_to 'Générer', '#', link: select_organization_file_sending_kit_path(@organization), class: 'btn btn-primary bold select_for_orders'
+
+= render partial: 'file_sending_kit_modal'
+
+= javascript_include_tag 'front/file_sending_kits/assets/javascripts/main'

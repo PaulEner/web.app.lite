@@ -1,0 +1,12 @@
+= stylesheet_link_tag 'front/organizations/assets/stylesheets/show'
+
+#paper_set_order.new.derivationRight
+  .row.hide
+    .text-center
+      %h5.modal-title #{@customer}
+  .box.mt-4.form-content
+    - manual_paper_set_order = CustomUtils.is_manual_paper_set_order?(@organization)
+    = simple_form_for @order, url: organization_paper_set_orders_path(@organization), html: { :id => manual_paper_set_order ? 'valid-manual-paper-set-order' : 'default', class: 'form-horizontal paper_set_order paper_set_order_form' } do |f|
+      = render 'form', f: f, manual_paper_set_order: manual_paper_set_order
+
+= javascript_include_tag 'front/paper_set_orders/assets/javascripts/main'

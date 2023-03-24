@@ -1,0 +1,27 @@
+.modal.fade.in#filter-operations
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Recherche : opération bancaire
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        - if @user.collaborator?
+          = render partial: 'search_form_operation'
+
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel.reset-filter{ data: { target: 'operations' }, type: :button } Annuler
+        %button.btn.btn-primary.semibold.validate-filter{ data: { target: 'operations' }, type: :button } Rechercher
+
+.modal.fade.in#filter-documents
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Filtre documents
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        - if @user.collaborator?
+          = render partial: 'search_form_document'
+
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel.reset-filter{ data: { target: 'documents' }, type: :button } Annuler
+        %button.btn.btn-primary.semibold.validate-filter{ data: { target: 'documents' }, type: :button } Valider

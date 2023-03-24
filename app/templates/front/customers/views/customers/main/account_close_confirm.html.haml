@@ -1,0 +1,18 @@
+.account_close_confirm.close_or_reopen
+  = form_tag close_account_organization_customer_path(@organization, @customer), method: 'patch', class: 'form-horizontal', id: 'account_close_confirm'  do
+    .modal-body
+      %p.p-1
+        Cette action est irréversible, voulez-vous réellement clôturer le dossier
+        %br
+        %span.semibold= @customer.info
+        %span ?
+    .modal-footer
+      .row.form-group.w-100.no-margin
+        .col-md-6.d-inline-block{style: 'position: relative; bottom: -12%'}
+          - if @user.is_admin && (@customer.active? || @customer.inactive_at > Time.now)
+            .form-check.form-check-inline
+              %label.form-check-label Clôturer ce dossier maintenant?
+              %input.form-check-input.pointer.close_now{ type: :checkbox, name: "close_now" }
+        .col-md-6.d-inline-block.ps-1.text-end
+          %button.btn.btn-light.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' } Annuler
+          %button.btn.btn-primary.bold.close.close_or_reopen_confirm{ type: :button } Clôturer le dossier

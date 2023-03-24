@@ -1,0 +1,51 @@
+- packs.each do |pack|
+  .box.animatedChild.animated-pointer{ class: animation }
+    .row
+      .col-md-4
+        %h6.pack=link_to pack.name.to_s.gsub('all', '').strip, documents_details_path(id: pack.id), class: "no-style black-label bold"
+        - unless pack.owner.nil?   
+          %label.under_pack.regular= pack.owner.organization.name 
+      .col-md-5
+        .created-date
+          %label.semibold Premier ajout le :
+          %label= pack.created_at.strftime('%d/%m/%Y')
+        .updated-date
+          %label Modifié le :
+          %label= pack.updated_at.strftime('%d/%m/%Y')
+      .col-md-2
+        .operation-count.text-end.p-1
+          - pp_size = pack.pieces.size
+          %span{ class: ( pp_size >= 100) ? 'bg-yellow text-white' : '' }= pp_size
+      .col-md-1.caret-right
+        =link_to glyphicon('caret-right', { size: '20', color: '#CCC' }), documents_details_path(id: pack.id) 
+    %hr.w-100.no-margin   
+    .row
+      .col-md-8.pt-1
+        - if pack.created_at >= 1.days.ago
+          %span.badge.badge-success.semibold.to-filter.pointer#new-pack Nouveau
+        - if @user.pre_assignement_displayed? && pack.id.in?(packs_with_failed_delivery_ids)
+          %span.badge.badge-danger.semibold.to-filter.pointer#preseizure-not-delivered Ecritures non livrées
+        - if pack.pieces.collect(&:expense).any?
+          %span.badge.bg-dark.semibold Notes de frais
+        - if not pack.is_fully_processed
+          %span.badge.bg-dark.semibold En cours ...
+        - if pack.pieces.select{ |pi| pi.preseizures.empty? && pi.pre_assignment_not_processed? }.any?
+          %span.badge.badge-danger.semibold Rejetée
+
+        - pack.get_tags.split(' - ').each_slice(3).first.try(:each) do |tag|
+          - if tag != '-'
+            %span.badge.bg-dark.semibold= tag
+
+      .col-md-4.icon-actions.text-end.pe-3.pt-1
+        / %span.ms-2= glyphicon('flag', { size: '20', color:'rgba(26, 26, 26, 0.32);'})
+        %span.ms-2.update_tags{title: 'Taguer le lot', data: {id: pack.id, type: 'pack'}}= glyphicon('tag', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+        / %span.ms-2.download_pack_bundle{title: 'Télécharger', data: {id: pack.id}}= glyphicon('data-transfer-download', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+        %span.ms-2.download_pack_archive{title: 'Télécharger une archive zip', data: {id: pack.id}}= glyphicon('cloud-download', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+        - if @user.has_collaborator_action?
+          %span.ms-2.preseizures_export{title: 'Export écriture comptable', data:{ id: pack.id, type: 'special_piece', multi: 'true' }}= glyphicon('external-link', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+          - if pack.try(:user).try(:uses_api_softwares?)
+            %span.ms-2.deliver_preseizures{title: 'Livraison écriture comptable', data: {id: pack.id, type: 'special_piece', multi: 'true'}}= glyphicon('loop-circular', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+        / %span.ms-2.t-info{ title: 'Informations', data: { id: pack.id } }= glyphicon('info', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+        / .hide.t-info-content{ id: "t-content-#{pack.id}" }
+        /  = html_pack_info(pack)
+        %span.ms-2.delete-all-pieces{ title: 'Supprimer les pièces', data: { pack_id: pack.id } }= glyphicon('trash', { size: '14', color:'rgba(26, 26, 26, 0.32);'})

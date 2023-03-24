@@ -1,0 +1,324 @@
+@import front/main
+
+// Admin
+body
+  overflow-y: hidden
+  overflow-x: hidden
+  background: linear-gradient(90deg, rgba(26, 26, 26, 0.04) 0%, #8B9A9B 100%)
+  scrollbar-width: none
+
+.navbar-brand img
+  margin: 5% auto
+
+.lefter-content
+  width: 100%
+  z-index: 100
+  background: linear-gradient(90deg, rgba(26, 26, 26, 0.04) 0%, #9FA897 100%)
+  li
+    a
+      transition: padding .3s ease-out
+      display: block
+      width: 100%
+  li
+    a:hover
+      padding-left: 9px
+  .nav-item
+    .dropdown-menu.show
+      -webkit-animation-duration: .16s !important
+      animation-duration: .16s !important
+
+.header-connexion
+  position: fixed
+  width: 85%
+  height: 70px
+  z-index: 100
+  background: linear-gradient(90deg, rgba(26, 26, 26, 0.04) 0%, #DDD 100%)
+  li.nav-item:hover
+    background-color: inherit !important
+
+.head-logo
+  border-radius: 8px
+  .admin-label
+    font-size: 34px
+    color: rgba(26, 26, 26, 4)
+
+.body_content
+  padding: 0.1% 2%
+  width: 99%
+  scrollbar-width: thin
+
+.scroll-on-top
+  background: linear-gradient(90deg, #C4C4C4 10%, #1B1C1A 90%)
+
+
+.box
+  border-radius: 6px
+  box-shadow: 0 4px 20px 0 rgba(0,0,0,.14),0 7px 10px -5px rgba(64,64,64,.4)!important  
+  .table
+    thead
+      
+.btn
+  border-radius: 8px
+  border: none
+  box-shadow: 0 4px 2px 0 rgba(0, 0, 0, 0.36), 0 2px 1px 0 rgba(0, 0, 0, 0.32) !important
+  font-size: 13px
+  a
+    color: #FFF !important
+
+.btn-primary
+  background: linear-gradient(90deg, #578EE3 0%, #4249AA 100%)
+
+.btn-secondary
+  background: linear-gradient(90deg, #BBB 0%, #6c757d 100%)
+
+.btn-warning
+  background: linear-gradient(90deg, #ffe9a9 0%, #ffc107 100%)
+
+
+.header-connexion
+  font-size: 13px
+  .user-name
+    padding: 1%
+    padding-left: 3%
+    h1
+      color: rgba(26, 26, 26, 4)
+  svg icon
+    transition: all 1s
+
+  svg icon
+    transform: rotate(360deg)
+
+.for-badge
+  position: absolute
+  padding: 5px
+  border-radius: 6px
+  box-shadow: 0 4px 20px 0 rgba(0,0,0,.14),0 7px 10px -5px rgba(64,64,64,.4)!important
+  margin-left: 1%
+  z-index: 90
+
+.back-blue-sky
+  background: #26a9e4
+
+.bottom-blue-sky
+  border-bottom: 1px solid #26a9e4
+
+.back-green
+  background: #28b679
+  
+.bottom-green
+  border-bottom: 1px solid #28b679
+
+.back-yellow
+  background: #ffb94a
+
+.bottom-yellow
+  border-bottom: 1px solid #ffb94a
+
+.back-magenta
+  background: #db542f
+
+.bottom-magenta
+  border-bottom: 1px solid #db542f
+
+.back-grey
+  background: rgba(26, 26, 26, 0.7)
+
+.bottom-grey
+  border-bottom: 1px solid rgba(26, 26, 26, 0.7)
+
+.back-blue
+  background: #2555a4
+
+.bottom-blue
+  border-bottom: 1px solid #2555a4
+
+.label_more_info
+  color: #4caf50
+
+.back-red-metal
+  background: #f84d4f
+
+.dropdown-menu
+  min-width: 17rem
+
+.dropdown-toggle::after
+  border-top: none !important
+
+li.nav-item 
+  padding: 2%
+  padding-left: 10%
+  a span
+    font-size: 14px
+    color: white
+
+li.nav-item.active
+  background-color: #696969 !important
+
+li.nav-item:hover
+  background-color: #919191
+
+
+/*menu base*/
+.bg-menu
+  background-color: #696969 !important
+
+.nav-tabs
+  .dropdown
+    .dropdown-menu
+      .dropdown-item:hover
+        background-color: #696969 !important
+
+.dropdown-item:active, .dropdown-item.active
+  background-color: #b9d633 !important
+
+
+nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
+  :color #FFF !important
+
+a
+  text-decoration: none
+
+/* Sticky footer */
+.wrapper
+  min-height: 100%
+  height: auto !important
+  height: 100%
+  margin: 0 auto -4em
+
+.footer
+  background: rgba(26, 26, 26, 0.04)
+  color: #5b5b5b
+  padding: 4px
+.footer
+  height: 2em
+.push
+  height: 4em
+
+/*****************/
+
+
+.popover_content_tickets
+  position: absolute
+  border: 1px solid #CCC
+  z-index: 120
+  margin: -3% 0px 0px 3%
+  min-width: 300px
+  box-shadow: 2px 5px 13px -1px rgba(0,0,0,0.75)
+  -webkit-box-shadow: 2px 5px 13px -1px rgba(0,0,0,0.75)
+  -moz-box-shadow: 2px 5px 13px -1px rgba(0,0,0,0.75)
+
+
+table
+  font-size: 12px
+  tr
+    th.total, td.total
+      text-align: right
+      font-weight: bold
+    td.price
+      text-align: right
+
+#cms_images img
+  max-width: 250px
+  max-height: 75px
+
+#user.show
+  input[type=text], input[type=textarea]
+    padding: 0
+    margin: 0
+    width: 75%
+    height: 14px
+    font-size: 11px
+  table th.first
+    width: 110px
+  table td.checkbox
+    width: 25px
+  table td.value
+    width: auto
+    text-align: right
+  .closed_account
+    font-size: 14px
+    margin-top: 7px
+    padding:
+      top: 4px
+      bottom: 4px
+      left: 6px
+      right: 6px
+
+h3 a
+  font-size: 18px
+
+.panel
+  margin-bottom: 10px
+  padding: 7px 19px 7px
+  background-color: white
+  border: 1px solid #DDD
+  +border-radius(4px)
+  +box-shadow(rgba(0, 0, 0, .065) 0 3px 5px)
+
+.badge
+  font-size: inherit
+
+.center
+  vertical-align: middle !important
+  text-align: center !important
+
+.pagination
+  height: 22px
+  margin: 0
+  padding: 0 7px
+  a
+    padding: 0 7px
+    line-height: 20px
+
+.filter_date
+  input
+    width: 78px
+  .add-on
+    position: relative
+    left: 3px
+i.gray
+  color: #AAAAAA
+
+.auto-scroll-div ul.nav
+  width: 1024px !important
+  
+.form-check-input  
+  background-color: rgba(26, 26, 26, 0.1)
+  border-color: rgba(26, 26, 26, 0.1)
+
+.form-check-input:checked
+  background-color: #C1D837
+  border-color: #C1D837
+
+.form-filter
+  input[type=text], input[type=number], select
+    width: 100%
+  .input-group
+    input[type=text]
+      width: 70%
+
+.sub_menu
+  ul
+    li
+      transition: transform .2s ease-in
+    li:hover
+      transform: scale(1.07)
+
+.modal-content
+  border-radius: 6px
+
+
+.back-notice-flush
+  z-index: 200
+  position: absolute
+  bottom: 19px
+  width: 83%
+  a.close
+    float: right
+    cursor: pointer
+    font-size: 18px
+  #flash_notice
+    width: 90%
+
+
+@import "admin/*"

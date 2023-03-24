@@ -1,0 +1,59 @@
+.derivationLeft
+  %input#ignored-pre-assignment-size{ type: 'hidden', value: @ignored_list.total_count }
+
+  .form-group
+    .w-100.text-end
+      - if @user.has_collaborator_action? && @user.still_active?
+        %button.btn.btn-danger.semibold#resend-to-pre-assignment
+          %span.me-2= glyphicon('aperture', { size: '15', color: '#FF4848'})
+          %span Renvoyer et forcer la pré-affectation
+      - if @user.still_active?
+        %button.btn.btn-default.semibold.no-margin#confirm-ignorance
+          %span.me-2= glyphicon('circle-check', { size: '15', color: '#72AA42'})
+          %span Marquer la séléction comme vu
+
+  .row
+    .col-md-12
+      %table.table.table-striped.table_ignored_pre_assignment#tbl_ignored_pieces
+        %thead            
+          %th.text-center
+            .form-check
+              %input.form-check-input.pointer.float-none.check-all-piece-ignored.ignored{ type: :checkbox, value: '' }
+          %th= sortable :created_at, 'Date de création'
+          %th= sortable :name, 'N° pièce'
+          %th= sortable :number, 'N° facture'
+          %th Nom de lot
+          %th Remarque
+          %th= sortable :pre_assignment_state, 'Statut'
+          %th.text-end Action
+        %tbody
+          - if @ignored_list.any?
+            - @ignored_list.each_with_index do |piece, ind|
+              %tr
+                %td.text-center
+                  .form-check
+                    %input.form-check-input.pointer.float-none.check-piece-ignored{ type: :checkbox, class: "checkbox checker_piece_#{ind}", data: { value: piece.id } }
+                %td= piece.created_at.strftime('%d-%m-%Y')
+                %td
+                  = link_to piece.name, documents_details_path({ id: piece.pack.id, _ext: 1, k: Base64.encode64({ text: piece.name, reinit: true }.to_json) }), class: 'no-style bold black-label underlined-pointer', target: '_blank'
+                %td= piece.number
+                %td
+                  = link_to piece.pack.name, documents_details_path({id: piece.pack.id, _ext: 1, k: Base64.encode64({ reinit: true }.to_json) }), class: 'no-style bold black-label underlined-pointer', target: '_blank'
+                %td= piece.pre_assignment_comment         
+                %td
+                  - if piece.pre_assignment_ignored?
+                    %span.badge.bg-warning Pré-affectation ignorée
+                  - else
+                    %span.badge.bg-dark En cours de renvoi à la pré-affectation
+                %td.text-end.pointer
+                  .action.sub-menu-piece-ignored
+                    %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+                  .sub_menu.text-start.hide
+                    %ul.no-margin.no-padding.regular
+                      %li.show_ignored_piece
+                        = link_to glyphicon('eye', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Voir la pièce', '#', class: ("do-showPieces custom_popover ignored_piece piece_#{ind}"), title: 'Voir la pièces', data: { piece_index: ind, piece_name: piece.name, piece_url: piece.cloud_content_object.url, content: html_piece_view(piece) }
+          - else
+            %tr
+              %td.text-center{colspan: 8}= t('global.no-data-found')
+
+    = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { name: 'ignored-pre-assignment', filter: 'filter-ignored-pre-assignment-form', mark: 'pieces_errors', total_pages: @ignored_list.total_pages }

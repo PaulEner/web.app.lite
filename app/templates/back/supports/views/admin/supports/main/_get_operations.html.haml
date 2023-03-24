@@ -1,0 +1,49 @@
+.mb-3
+.row
+  .col-md-12#table_operations
+    %table.table.table-condensed.table-striped
+      %thead
+        %tr.text-center
+          %th.text-center
+            .form-check
+              = check_box_tag 'master_checkbox', 0, false, class: 'form-check-input pointer float-none check-all', data: { action: 'operation'}
+          %th= sortable :created_at,   'Créé le'
+          %th= sortable :date,   'Date'        
+          %th Label
+          %th Montant
+          %th Processed at
+          %th Est locké
+          %th Api ID
+          %th Api
+          %th Compte
+          %th Banque
+          %th Ecriture livrée ?
+          %th Action
+      %tbody
+        - @operations.each do |operation|
+          - next if not operation.bank_account.try(:is_used)
+          %tr.text-center
+            %th.text-center
+              .form-check
+                = check_box_tag 'operations[ids][]', operation.id, false, id: "rule_#{operation.id}", class: 'form-check-input pointer float-none check check-operation checkbox', data: { action: 'operation'}
+            %td= l(operation.created_at, format: '%d %b %Y %H:%M')
+            %td= l(operation.date, format: '%d %b %Y')
+            %td= operation.label
+            %td= operation.amount
+            %td= operation.processed_at
+            %td= operation.is_locked ? "Oui" : "Non"
+            %td= operation.api_id
+            %td= operation.api_name
+            %td= operation.bank_account.try(:number)
+            %td= operation.bank_account.try(:bank_name)
+            %td= operation.preseizure.try(:is_delivered?)
+            %td.text-end.pointer
+              .action.sub_edit_delete.list-collaborators
+                %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+              .sub_menu.text-start.hide
+                %ul.no-margin.no-padding.regular
+                  %li.resend_operation{ data: { operation_id: operation.id, title: "Re-envoyer" } }
+                    = link_to '#' do
+                      %span.me-2= glyphicon('media-record', size: 12)
+                      %span Relivrer
+    = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: get_operations_admin_supports_path, target: '#table_operations', total_pages: @operations.total_pages, filter: 'operation-filter' }

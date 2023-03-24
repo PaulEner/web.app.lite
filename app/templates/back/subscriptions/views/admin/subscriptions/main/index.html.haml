@@ -1,0 +1,152 @@
+= stylesheet_link_tag 'back/subscriptions/assets/stylesheets/main'
+
+#subscriptions
+  .row.derivationLeft
+    .col-md-12
+      .box
+        %h3 Récapitulatif des Forfaits actuels
+        .mb-2
+        %table.table.table-condensed.table-striped#recapitulation
+          %thead
+            %tr.text-center
+              %th
+              %th.ido_classic_title iDo Classique
+              %th.ido_micro_title iDo Micro
+              %th.ido_nano_title iDo Nano
+              %th.ido_x_title iDo X
+              %th.ido_premium_title iDo Premium
+
+              %th.ido_retriever_title Automate uniquement
+              %th.ido_digitize_title Numérisation uniquement
+              %th Total
+
+              %th.mail_active_title Options courrier
+              %th.scan_active_title Options numérisation
+              %th.bank_active_title Options banque
+              %th.preassignment_active_title Pré-saisie
+          %tbody
+            %tr.text-center.recapitulation_data
+              %th Abonnés
+              %td.ido_classic= link_to @counts[:ido_classic].to_i, "#", class: 'do-showAccounts', title: "iDo Classique", type: "basic_package"
+              %td.ido_micro= link_to @counts[:ido_micro].to_i, "#", class: 'do-showAccounts', title: "iDo Micro", type: "micro_package"
+              %td.ido_nano= link_to @counts[:ido_nano].to_i, "#", class: 'do-showAccounts', title: "iDo Nano", type: "nano_package"
+              %td.ido_x= link_to @counts[:ido_x].to_i, "#", class: 'do-showAccounts', title: "iDo X", type: "idox_package"
+              %td.ido_premium= link_to @counts[:ido_premium].to_i, "#", class: 'do-showAccounts', title: "iDo Premium", type: "premium_package"
+
+              %td.ido_retriever= link_to @counts[:ido_retriever].to_i, "#", class: 'do-showAccounts', title: "Automate uniquement", type: "retriever_only_package"
+              %td.ido_digitize= link_to @counts[:ido_digitize].to_i, "#", class: 'do-showAccounts', title: "Numérisation uniquement", type: "digitize_only_package"
+              %td.total
+                = @counts[:ido_classic].to_i + @counts[:ido_micro].to_i + @counts[:ido_nano].to_i + @counts[:ido_x].to_i + @counts[:ido_premium].to_i + @counts[:ido_retriever].to_i + @counts[:ido_digitize].to_i
+
+              %td.mail_active= link_to @counts[:mail_active].to_i, "#", class: 'do-showAccounts', title: "Fofait Courrier", type: "mail_package"
+              %td.scan_active= link_to @counts[:scan_active].to_i, "#", class: 'do-showAccounts', title: "Numériser", type: "digitize_package"
+              %td.bank_active= link_to @counts[:bank_active].to_i, "#", class: 'do-showAccounts', title: "Forfait automates", type: "retriever_package"
+              %td.preassignment_active= link_to @counts[:preassignment_active].to_i, "#", class: 'do-showAccounts', title: "Pré-saisie", type: "pre_assignment_active"
+  .row.derivationRight
+    .col-md-12
+      .box.clearfix#statistic_table
+        .row.mb-2
+          .col-sm-2
+            %label Période
+            = select_tag 'period', options_for_select(period_list_options, @param_period), id: 'period', class: 'form-select', include_blank: false
+          .col-sm-2
+            %label Organisation
+            %input{ type: 'text', class: 'search_organization' }
+          .col-sm-8
+            .float-end
+              %a{ href: admin_subscriptions_index_path({ p: @param_period, export: "csv" }), class: 'btn btn-primary' } Export CSV
+
+        %table.table.table-condensed.table-striped.statistic_table
+          %thead
+            %tr.text-start.bg-dark.text-white.border-end.border-white
+              %th.text-center.information(colspan='3') Information
+              %th.text-center.subscription(colspan='7') Forfaits
+              %th.text-center.utilisation(colspan='3') Options
+              %th.text-center.clients(colspan='3') Clients
+            %tr.text-center
+              %th période
+              %th= 'code'
+              %th= 'organisation'
+
+              %th= 'Classique'
+              %th= 'Micro'
+              %th= 'Nano'
+              %th= "iDo'x"
+              %th= 'Automate uniq.'
+              %th= 'Numérisation uniq.'
+              %th= 'Premium'
+
+              %th= 'Courrier'
+              %th= 'Numérisation'
+              %th= 'Banque'
+
+              %th= 'actifs'
+              %th= 'nouveaux'
+              %th= 'clôturés'
+          %tbody
+            - @organization_ids.each do |o_id|
+              %tr.waiting_datas{ class: "preload_#{o_id}" }
+                %td{ colspan: 17 }
+                  = render_async admin_subscriptions_row_organization_path(o_id), { period: @param_period }, true
+
+            %tr.total
+              %td.information.semibold Total
+              %td.information
+              %td.information
+
+              %td.subscription.ido_classic= 0
+              %td.subscription.ido_micro= 0
+              %td.subscription.ido_nano= 0
+              %td.subscription.ido_x= 0
+              %td.subscription.ido_retriever= 0
+              %td.subscription.ido_digitize= 0
+              %td.subscription.ido_premium= 0
+
+              %td.options.mail_active= 0
+              %td.options.scan_active= 0
+              %td.options.bank_active= 0
+
+              %td.clients.active= 0
+              %td.clients.new= 0
+              %td.clients.closed= 0
+
+  / .modal#filter-subscription
+  /   .modal-dialog
+  /     .modal-content
+  /       .modal-header.clearfix
+  /         %h5.modal-title.bold Filtrer
+  /         %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+  /       = form_tag admin_subscriptions_index_path, method: :get, class: 'form-filter' do
+  /         .modal-body        
+  /           .form-group
+  /             %label.semibold
+  /               %span.badge.bg-info
+  /                 = label_tag 'Nb. Organisations : '
+  /                 = @organization_count
+  /           .form-group
+  /             %label.semibold
+  /               = label_tag 'first_period', 'Première période'            
+  /             = select_tag 'first_period', subscription_period_options_for_select(params[:first_period]), class: 'form-select'
+  /           .form-group
+  /             %label.semibold
+  /               = label_tag 'second_period', 'Deuxième période'
+  /             = select_tag 'second_period', subscription_period_options_for_select(params[:second_period]), class: 'form-select'
+  /           .form-group
+  /             %label.semibold
+  /               = label_tag 'organization', 'Organisation'
+  /             .select-container.w-100.no-padding  
+  /               = text_field_tag 'organization', (params[:organization] rescue ''), class: 'input-small'
+  /         .modal-footer            
+  /           = link_to 'Réinitialiser', admin_subscriptions_index_path, class: 'btn btn-light', title: t('filters.reset')
+  /           = submit_tag t('filters.compare'), name: nil, class: 'btn btn-primary'
+
+  #showAccounts.modal.fade.in
+    .modal-dialog.modal-dialog-centered
+      .modal-content
+        .modal-header
+          %h3
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        .modal-body
+        .modal-footer
+
+= javascript_include_tag 'back/subscriptions/assets/javascripts/main'

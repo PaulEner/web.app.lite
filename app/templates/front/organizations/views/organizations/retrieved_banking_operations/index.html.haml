@@ -1,0 +1,44 @@
+= stylesheet_link_tag 'front/organizations/assets/stylesheets/main'
+
+#retrieved_banking_operations
+  - unless @customer.configured?
+    = render 'account/customers/steps'
+
+  .row-fluid
+    .span12.box
+      .pull-left
+        %h3 Liste des opérations bancaires du client #{link_to @customer, organization_customer_retrievers_path(@organization, @customer)} (#{@operations.total_count})
+      - unless @customer.options.operation_processing_forced?
+        .pull-right
+          = link_to "Forcer la pré-affectation de #{@waiting_operations_count} opération(s)", force_processing_organization_customer_retrieved_banking_operations_path(@organization, @customer, banking_operation_contains: params[:banking_operation_contains]), method: :post, class: 'btn btn-danger', data: { confirm: "Ces opérations peuvent encore être modifiés par la/les banque(s). Êtes-vous sûr ?" }
+  .row-fluid
+    .span9.box
+      = render partial: 'shared/list_options', locals: { collection: @operations }
+      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+        %thead
+          %tr
+            %th.date= sortable :date,                'Date Op'
+            %th= sortable 'bank_accounts.bank_name', 'Service'
+            %th= sortable 'bank_accounts.number',    'Compte'
+            %th= sortable :category,                 'Catégorie'
+            %th= sortable :label,                    'Libellé'
+            %th.amount= sortable :amount,            'Montant'
+            %th Pré-affecté
+        %tbody
+          - @operations.each do |operation|
+            %tr
+              %td.date= l(operation.date, format: '%d %b %Y')
+              %td= operation.bank_account.bank_name if operation.bank_account
+              %td= operation.bank_account.number    if operation.bank_account
+              %td= operation.category
+              - if @customer.options.operation_value_date_needed? && operation.retrieved? && operation.date != operation.value_date
+                %td= "#{operation.label} - #{operation.value_date}"
+              - else
+                %td= operation.label
+              %td.amount= format_price_00((operation.amount * 100).round) + " #{operation.currency["symbol"] || '€'}"
+              %td= is_operation_pre_assigned(operation)
+      = render partial: 'shared/list_options', locals: { collection: @operations }
+    .span3.box
+      = render 'sidebar'
+
+= javascript_include_tag 'front/organizations/assets/javascripts/main'

@@ -1,0 +1,42 @@
+/ = stylesheet_link_tag 'front/payments/assets/stylesheets/edit'
+
+.general
+  .row.derivationRight
+    .col-md-8
+      %h3.bold Mode de paiement
+
+  .box.mt-4.derivationLeft
+    - if @user.leader?
+      = render :partial => 'slimpay_checkout'
+      %table.table.table-condensed.table-striped
+        %tbody
+          %tr
+            %th Etat :
+            %td#debit_state
+              - if @organization.try(:debit_mandate).try(:pending?)
+                %span.badge.bg-light.text-dark Non configuré
+              - elsif @organization.try(:debit_mandate).try(:started?)
+                %span.badge.bg-warning.text-dark En attente utilisateur ...
+              - elsif @organization.try(:debit_mandate).try(:configured?)
+                %span.badge.bg-success OK
+              - else
+                %span.badge.bg-dark Information non valide
+          %tr
+            %th Banque :
+            %td#debit_bic= @organization.try(:debit_mandate).try(:bic)
+          %tr
+            %th Nom :
+            %td#debit_name= @organization.try(:debit_mandate).try(:title).try(:capitalize).to_s + ' ' + @organization.try(:debit_mandate).try(:firstName).to_s + ' ' + @organization.try(:debit_mandate).try(:lastName).to_s
+          %tr
+            %th Email :
+            %td#debit_email= @organization.try(:debit_mandate).try(:email)
+      %hr
+      .text-end
+        %a#link_slimpay_checkout.btn.btn-primary{ href: '#slimpay_checkout', 'data-bs-toggle' => 'modal' } Configurer
+        -if @user.is_admin
+          %a.btn.btn-danger.as_idocus_ajax{ href: '#', idocus: param_encode({ url: revoke_payment_organization_path({ revoke_confirm: true }), method: 'post', confirm: 'Etes vous sûr?'}) } Revoquer le mandat
+      %span#payment_configuration_checker.fs-origin.bg-warning.text-dark.hide
+        Verification de votre configuration en cours ... Veuillez patienter svp.
+
+
+= javascript_include_tag 'front/payments/assets/javascripts/main'

@@ -1,0 +1,108 @@
+#pre_assignment_deliveries
+  .row.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-10 
+      %h3
+        Liste des livraisons de pré-affectation vers #{@pre_assignment_deliveries_software}
+        %span.badge.bg-dark= @pre_assignment_deliveries_count
+    .col-md-2.text-end
+      %button.btn.btn-warning.filter-deliveries.w-50
+        %span.me-2= glyphicon('transfer', { size: '10', color: '#000', style: 'transform: rotate(90deg)'})
+        %span Filtrer
+
+  .row.derivationRight
+    .col-md-12
+      .box#table_pre_assignment
+        %table.table.table-condensed.table-striped
+          %thead
+            %tr
+              %th= sortable :id,            'N°'
+              %th= sortable :created_at,    t('activerecord.models.common.attributes.created_at')
+              %th= sortable :updated_at,    t('activerecord.models.common.attributes.updated_at')
+              %th= sortable :pack_name,     t('activerecord.models.pre_assignment_delivery.attributes.pack_name')
+              %th= sortable :total_item,    'Nb'
+              %th= sortable :is_auto,       'Auto'
+              %th= sortable :state,         t('activerecord.models.pre_assignment_delivery.attributes.state')
+              %th= sortable :error_message, t('activerecord.models.pre_assignment_delivery.attributes.error_message')
+              %th.text-end Action
+          %tbody
+            - @pre_assignment_deliveries.each do |delivery|
+              %tr
+                %td= delivery.id
+                %td= l(delivery.created_at, format: '%d %b %Y %H:%M')
+                %td= l(delivery.updated_at, format: '%d %b %Y %H:%M')
+                %td= delivery.pack_name
+                %td= delivery.total_item
+                %td= delivery.is_auto ? t('yes_value') : t('no_value')
+                %td= pre_assignment_delivery_state delivery
+                %td= delivery.error_message.to_s[0..55]
+                %td.text-end.pointer.readonly-container                
+                  .action.sub_edit_delete
+                    %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+                  .sub_menu.text-start.hide
+                    %ul.no-margin.no-padding.regular
+                      %li.edit                                
+                        = link_to admin_pre_assignment_delivery_path(delivery) do
+                          %span.me-2= glyphicon('eye', size: 12)
+                          %span Afficher les détails
+
+        = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: admin_pre_assignment_deliveries_path(software: params[:software]), target: '#table_pre_assignment', total_pages: @pre_assignment_deliveries.total_pages, filter: 'form-filter' }
+
+.modal#filter-deliverie
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h5.modal-title.bold Filtrer
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      = form_tag admin_pre_assignment_deliveries_path, method: :get, class: 'form-filter' do
+        .modal-body    
+          = hidden_field_tag :software, params[:software]
+          = hidden_field_tag :direction, sort_direction
+          = hidden_field_tag :sort, sort_column
+          = hidden_field_tag :per_page, per_page
+          .form-group
+            %label.semibold
+              = label_tag 'pre_assignment_delivery_contains[id]', 'N°'
+            .select-container.w-100.no-padding
+              = number_field_tag 'pre_assignment_delivery_contains[id]', (params[:pre_assignment_delivery_contains][:id] rescue ''), min: 0, class: 'form-control'
+          .form-group
+            %label.semibold
+              = label_tag 'pre_assignment_delivery_contains[pack_name]', t('activerecord.models.pre_assignment_delivery.attributes.pack_name')
+            .select-container.w-100.no-padding  
+              = text_field_tag 'pre_assignment_delivery_contains[pack_name]', (params[:pre_assignment_delivery_contains][:pack_name] rescue ''), class: 'form-control'
+          .form-group
+            %label.semibold
+              = label_tag 'pre_assignment_delivery_contains[total_item]', t('activerecord.models.pre_assignment_delivery.attributes.total_item')
+            .select-container.w-100.no-padding  
+              = number_field_tag 'pre_assignment_delivery_contains[total_item]', (params[:pre_assignment_delivery_contains][:total_item] rescue ''), min: 0, class: 'form-control'
+          .form-group
+            %label.semibold
+              = label_tag 'pre_assignment_delivery_contains[is_auto]', t('activerecord.models.pre_assignment_delivery.attributes.is_auto')            
+            = select_tag 'pre_assignment_delivery_contains[is_auto]', options_for_select([[t('yes_value'), 1],[t('no_value'), 0]], (params[:pre_assignment_delivery_contains][:is_auto] rescue '')), include_blank: true, class: 'form-select'
+          .form-group
+            %label.semibold
+              = label_tag 'pre_assignment_delivery_contains[state]', t('activerecord.models.pre_assignment_delivery.attributes.state')            
+            = select_tag 'pre_assignment_delivery_contains[state]', options_for_select(PreAssignmentDelivery.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:pre_assignment_delivery_contains][:state] rescue '')), include_blank: true, class: 'form-select'
+          .form-group
+            %label.semibold
+              = label_tag 'pre_assignment_delivery_contains[error_message]', t('activerecord.models.pre_assignment_delivery.attributes.error_message')
+            .select-container.w-100.no-padding  
+              = text_field_tag 'pre_assignment_delivery_contains[error_message]', (params[:pre_assignment_delivery_contains][:error_message] rescue ''), class: 'form-control'
+          .form-group
+            %label.semibold
+              = label_tag 'pre_assignment_delivery_contains[created_at]', t('activerecord.models.common.attributes.created_at')
+            .select-container.w-100.no-padding              
+              = text_field_tag 'pre_assignment_delivery_contains[created_at]', (params[:pre_assignment_delivery_contains][:created_at] rescue ''), class: 'form-control date daterange'
+              
+          .form-group
+            %label.semibold
+              = label_tag 'pre_assignment_delivery_contains[updated_at]', t('activerecord.models.common.attributes.updated_at')
+            .select-container.w-100.no-padding              
+              = text_field_tag 'pre_assignment_delivery_contains[updated_at]', (params[:pre_assignment_delivery_contains][:updated_at] rescue ''), class: 'form-control date daterange'              
+        .modal-footer
+          .form-actions
+            = link_to 'Reinitialiser', admin_pre_assignment_deliveries_path, class: 'btn btn-light', title: t('filters.reset')
+            = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+            
+
+
+= javascript_include_tag 'back/pre_assignment_deliveries/assets/javascripts/main'

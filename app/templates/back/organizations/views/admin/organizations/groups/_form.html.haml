@@ -1,0 +1,15 @@
+= simple_form_for @organization_group, url: (@organization_group.persisted? ? admin_organizations_group_path : admin_organizations_groups_path), html: { class: 'simple_form form-horizontal label-medium', id: 'new_organization_group' } do |f|
+  .form-group
+    %label.semibold
+      = f.label :name
+    .select-container.w-100.no-padding
+      = f.input :name, label: false
+  = f.association :organizations, collection: Organization.all.order(:name), input_html: { class: 'searchable-option-list clearfix' }, required: true, multiple: true
+
+  .form-group.row
+    .col-md-10
+      = f.label :is_auto_membership_activated, class: 'semibold'
+    .col-md-1
+      .form-check.form-switch
+        = f.input :is_auto_membership_activated, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field mt-2', id: 'organization_group' }
+        %label.semibold{ class: 'form-check-label label_check_field', for: 'organization_group'} Non

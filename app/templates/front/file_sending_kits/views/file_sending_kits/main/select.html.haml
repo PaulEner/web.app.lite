@@ -1,0 +1,102 @@
+= stylesheet_link_tag 'front/organizations/assets/stylesheets/show'
+
+%input#organization_id{type: :hidden, value: @organization.id, name: 'organization_id'}
+.row  
+  .col-md-8.text-start
+    %h3.semibold Kit d'envoi de numérisation
+
+.file_sending_kits_select
+  - manual_paper_set_order = CustomUtils.is_manual_paper_set_order?(@organization)
+  .text-center
+    - if manual_paper_set_order        
+      = link_to image_tag('application/icon-pdf.png', alt: "#{@organization.code.downcase}_folders.pdf", class: 'generate-manual-order', style: 'position:relative;top:-2px;') + " Télécharger le dernièr kit de numérisation généré pdf", folders_organization_file_sending_kit_path(@organization, {v: Time.now.strftime('%H%M%S')}), class: "btn btn-light download-manual-paper-set-order-folder-pdf"
+  - if manual_paper_set_order
+    .mb-4
+    .row
+      .text-center
+        #download-manual-paper-set-order.d-inline
+          %span.alert.alert-danger.show-notify-content.error-generation.semibold.hide Une erreur a été rencontré lors de la régénération de votre commande ... veuillez réessayer svp
+          %span.alert.alert-info.show-notify-content.blink.pending-generation.semibold.hide Génération de fichier de commande en cours ... veuillez patienter svp
+          %span.alert.alert-success.show-content.success-generation.hide Votre fichier de commande a bien été généré
+
+  .box.mt-4
+    = form_tag generate_organization_file_sending_kit_path(@organization), class: (manual_paper_set_order ? 'form-horizontal label-auto fsk_paper_set_orders' : 'form-horizontal label-auto'), id: 'fsk_paper_set_orders' do
+      %table.table.table-striped
+        %thead
+          %tr
+            %th.text-center
+              - if manual_paper_set_order
+                = label_tag do
+                  = check_box_tag "users[fsk_all_users_checked][are_checked]", "true", (params[:order_customer_id].present? ? true : false), id: 'fsk_all_users_checked', class: 'form-check-input'
+              - else
+                = 'Sélection'
+            %th Nom
+            - if manual_paper_set_order
+              %th Nb journaux
+              %th= t('activerecord.models.order.attributes.paper_set_start_date').downcase
+              %th= t('activerecord.models.order.attributes.paper_set_end_date').downcase
+              %th.hide prix ht
+            - else
+              %th Début (Mois)
+              %th Durée (Mois)
+        %tbody{id: ( manual_paper_set_order ? 'fsk_paper_set_orders' : '')}
+          - order_active_customers = params[:order_customer_id].present? ? @organization.customers.active.where(id: params[:order_customer_id]) : @organization.customers.active.order(code: :asc)
+          - order_active_customers.each do |client|
+            - if client.my_package.try(:mail_active) || client.my_package.try(:digitize_active)
+              - if manual_paper_set_order
+                - current_order = client.orders.paper_sets.order(updated_at: :desc).first
+                - next_month_order = (Time.now + 1.month).beginning_of_month.strftime("%Y-%m-%d")
+                - order = current_order || Order.new(user: client, type: 'paper_set', period_duration: (client.subscription.present? ? client.subscription.period_duration : 1))
+                %tr
+                  %td.text-center
+                    = check_box_tag "users[#{client.id}][is_checked]", "true", (params[:order_customer_id].present? ? true : false), class: "fsk_user_checked form-check-input"
+                  %td
+                    = client.info
+                    %span.error_info
+                  %td
+                    = client.account_book_types.size
+                    = hidden_field_tag("orders[][user_id]", client.id, {id: 'fsk_user_id'})
+                    = hidden_field_tag("orders[][manual_paper_set_order]", manual_paper_set_order, {id: 'fsk_manual_paper_set_order', data: {id: @organization.id}})
+                    = hidden_field_tag("orders[][order_period_duration]", (client.subscription.present? ? client.subscription.period_duration : 1), {id: 'fsk_order_period_duration'})
+                    = hidden_field_tag("orders[][paper_set_folder_count]", client.account_book_types.size, {id: 'fsk_order_paper_set_folder_count'})
+                  %td= select_tag "orders[][paper_set_start_date]", options_for_select(paper_set_start_date_options(order), current_order ? current_order.paper_set_start_date : next_month_order), include_blank: false, class: "form-select select form-select-sm optional date_order start_date", id: 'fsk_orders_paper_set_start_date'
+                  %td= select_tag "orders[][paper_set_end_date]", options_for_select(paper_set_end_date_options(order), current_order ? current_order.paper_set_end_date : next_month_order), include_blank: false, class: "form-select select form-select-sm optional date_order end_date", id: 'fsk_orders_paper_set_end_date'
+                  %td.hide.price{ style: 'font-size:15px;text-align: left !important;' , id: 'fsk_order_paper_set_price'}
+              - else
+                %tr
+                  %td{style: 'width: 66px'}= check_box_tag "users[#{client.id}][is_checked]", "true", false, class: "fsk_user_checked form-check-input pointer float-none"
+                  %td= client.info
+                  - last_order = client.orders.last
+                  - if last_order.try(:normal_paper_set_order?)
+                    %td= number_field_tag "users[#{client.id}][start_month]", 0, style: 'width:50px;'
+                    %td= number_field_tag "users[#{client.id}][offset_month]", 1, style: 'width:50px;'
+                  - elsif last_order
+                    %td
+                      - value = last_order.periods_offset_start
+                      %span{style: 'width:50px;'}= last_order.paper_set_start_date.strftime('%b')
+                      = hidden_field_tag "users[#{client.id}][start_month]", value
+                    %td
+                      - value = last_order.periods_count
+                      %span{style: 'width:50px;'}= value
+                      = hidden_field_tag "users[#{client.id}][offset_month]", value, style: 'width:50px;'
+      - if manual_paper_set_order
+        .text-center
+          %h4.hide
+            Total de la commande :
+            %b.fsk_total_price{ style: 'font-size:20px' }
+      - else
+        .form-group.boolean
+          .form-check.idocus-custom-form-check
+            = check_box_tag 'one_workshop_labels_page_per_customer', 1, false, type: 'checkbox', class: 'boolean form-check-input pointer float-none', id: 'one_workshop_labels_page_per_customer'
+            = label_tag 'one_workshop_labels_page_per_customer', "Une page d'étiquette par client ?", class: 'control-label boolean form-check-label', for: 'one_workshop_labels_page_per_customer'
+      %hr
+      .form-group.form-footer-content.text-end.hide
+        = link_to t('actions.edit'), '#', link: edit_organization_file_sending_kit_path(@organization), class: 'btn btn-dark edit-file-sending-kits' if current_user.is_developer
+        - if manual_paper_set_order
+          = submit_tag 'Générer', class: 'btn btn-primary no-margin', id:'generate-manual-paper-set-order'
+        - else
+          = submit_tag t('actions.submit'), class: 'btn btn-primary'
+
+= render partial: 'file_sending_kit_modal'
+
+= javascript_include_tag 'front/file_sending_kits/assets/javascripts/main'

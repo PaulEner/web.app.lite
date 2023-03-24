@@ -1,0 +1,47 @@
+!!!
+%html
+  %head
+    %title
+      - if content_for?(:title)
+        = yield(:title)
+      - else
+        Idocus | Archivage numérique
+    %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-type" }
+    %meta{ name: "viewport", content: "width=device-width, initial-scale=1" }
+    = yield(:head)
+
+    %link{ :rel => 'shortcut icon', :type => "image/ico", :href => image_path('favicon.ico') }
+    = csrf_meta_tag
+    = stylesheet_link_tag 'admin'
+    = javascript_include_tag Ckeditor.cdn_url
+    = javascript_include_tag 'back/main'
+
+    :plain
+      <!--[if lt IE 9]>
+        <script src="/assets/html5.js" type="text/javascript"></script>
+      <![endif]-->
+
+  .row
+    .col-md-2.lefter-dark.no-padding
+      = render 'layouts/back/lefter'
+    .col-md-10.no-padding
+      = render 'layouts/back/header_connexion'  
+      .body_content{ style: "height: 900px;" }
+        = yield
+        .push
+
+      .scroll-on-top.pointer.hide
+        .scroll-arrow= glyphicon('chevron-top', { size: '16', color: 'white' })
+
+      = render partial: 'layouts/back/messages'
+
+      %footer.fixed-bottom.footer.clearfix
+        %p.copyright{ style: 'text-align:center;' } &copy; iDocus #{Time.now.year}
+
+  .loading_box.hide
+    .box.text-center
+      %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}
+      %label.mt-2.semibold Chargement
+
+  .scroll-on-top.pointer.hide
+    .scroll-arrow= glyphicon('chevron-top', { size: '16', color: 'white' })

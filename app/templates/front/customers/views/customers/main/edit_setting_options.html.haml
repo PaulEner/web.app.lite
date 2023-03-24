@@ -1,0 +1,146 @@
+= stylesheet_link_tag 'front/customers/assets/stylesheets/main'
+
+.box.derivationRight
+  #customer.edit
+    = simple_form_for @customer, url: update_setting_options_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal label-medium' } do |f|
+      - if @customer.active? && (@customer.my_package.try(:upload_active) || @customer.my_package.try(:name) == 'ido_retriever') && !@organization.specific_mission
+        .select-container.no-padding.w-100
+          = f.input :authd_prev_period, as: :integer, input_html: { min: 0, placeholder: "1" }
+        .select-container.no-padding.w-100
+          = f.input :auth_prev_period_until_day, as: :integer, input_html: { min: 0, max: 28, placeholder: "11" }, hint: 'De 0 à 28'
+        - if @user.is_admin
+          .select-container.no-padding.w-100.hide
+            = f.input :auth_prev_period_until_month, as: :integer, input_html: { min: 0, max: 2 }, hint: '0 = actuel, 1 = le mois suivant, 2 = dans 2 mois'
+      - if @customer.my_package.try(:scan_active)
+        - if @customer.dematbox.try(:is_configured)
+          %h4.margin1bottom Liste des services
+          - if @customer.dematbox.try(:services).try(:any?)
+            %table.table.table-striped.table-bordered-inner.table-condensed.margin0bottom
+              %thead
+                %tr.bg-brown.text-white
+                  %th Groupe
+                  %th Nom
+              %tbody
+                - @customer.dematbox.services.order(group_name: :asc, name: :asc).each do |service|
+                  %tr
+                    %td= service.group_name
+                    %td= service.name
+          - elsif @customer.account_book_types.size == 0
+            %p Pas de journaux paramétrés.
+          = link_to 'Déconnecter le Scanner', organization_customer_dematbox_path(@organization, @customer), method: :delete, class: 'btn btn-danger margin1top', data: { confirm: 'Etes-vous sûr de vouloir déconnecter le scanner ?' }
+        - elsif @customer.dematbox.try(:beginning_configuration_at).present?
+          Configuration en cours...veuillez recharger votre page dans quelques secondes.
+        - else
+          %label
+            Appairez ici un scanner iDocus'Box (Produit Sagemcom). Si vous n'avez pas de scanner,
+            = link_to 'vous pouvez en commander un.', organization_customer_orders_path(@organization, @customer), class: 'no-style green-label semibold', target: '_blank'
+            %br
+            Afin d'appairer le scanner, merci de suivre les instructions du
+            = link_to "mode d'emploi Sagemcom", download_document_path(name: 'Livret_utilisation_Dematbox.pdf'), class: 'no-style green-label semibold'
+            fournit lors de la livraison.
+          %br
+          %br
+          %p Merci d'inscrire le code d'appairage dans le champ ci-dessous :
+          .form-group
+            %label.semibold Code appairage iDocus Box
+            .select-container.no-padding.w-100
+              = text_field_tag 'pairing_code', '', placeholder: "ex : 125HKEH344"
+      = f.simple_fields_for :options do |o|
+        = o.hidden_field :id
+        .form-group
+          .row
+            .col-md-6
+              = o.label :preseizure_date_option, class: 'semibold'
+              %br
+              %i.help-block Cette option permet de choisir la date d'écriture de l'opération qui sera exportée.
+            .col-md-2
+              .form-check.form-check-inline               
+                = radio_button_tag 'user[options_attributes][preseizure_date_option]', '-1', @customer.options.preseizure_date_option == -1, class: 'form-check-input'
+                %label.form-check-label Paramètres du cabinet     
+            .col-md-2
+              .form-check.form-check-inline
+                = radio_button_tag 'user[options_attributes][preseizure_date_option]', '0', @customer.options.preseizure_date_option == 0, class: 'form-check-input'
+                %label.form-check-label Date de réalisation
+            .col-md-2
+              .form-check.form-check-inline
+                = radio_button_tag 'user[options_attributes][preseizure_date_option]', '1', @customer.options.preseizure_date_option == 1, class: 'form-check-input'
+                %label.form-check-label Date de prélèvement
+        .form-group
+          .row
+            .col-md-6
+              = o.label :is_pre_assignment_date_computed, class: 'semibold'
+            .col-md-2
+              .form-check.form-check-inline               
+                = radio_button_tag 'user[options_attributes][is_pre_assignment_date_computed]', '-1', @customer.options.is_pre_assignment_date_computed == -1, class: 'form-check-input'
+                %label.form-check-label Paramètres du cabinet
+                %br
+                %i.help-block (appliquer la règle définie dans les paramètres du cabinet)
+            .col-md-2
+              .form-check.form-check-inline
+                = radio_button_tag 'user[options_attributes][is_pre_assignment_date_computed]', '0', @customer.options.is_pre_assignment_date_computed == 0, class: 'form-check-input'
+                %label.form-check-label Date d’origine
+                %br
+                %i.help-block (la facture sera saisie à sa date d’origine)
+            .col-md-2
+              .form-check.form-check-inline
+                = radio_button_tag 'user[options_attributes][is_pre_assignment_date_computed]', '1', @customer.options.is_pre_assignment_date_computed == 1, class: 'form-check-input'
+                %label.form-check-label Date de la période iDocus
+                %br
+                %i.help-block (la facture sera saisie au 1er jour du mois/trimestre en cours dans lequel la facture est déposée dans iDocus, exemple: une facture de janvier déposée le 15 novembre sera saisie au 1er novembre)
+        .form-group
+          .row
+            .col-md-6.form-group.no-margin
+              = o.label :is_taxable, class: 'control-label semibold form-check-label'
+              %br
+                %i.help-block Non (aucune TVA ne sera reportée en pré-saisie)
+            .col-md-6
+              .form-check.form-switch.idocus-custom-form-check
+                = o.input :is_taxable, as: :boolean, label: false, input_html: { class: 'form-check-input input_switch input_check_field check-taxable-user-options', id: 'check-taxable-user-options' }
+                %label.semibold{class: 'form-check-label label_check_field', for: 'check-displayed-pre-assignment'} Non
+        .form-group
+          .row
+            .col-md-6
+              = o.label :is_operation_processing_forced, class: 'semibold'
+              %br
+              %i.help-block Cette option permet de forcer la pré-affectation des écritures récupérées par les automates sans délais d'attente. Toutefois, en forçant le traitement, iDocus ne pourra plus garantir la mise à jour des opérations (exemple: libellé, date, montant changés par les banques).
+            .col-md-2
+              .form-check.form-check-inline               
+                = radio_button_tag 'user[options_attributes][is_operation_processing_forced]', '-1', @customer.options.is_operation_processing_forced == -1, class: 'form-check-input'
+                %label.form-check-label Paramètres du cabinet     
+            .col-md-2
+              .form-check.form-check-inline
+                = radio_button_tag 'user[options_attributes][is_operation_processing_forced]', '0', @customer.options.is_operation_processing_forced == 0, class: 'form-check-input compta-user-options'
+                %label.form-check-label Non
+            .col-md-2
+              .form-check.form-check-inline
+                = radio_button_tag 'user[options_attributes][is_operation_processing_forced]', '1', @customer.options.is_operation_processing_forced == 1, class: 'form-check-input compta-user-options'
+                %label.form-check-label Oui
+        .form-group
+          .row
+            .col-md-6
+              = o.label :is_operation_value_date_needed, class: 'semibold'
+              %br
+              %i.help-block La date est ajouté à la suite du libellé de l'opération et sera présent sur la pré-affectation.
+            .col-md-2
+              .form-check.form-check-inline               
+                = radio_button_tag 'user[options_attributes][is_operation_value_date_needed]', '-1', @customer.options.is_operation_value_date_needed == -1, class: 'form-check-input'
+                %label.form-check-label Paramètres du cabinet     
+            .col-md-2
+              .form-check.form-check-inline
+                = radio_button_tag 'user[options_attributes][is_operation_value_date_needed]', '0', @customer.options.is_operation_value_date_needed == 0, class: 'form-check-input compta-user-options'
+                %label.form-check-label Non
+            .col-md-2
+              .form-check.form-check-inline
+                = radio_button_tag 'user[options_attributes][is_operation_value_date_needed]', '1', @customer.options.is_operation_value_date_needed == 1, class: 'form-check-input compta-user-options'
+                %label.form-check-label Oui
+                
+      %hr
+      .form-group.no-margin
+        .w-100.text-end
+          - if @customer.configured?
+            = link_to t('actions.cancel'), organization_customer_path(@organization, @customer, tab: 'compta'), class: 'btn btn-light semibold'
+            = f.submit 'Valider les modifications', class: 'btn btn-primary bold'
+          - else
+            = f.submit t('actions.next_step'), class: 'btn btn-primary bold'
+
+= javascript_include_tag 'front/customers/assets/javascripts/main'

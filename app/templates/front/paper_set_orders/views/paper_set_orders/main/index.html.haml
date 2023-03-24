@@ -1,0 +1,64 @@
+= stylesheet_link_tag 'front/organizations/assets/stylesheets/show'
+= stylesheet_link_tag 'front/paper_set_orders/assets/stylesheets/main'
+
+%input#organization_id{type: :hidden, value: @organization.id, name: 'organization_id'}
+- manual_paper_set_order = CustomUtils.is_manual_paper_set_order?(@organization) ? true : false
+%input#manual_paper_set_order{type: :hidden, value: "#{manual_paper_set_order}", view: (manual_paper_set_order ? select_organization_file_sending_kit_path(@organization) : select_for_orders_organization_paper_set_orders_path), name: 'manual_paper_set_order'}
+
+.kits.paper-set-order-view
+  .row.derivationRight
+    .col-md-9
+      %h3.bold
+        Kit courrier
+        %span.badge.badge-secondary.badge-sm.regular= @orders_count
+    .col-md-1.text-end.no-padding
+      %button.btn.btn-light.semibold.open_paper_set_order_filter
+        %span.me-2 Filtrer
+        %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+    .col-md-2.text-end
+      %button.btn.btn-primary.select_for_orders.semibold
+        Nouvelle commande
+
+  .box.mt-4.derivationLeft
+    %table.table.table-striped#tbl_orders
+      %thead
+        %th= sortable :user_code, 'Dossier'
+        %th= sortable :created_at, 'Date de commande'
+        %th= sortable :company, 'Société'
+        %th Commande
+        %th= t('activerecord.models.paper_process.attributes.tracking_number').downcase
+        %th= sortable :state, t('activerecord.models.order.attributes.state').downcase
+        %th.text-end Action
+      %tbody
+        - @orders.each do |order|
+          %tr
+            %td.text-table-green.semibold= link_to "#{order.user.info}", organization_customer_orders_path(@organization, customer_id: order.user_id)
+            %td= order.created_at.strftime('%d/%m/%y')
+            %td= truncate(order.company, length: 20, separator: ' ')
+            %td
+              = order.paper_set_casing_size.to_s + 'g - ' + order.paper_set_casing_count.to_s + ' env - ' + order.paper_set_folder_count.to_s + ' chm - '
+              = paper_set_date_to_name(order.period_duration, order.paper_set_start_date)
+              à
+              = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
+            %td.text-table-green= link_to_paper_tracking(order.kit) if order.kit.try(:tracking_number)
+            %td
+              .badge.bg-dark.semibold= Order.state_machine.states[order.state].human_name
+            %td.text-end.pointer
+              .action.sub-menu-kit
+                %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+              .sub_menu.text-start.hide
+                %ul.no-margin.no-padding.regular
+                  %li.new.open_new_edit
+                    = link_to glyphicon('plus', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Recommander', new_organization_paper_set_order_path(@organization, template: order), title: 'Recommander le même kit'
+                  - if order.pending? && (Time.now < order.created_at + 24.hours)
+                    %li.edit.open_new_edit
+                      = link_to glyphicon('pencil', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Éditer', edit_organization_paper_set_order_path(@organization, order), title: 'Éditer'
+                    %li.delete.red-label
+                      = link_to glyphicon('trash', { size: '15', color: "#FF4848" }) + ' Supprimer', organization_paper_set_order_path(@organization, order), method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
+    = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { name: 'paper_set_orders', total_pages: @orders.total_pages }
+          
+  .mb-5
+
+= render partial: 'modal', locals: { manual_paper_set_order: manual_paper_set_order }
+
+= javascript_include_tag 'front/paper_set_orders/assets/javascripts/main'

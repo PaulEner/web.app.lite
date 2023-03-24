@@ -1,0 +1,14 @@
+= stylesheet_link_tag 'front/customers/assets/stylesheets/main'
+
+#address.edit.derivationRight
+  .row
+    .col-md-10
+      %h3.bold
+        Édition d'adresse 
+    .col-md-2.text-center.no-padding
+      %button.btn.btn-light.semibold      
+        %span= glyphicon('plus', { size: '12', color: '#72AA42'})
+        %span= link_to 'Nouvelle adresse', new_organization_address_path(@organization), class: 'add-adress no-style primary-label'
+
+  .box
+    = render partial: 'form'

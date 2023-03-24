@@ -1,0 +1,35 @@
+.retractable-content
+%table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner{ data: { total: collection.count }}
+  %thead
+    %tr.bg-brown.text-white
+      %th.text-center=  
+      %th.text-center Nom Lot
+      %th.text-center Nb. docs.
+      %th.text-center Origine
+  %tbody
+    - total = 0
+    - if collection.count > 0
+      - collection.each do |object|
+        - total = total + object.document_count
+        %tr
+          %td.text-center
+            - if object.date
+              - if object.date.today?
+                = l(object.date, format: '%H:%M')
+              - else
+                = l(object.date, format: '%d %b %Y %H:%M')
+            - else
+              \-
+          %td.text-center= object.name
+          %td.text-center= object.document_count
+          %td.text-center= object.message == false ? '-' : sanitize(object.message, :tags => %w(br))
+      %tr
+        %td
+        %td
+        %td.text-center
+          %strong= total
+        %td
+    - else
+      %tr
+        %td.text-center{ colspan: 4 }
+          %i Aucun

@@ -1,0 +1,18 @@
+@media (max-width: 1280px) {
+  .modal#general_idocus_main_modal .modal-dialog{
+    min-width: 710px;
+  }
+
+  .form-group {
+    margin-bottom: 2%;
+  }
+
+  h5{
+    font-size: 14px;
+  }
+
+  .new-reminder-email svg{
+    width: 11px !important;
+    height: 11px !important;
+  }
+}

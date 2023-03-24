@@ -1,0 +1,126 @@
+= stylesheet_link_tag 'front/invoices/assets/stylesheets/main'
+
+.main_content
+  .invoice
+    .auto_integration_box
+      .row.derivationRight
+        .col-md-10
+          %h3.bold
+            = t('invoices.auto_invoice_integration')
+            %span.badge.badge-secondary.badge-sm.regular= @invoice_settings.size
+        .col-md-2.text-center
+          - modal_params = param_encode({ url: '#integration', title: t('invoices.auto_invoice_integration'), after_show: 'integration_bind_user_change' })
+          %button.btn.btn-primary.parameter.semibold.as_idocus_modal{ idocus: modal_params  }
+            %span.me-2
+              = glyphicon('cog', { color: "#FFF", size: '15'})       
+            %span Paramètres
+
+      
+      .box.mt-4.table_integration.derivationLeft
+        %table.table.table-striped
+          %thead
+            %th Code de dossiers
+            %th Journal
+            %th.text-end Action
+          %tbody
+            - @invoice_settings.each do |invoice_setting|
+              %tr
+                %td.semibold.custom-invoice= User.find_by_code(invoice_setting.user_code).info
+                %td.custom-invoice= invoice_setting.journal_code
+                %td.text-end.pointer
+                  .action.sub-menu-invoice
+                    %span.glyph= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+                    .sub_menu.integration.text-start.hide
+                      %ul.no-margin.no-padding.regular
+                        %input.invoice-setting-data{type: :hidden, value: invoice_setting.id, name: 'invoice-setting-data', data: {code: invoice_setting.user_code, journal: invoice_setting.journal_code, info: User.find_by_code(invoice_setting.user_code).info, organization_id: @organization.id}}
+
+                        - modal_params = param_encode({ url: '#synchronization', title: 'Synchroniser les factures dépuis la période sélectionnée', after_show: 'set_synchronisation_id' })
+                        %li.invoice-setting-action.as_idocus_modal{ idocus: modal_params, 'data-id' => invoice_setting.id }
+                          = link_to glyphicon('loop', { size: '15', color: "rgba(26, 26, 26, 0.7)" }) + ' Synchroniser les factures', '#'
+                        / %li.invoice-setting-action.edit
+                        /   %span.me-1= glyphicon('pencil', { size: '15', color: 'rgba(26, 26, 26, 0.7);'})
+                        /   %span Éditer
+
+                        - idocus_params = param_encode({ url: remove_organization_invoices_path(@organization, id: invoice_setting.id), method: 'delete', confirm: 'Etes vous sûr?', redirect_to: { url: organization_invoices_path(@organization), method: 'get', html: { target: '.main_content' } } })
+                        %li.invoice-setting-action.red-label.as_idocus_ajax{ idocus: idocus_params }
+                          = link_to glyphicon('trash', { size: '15', color: "#FF4848" }) + ' Supprimer', '#', class: 'red-label'
+
+
+        = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: organization_invoices_path(@organization), name: 'integration', target: '.table_integration', total_pages: @invoice_settings.total_pages }
+
+    .invoices_box
+      .row.derivationRight
+        .col-md-8
+          %h3.bold 
+            Factures
+            %span.badge.badge-secondary.badge-sm.regular.total-invoices= @invoices.total_count
+
+      #data_invoices.box.mt-4.table_facture.derivationLeft
+        %table.table.table-striped
+          %thead
+            %th Numero de facture
+            %th Montant
+            %th.text-end Action
+          %tbody
+            - if !@user.leader?
+              %tr
+                %td{ colspan: 3 }
+                  .badge.badge-warning.fs-origin Vous n'avez pas le droit necessaire pour acceder à cette page
+            - elsif @organization.try(:is_suspended)
+              %tr
+                %td{ colspan:3 }
+                  .badge.badge-warning.fs-origin Cette organization a été suspendue
+            - else
+              - @invoices.each do |invoice|
+                %tr
+                  %td.semibold= invoice.number
+                  %td.price
+                    - if invoice.amount_in_cents_w_vat
+                      = "#{format_price_00(invoice.amount_in_cents_w_vat)} €"
+                  %td.text-end.pointer
+                    .action.sub-menu-invoice
+                      %span.glyph= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+                      .sub_menu.invoice.text-start.hide
+                        %ul.no-margin.no-padding.regular
+                          %input.invoice-action-data{type: :hidden, name: 'invoice-action-data', link: organization_invoice_path(invoice.id), title: "#{invoice.number}.pdf"}
+                          - modal_params = param_encode({ url: '#invoice_view', style: 'min-width: 1041px;', title: 'Facture', before_show: 'set_iframe_url', with_cancel: false })
+                          %li.invoice-action.view.as_idocus_modal{ idocus: modal_params, data: { url: download_organization_invoices_path(@organization, invoice.id) }  }
+                            = link_to glyphicon('eye', { size: '15', color: "rgba(26, 26, 26, 0.7)" }) + ' Voir', '#'
+                          / %li.invoice-action
+                          /   %span.me-1= glyphicon('cloud-download', { size: '15', color: 'rgba(26, 26, 26, 0.7);'})
+                          /   %span Télécharger
+        
+        = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: organization_invoices_path(@organization), name: 'invoices', target: '.table_facture', total_pages: @invoices.total_pages }
+
+  //Integration modal
+  #integration.hide
+    = simple_form_for @invoice_setting, :url => insert_organization_invoices_path(@organization), :controller => 'main_controller', :method => :post, html: { class: 'form', :id => 'data-invoice-integration', data: { params: file_upload_params.to_json } } do |f|
+      .form-group.clearfix
+        = f.input :id, as: :hidden, id: 'invoice-setting-id'
+      .form-group.clearfix
+        = f.input :user_code, label: t('invoices.client_code') + ' :', collection: file_upload_users_list.map{ |e| [e.short_info, e.code] }, include_blank: true, required: true, input_html: { class: 'form-control select form-select form-select-sm', "aria-label" => ".form-select-sm"}
+      .form-group.clearfix
+        = f.input :journal_code, label: t('invoices.document_type') + ' :', collection: [], required: true, input_html: { class: 'form-control select form-select form-select-sm', "aria-label" => ".form-select-sm"}
+    .idocus_modal_buttons
+      - idocus_params = param_encode({ url: '#url', method: 'post', form:{ id: 'data-invoice-integration', dump_action: true }, modal: { id: '#' }, redirect_to: { url: organization_invoices_path(@organization), method: 'get', html: { target: '.main_content' } } })
+      %button.btn.btn-primary.add.as_idocus_ajax{ type: :button, idocus: idocus_params }= t('actions.add')
+
+  //Synchronize modal
+  #synchronization.hide
+    = form_tag synchronize_organization_invoices_path(@organization), :method => :post, class: 'synchronization-invoice-form', :id => 'synchronization-invoice-form' do
+      .form-group.clearfix
+        = hidden_field_tag 'invoice_setting_id'
+      .form-group.clearfix
+        .label-section
+          = label_tag 'invoice_setting_synchronize_contains[period]', 'Sélectionner la période:', class: 'control-label'
+        .control-section
+          = select_tag 'invoice_setting_synchronize_contains[period]', options_for_select( @synchronize_months, (params[:invoice_setting_synchronize_contains][:period] rescue '') ), class: 'form-control select form-select form-select-sm', "aria-label" => ".form-select-sm"
+    .idocus_modal_buttons
+      - idocus_params = param_encode({ url: '#url', metod: 'post', form:{ id: 'synchronization-invoice-form', dump_action: true }, modal: { id: '#' }, redirect_to: { url: organization_invoices_path(@organization), method: 'get', html: { target: '.main_content' } } })
+      %button.btn.btn-primary.as_idocus_ajax{ type: :button, idocus: idocus_params } Synchroniser
+
+//invoice view
+#invoice_view
+  %iframe.w-100{ src: '', style: 'height: 650px!important' }
+
+  = javascript_include_tag 'front/invoices/assets/javascripts/main'

@@ -1,0 +1,25 @@
+%form#filter-documents-form
+  .form-group
+    %label.semibold Banque
+    .select-container.no-padding.w-100
+      %input{ name: 'document_contains[service_name]', type: :text }
+
+  .form-group
+    %label.semibold Date
+    .input-group.mb-3
+      %span.show-calendar.input-group-text.calendar-field-customer{ data: { ref: 'document-date' } }= glyphicon('calendar', { size: '14', color: 'background: rgba(26, 26, 26, 0.7)' })
+      %input.form-control.calendar-field-customer.date.daterange#document-date{ name: 'document_contains[date]', type: :text }
+      %span.show-calendar.calendar-field-customer.input-group-text-right{ data: { ref: 'document-date' } }= glyphicon('chevron-bottom', { size: '12', color: 'background: rgba(26, 26, 26, 0.7)' })
+
+  .form-group
+    %label.semibold Nom original
+    .select-container.no-padding.w-100
+      %input{ name: 'document_contains[name]', type: :text }
+
+  .form-group
+    %label.semibold Montant
+    .row.me-0
+      .w-50
+        = select_tag 'document_contains[amount_operation]', options_for_select([['=', 0], ['>=', 1], ['<=', 2]]), include_blank: false, class: 'form-select operator'
+      .w-50.select-container.no-padding
+        %input#amount.p-1{ name: 'document_contains[amount]' }

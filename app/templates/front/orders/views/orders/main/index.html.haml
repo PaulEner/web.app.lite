@@ -1,0 +1,62 @@
+= stylesheet_link_tag 'front/orders/assets/stylesheets/main'
+
+#orders_list
+  .box.derivationRight
+    %table.table.table-striped
+      %thead
+        %tr
+          %th Date de la commande
+          %th Produit
+          %th Quantité
+          %th Prix (HT)
+          %th Adresse de livraison
+          %th Statut
+          %th Actions
+      %tbody
+        - @orders.each do |order|
+          %tr
+            %td= l order.created_at
+            - if order.dematbox?
+              %td iDocus'Box
+              %td= order.dematbox_count
+              %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
+            - else
+              %td Kit envoi courrier
+              %td
+                = order.paper_set_casing_size.to_s + 'g'
+                %br
+                = order.paper_set_casing_count.to_s + ' enveloppe(s)'
+                %br
+                = order.paper_set_folder_count.to_s + ' chemises'
+                %br
+                = paper_set_date_to_name(order.period_duration, order.paper_set_start_date)
+                à
+                = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
+              %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
+            %td= order.address.try(:long_info)
+            %td= Order.state_machine.states[order.state].human_name
+            %td.text-end.pointer
+              .action
+                %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+              - if order.pending? && (Time.now < order.created_at + 24.hours)
+                .sub_menu.text-start.hide
+                  %ul.no-margin.no-padding.regular                                                               
+                    %li
+                      = link_to glyphicon('pencil', { size: '15', color: "rgba(26, 26, 26, 0.7)" }) + ' Éditer', '#', class: 'new_edit_order_url', link: edit_organization_customer_order_path(@organization, @customer, order)
+                    %li
+                      - idocus_params = param_encode({ url: organization_customer_order_path(@organization, @customer, order), confirm: t('actions.confirm'), method: 'delete', redirect_to: { url: organization_customer_orders_path(@organization, @customer), method: 'get', html: { target: '#orders_list table' } } })
+                      = link_to glyphicon('action-undo', { size: '15', color: "#FF4848" }) + ' Annuler', '#', class: 'red-label as_idocus_ajax', idocus: idocus_params             
+
+    .form-group.no-margin
+      .w-100.text-end
+        - if @customer.my_package.try(:scan_active)
+          = link_to "Commander un/des scanner(s) iDocus'box", "#", class: 'btn btn-dark bold new_edit_order_url', link: new_organization_customer_order_path(@organization, @customer, order: { type: 'dematbox' })
+        - if @customer.is_package?('mail_active') || @customer.is_package?('digitize_active')
+          - if CustomUtils.is_manual_paper_set_order?(@organization)
+            = link_to 'Générer un kit de numérisation', "#", link: select_organization_file_sending_kit_path(@organization, order_customer_id: @customer.id), class: 'btn btn-light bold select_for_orders'
+          - else
+            = link_to 'Commander un Kit envoi courrier', "#", link: new_organization_customer_order_path(@organization, @customer, order: { type: 'paper_set' }), class: 'btn btn-primary bold new_edit_order_url'
+
+= render partial: 'modal'
+
+= javascript_include_tag 'front/orders/assets/javascripts/main'

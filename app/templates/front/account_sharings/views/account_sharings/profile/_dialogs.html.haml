@@ -1,0 +1,33 @@
+.modal.fade.in#account-sharing-new
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Partager mon compte avec un contact
+        %button.btn-close{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' }
+      .modal-body
+        .row
+          .col-md-12
+            - @contact = User.new(company: @user.company)
+            = simple_form_for @contact, url: account_sharings_create_path, html: { class: 'form-group' } do |f| 
+              = f.input :email, placeholder: 'john.doe@example.com', hint: 'Si le contact existe déjà, les champs ci-dessous seront ignorés'
+              = f.input :company
+              = f.input :first_name
+              = f.input :last_name
+      .modal-footer
+        %button.btn.btn-primary.semibold.validate{ type: 'button' } Valider
+
+
+.modal.fade.in#account-sharing-new-request
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Demander l'accès à un dossier
+        %button.btn-close{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' }
+      .modal-body
+        .row
+          .col-md-12
+            - @account_sharing_request = AccountSharingRequest.new
+            = simple_form_for @account_sharing_request, url: account_sharings_create_request_path, html: { class: 'form-horizontal' } do |f|
+              = f.input :code_or_email, label: 'Code ou email du dossier'
+      .modal-footer
+        %button.btn.btn-primary.semibold.validate{ type: 'button' } Valider

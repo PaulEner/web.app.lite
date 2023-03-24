@@ -1,0 +1,5 @@
+.back-notice-flush
+  - flash.each do |name, msg|
+    %div{ class: "alert alert-#{['notice', 'success'].include?(name) ? 'success' : 'danger'}" }
+      %a.close{ "data-dismiss" => "alert" } x
+      != content_tag :div, msg, { :id => "flash_#{name}" }, false if msg.is_a?(String)

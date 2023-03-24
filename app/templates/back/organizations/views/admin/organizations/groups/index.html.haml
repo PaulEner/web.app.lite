@@ -1,0 +1,64 @@
+#group_organizations.container-fluid  
+  .row.derivationLeft.box.small-shadow.clearfix
+    .col-md-10
+      %h3.semibold
+        Liste des groupes d'organisation &nbsp;
+        %span.badge.bg-dark= @organization_groups.total_count
+    .col-md-2.text-end
+      %button.btn.btn-primary.create-group-organization
+        %span.me-2= glyphicon('plus', size: 10, color: "white")
+        %span Nouveau groupe  
+
+  .row.derivationRight
+    .col-md-12
+      .box        
+        .row
+          .col-md-12
+            %table.table.table-condensed.table-striped
+              %thead
+                %tr
+                  %th= t('activerecord.models.common.attributes.created_at')
+                  %th= t('activerecord.models.common.attributes.updated_at')
+                  %th Nom
+                  %th Membres
+                  %th.text-end Actions
+              %tbody.retractable.slidedown
+                - @organization_groups.each do |group|
+                  %tr
+                    %td= l(group.created_at)
+                    %td= l(group.updated_at)
+                    %td= group.name
+                    %td
+                      - group.organizations.order(:name).each_with_index do |organization, index|
+                        = ',' if index != 0
+                        = link_to organization.name, '#'
+
+                    %td.text-end.pointer.align-middle                      
+                      .action.sub_edit_delete
+                        %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+                      .sub_menu.text-start.hide
+                        %ul.no-margin.no-padding.regular                            
+                          %li.edit-group-organization{ id: group.id }                         
+                            = link_to '#' do
+                              %span.me-2= glyphicon('pencil', size: 12)
+                              %span Éditer
+                          %li.delete
+                            = link_to admin_organizations_group_path(group), method: 'delete', data: { confirm: t('actions.confirm') } do
+                              %span.me-2= glyphicon('trash', size: 12, color: 'red')
+                              %span.red-label Supprimer
+
+.modal#create-new-group
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h5.modal-title.bold Création d'une nouvelle groupe organisation
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}      
+      .modal-body   
+            
+      .modal-footer
+        %button.btn.btn-light.cancel{ type: :button, 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal' } Annuler
+        - idocus_params = param_encode({ url: "#create-new-organization", method: 'POST', form: { id: 'new_organization_group', dump_action: true }, modal: { id: 'create-new-group' }, after_send: 'show_organization' })
+        %button.btn.btn-primary.as_idocus_ajax{ type: :button, idocus: idocus_params } Valider
+                           
+
+= javascript_include_tag 'back/organizations/assets/javascripts/main'

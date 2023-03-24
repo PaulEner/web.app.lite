@@ -1,0 +1,9 @@
+= stylesheet_link_tag 'front/my_documents/assets/stylesheets/main'
+
+- if @collaborator_view
+  = render partial: 'for_collaborator'
+- else
+  %input#reload-page-flag{ type: :hidden, value: 0 }
+  = render partial: 'for_customer'
+
+= render partial: 'document_dialog'

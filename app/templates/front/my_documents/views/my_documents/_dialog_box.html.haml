@@ -1,0 +1,91 @@
+#more-filter.modal.fade.in{'aria-hidden' => 'true', :role => 'dialog', :tabindex => '-1'}
+  .modal-dialog
+    .modal-content
+      %form#pack_filter_form.simple_form.form-horizontal        
+        .modal-header
+          %h5.modal-title.bold Filtrer
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        .modal-body
+          .form-group            
+            - label_piece_operation = @is_operations ? "'opération" : "e pièce"
+            %label= "Numéro d#{label_piece_operation} iDocus" 
+            .w-100.row        
+              .w-25
+                = select_tag 'by_all[position_operation]', options_for_select([['=', 0], ['>=', 1], ['<=', 2]], (@options[:position_operation] rescue 0)), include_blank: false, class: 'form-select operator'
+              .w-75.select-container.no-padding
+                %input{ name: 'by_all[position]', value: (@options[:position].join(',') rescue '' ) }
+                %i Séparer par virgule (ex: 1,2,3), si plusieurs.
+          .form-group
+            %label.semibold Tags
+            .select-container.no-padding
+              %input{ name: 'by_all[tags]', value: (@options[:tags] rescue '' ) }
+
+          - if !@is_operations
+            .form-group
+              %label Etat pièce
+              = select_tag 'by_piece[state_piece]', options_for_select([['Tous', ''], ['En attente validation analytique', 'waiting_analytics'], ['Ignorée', 'ignored,truly_ignored'], ['Pré-saisie en cours','waiting']], (@options[:pre_assignment_state] rescue '')), include_blank: false, class: 'form-select', id: 'state_piece'
+          - if @user.pre_assignement_displayed?
+            %fieldset
+              %legend.alert.alert-info Filtre lié à la pré-affectation
+              %hr.no-margin
+              .form-group
+                %label Nom de tiers
+                .select-container.no-padding.w-100
+                  %input{ name: 'by_preseizure[third_party]', value: (@options[:by_preseizure][:third_party] rescue nil) }
+              .form-group
+                %label N° de pièce
+                .select-container.no-padding.w-100
+                  %input{ name: 'by_preseizure[piece_number]', value: (@options[:by_preseizure][:piece_number] rescue nil) }
+
+              - options = []
+              - if @user.organization.try(:uses_api_softwares?)
+                - options << ['Livrée', 1]; options << ['En attente livraison', 2]; options << ['Non livrée',3]
+              - if @user.organization.try(:uses_non_api_softwares?)
+                - options << ['Téléchargée', 4]; options << ['Non récupérée', 5]
+
+              - if not options.empty?
+                .form-group
+                  %label Livraison/Export écriture comptable
+                  = select_tag 'by_preseizure[is_delivered]', options_for_select(options, (@options[:by_preseizure][:is_delivered] rescue nil)), include_blank: true, class: 'form-select', id: 'delivery'
+              .form-group
+                %label Date de livraison              
+                .input-group.mb-3
+                  %span.show-calendar.input-group-text{ data: { ref: 'delivery-date' } }= glyphicon('calendar', { size: '14', color: 'background: rgba(26, 26, 26, 0.7)' })       
+                  %input.form-control.value-content.date.daterange#delivery-date{ type: :text, name: 'by_preseizure[delivery_tried_at]', value: (@options[:by_preseizure][:delivery_tried_at] rescue nil)}
+                  %span.show-calendar.input-group-text-right{ data: { ref: 'delivery-date' } }= glyphicon('chevron-bottom', { size: '12', color: 'background: rgba(26, 26, 26, 0.7)' })             
+              .form-group
+                %label Date de facture
+                .input-group.mb-3
+                  %span.show-calendar.input-group-text{ data: { ref: 'invoice-date' } }= glyphicon('calendar', { size: '14', color: 'background: rgba(26, 26, 26, 0.7)' })
+                  %input.form-control.value-content.date.daterange#invoice-date{ type: :text, name: 'by_preseizure[date]', value: (@options[:by_preseizure][:pre_assignment_date] rescue nil)}
+                  %span.show-calendar.input-group-text-right{ data: { ref: 'invoice-date' } }= glyphicon('chevron-bottom', { size: '12', color: 'background: rgba(26, 26, 26, 0.7)' })
+              .form-group
+                %label Montant
+                .row
+                  .col-md-4.compare-choice
+                    = select_tag 'by_preseizure[amount_operation]', options_for_select([['Eg à', 0], ['Sup - Eg à', 1], ['Inf - Eg à', 2]], (@options[:by_preseizure][:amount_operation] rescue nil)), include_blank: false, class: 'form-select operator', id: 'compare'
+                  .col-md-8
+                    .select-container
+                      %input.value-content{ name: 'by_preseizure[amount]', value: (@options[:by_preseizure][:amount] rescue nil) }
+                
+
+      .modal-footer
+        .row.w-100          
+          .col-md-12.d-inline-block.ps-1.text-end
+            %button.btn.btn-light.semibold.btn-reinit{:type => 'button', id: 'launch-reinit2', 'data-bs-dismiss' => 'modal', :type => 'button'} Réinitialiser
+            %button.btn.btn-primary.semibold.btn-add{:type => 'button', id: 'launch-filter'} Filtrer
+
+#preseizures_export.modal.fade.in{'aria-hidden' => 'true', :role => 'dialog', :tabindex => '-1'}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Téléchargement d'écritures comptables        
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        %p.information
+        .mb-4
+        %form.form-group#preseizures_export_form{ action: '/documents/export', method: 'POST' }
+          %label Format d'export
+          = select_tag :export_type, '', id: :export_type, class: 'form-select'
+      .modal-footer
+        %button.btn.btn-primary.semibold#export_button{:type => 'button'} Exporter

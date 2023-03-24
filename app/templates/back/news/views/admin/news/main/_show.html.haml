@@ -1,0 +1,29 @@
+.row
+  .col-md-4
+    %table.table.table-condensed.table-bordered-inner.table-striped
+      %thead
+        %tr
+          %th{ colspan: 2 }
+            %h3 Informations
+      %tbody
+        %tr
+          %th= t('activerecord.models.common.attributes.created_at')
+          %td= l(@news.created_at)
+        %tr
+          %th= t('activerecord.models.common.attributes.updated_at')
+          %td= l(@news.updated_at)
+        %tr
+          %th= t('activerecord.models.news.attributes.published_at')
+          %td
+            - if @news.published_at
+              = l(@news.published_at)
+            - else
+              %i.gray Pas encore publié
+        %tr
+          %th= t('activerecord.models.news.attributes.target_audience')
+          %td= t('simple_form.labels.news.target_audiences.'+ @news.target_audience)
+        %tr
+          %th= t('activerecord.models.news.attributes.url')
+          %td= link_to @news.url, @news.url, target: '_blank'
+  .col-md-8
+    != @news.body

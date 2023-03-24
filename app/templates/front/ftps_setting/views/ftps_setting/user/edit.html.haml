@@ -1,0 +1,17 @@
+#ftp.edit.container-fluid
+  .alerts.derivationLeft
+    = render partial: 'shared/messages'
+  .row.derivationRight
+    .col-md-12.box
+      %h2.padding16left.margin1bottom Édition de la configuration FTP
+      = simple_form_for @ftps, url: update_ftps_url, html: { class: 'form form-horizontal margin0' } do |f|
+        = hidden_field_tag :type, params[:type]
+        = f.input :host
+        = f.input :port, as: :integer
+        -if params[:type] == 'ftp'
+          = f.input :is_passive
+        = f.input :login
+        = f.input :password
+        .form-actions.margin0bottom
+          = f.submit t('actions.submit'), class: 'btn btn-primary'
+          = link_to t('actions.cancel').capitalize, profiles_path, class: 'btn'

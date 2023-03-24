@@ -1,0 +1,79 @@
+.ajax_response
+  #organization_subscriptions.select_options
+    = simple_form_for @subscription, url: propagate_options_organization_organization_subscription_path(@organization), html: { id: 'subscription_propagation_form', class: 'form-horizontal' } do |f|
+      .card-body
+        .row
+          .col-md-6.no-padding
+            .box
+              %h5.semibold Feuilles
+              %hr
+              .select-container.no-padding.w-100
+                = f.input :max_sheets_authorized, label: 'Maximum', as: :integer
+              .select-container.no-padding.w-100
+                = f.input :unit_price_of_excess_sheet, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+            
+            .box
+              %h5.semibold Pages téléversées
+              %hr
+              .select-container.no-padding.w-100
+                = f.input :max_upload_pages_authorized, label: 'Maximum', as: :integer
+              .select-container.no-padding.w-100
+                = f.input :unit_price_of_excess_upload, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+
+            .box
+              %h5.semibold Pages iDocus'Box
+              %hr
+              .select-container.no-padding.w-100
+                = f.input :max_dematbox_scan_pages_authorized, label: 'Maximum', as: :integer
+              .select-container.no-padding.w-100
+                = f.input :unit_price_of_excess_dematbox_scan, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+
+            .box
+              %h5.semibold Pièces presaisies
+              %hr
+              .select-container.no-padding.w-100
+                = f.input :max_preseizure_pieces_authorized, label: 'Maximum', as: :integer
+              .select-container.no-padding.w-100
+                = f.input :unit_price_of_excess_preseizure, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+
+            .box
+              %h5.semibold Pièces notes de frais
+              %hr
+              .select-container.no-padding.w-100
+                = f.input :max_expense_pieces_authorized, label: 'Maximum', as: :integer
+              .select-container.no-padding.w-100
+                = f.input :unit_price_of_excess_expense, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+
+            .box
+              %h5.semibold Attaches
+              %hr
+              .select-container.no-padding.w-100
+                = f.input :max_paperclips_authorized, label: 'Maximum', as: :integer
+              .select-container.no-padding.w-100
+                = f.input :unit_price_of_excess_paperclips, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+              
+            .box
+              %h5.semibold Hors format
+              %hr
+              .select-container.no-padding.w-100
+                = f.input :max_oversized_authorized, label: 'Maximum', as: :integer
+              .select-container.no-padding.w-100
+                = f.input :unit_price_of_excess_oversized, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer            
+
+          .col-md-6
+            .box
+              %h5.semibold Clients
+              %hr
+              %table.table.table-striped
+                %thead
+                  %tr
+                    %th= check_box_tag 'master_checkbox', 0, false, class: 'checkbox form-check-input'
+                    %th
+                      %label{ for: 'master_checkbox' } Tous/Aucun
+                %tbody
+                  - @organization.customers.active.order(code: :asc).each do |customer|
+                    %tr
+                      %td= check_box_tag 'subscription[customer_ids][]', customer.id, false, id: "subscription_customer_id_#{customer.id}", class: 'checkbox form-check-input'
+                      %td
+                        %label{ for: "subscription_customer_id_#{customer.id}" }= customer.info
+              = hidden_field_tag 'subscription[customer_ids][]', ''

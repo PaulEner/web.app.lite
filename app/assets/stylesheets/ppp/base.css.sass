@@ -1,0 +1,1811 @@
+@import "../common"
+
+html
+  overflow: hidden
+
+html, body
+  background-color: #F1EFEC
+  background: #{"linear-gradient(-55deg, #FFF 40%, #71969E 0%)"}
+  background: #{"-moz-linear-gradient(-55deg, #FFF 40%, #71969E 0%)"}
+  background: #{"-webkit-linear-gradient(-55deg, #FFF 40%, #71969E 0%)"}
+  background: #{"-o-linear-gradient(-55deg, #FFF 40%, #71969E 0%)"}
+  // background-image: url('application/bg_body.png')
+  background-repeat: repeat
+  background-attachment: fixed
+
+.box
+  background-color: white
+
+//Navigation
+#next-nav-wrapper
+  padding-top: 50px
+
+#user_logged_in
+  padding: 0 0 0 20px
+#notifications
+  padding: 0 0 0 20px
+
+/* menu base */
+.bg-menu
+  background-color: #214255 !important
+
+.nav-tabs
+  .dropdown
+    .dropdown-menu
+      .dropdown-item:hover
+        background-color: #214255 !important
+
+nav.navbar
+  :background-color: #214255
+
+nav.navbar .dropdown-menu
+  background-color: #214255
+
+nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
+  :color #E6F7FF !important
+
+.bg-brown
+  background-color: #214255 !important
+.bg-brown-light
+  background-color: #517285
+
+// Welcome
+#welcome
+  h2
+    font-size: 20px
+    color: #C9DD03
+  .ie-message
+    display: none
+  table
+    .date
+      width: 125px
+    .name
+      width: 180px
+    .count
+      width: 18px
+      text-align: right
+    .message
+      width: auto
+  .paper_process
+    table
+      .date
+        width: 95px
+  .loading-data
+    margin-top: 30px
+    height: 32px
+    background: url('/assets/application/spinner_gray_alpha.gif')
+    background-repeat: no-repeat
+    background-position: center center
+
+#uploadDialog.modal
+  .modal-body
+    .control-label
+      font-weight: 900
+    select
+      font-size: 13px
+    #analytic_user_fields
+      margin-bottom: 5px !important
+    .analytic_resume_box
+      margin-bottom: 25px
+      .analytic_resume
+        padding: 5px
+        background-color: #F0F0F0
+        margin: 0 20px 0 0
+        .analytic_title
+          text-decoration: underline
+          font-size: 14px
+        .analytic_groups
+          margin-left: 10px
+          .analytic_axis_name
+            font-weight: bold
+            margin-top: 5px
+          .analytic_section_group
+            margin-left: 10px
+            .analytic_section_ventilation
+              font-weight: bold
+
+#comptaAnalysisEdition
+  .modal-dialog
+    max-width: 1024px !important
+  .modal-body
+    .control-label
+      font-weight: 900
+    select
+      font-size: 12px
+
+#packFilterModal
+  .target_filter
+    display: inline-block
+    margin: 0px 20px
+
+#exportSelectedPreseizures
+  .text_title
+    margin-bottom: 10px
+    span
+      font-size: 14px
+
+#preseizuresModals
+  .modal-footer
+    .block_footer
+      width: 100%
+
+//Used by document upload and Default analytics journal
+#analytic_fields
+  .control-label
+    font-weight: 900
+  select
+    font-size: 11px
+  #analytic
+    .analytic_title
+      text-align: center
+      background-color: #ddd
+      font-size: 12px
+      padding: 3px 0
+    .section_map
+      font-size: 16px
+      font-weight: bold
+      cursor: pointer
+      color: #584528
+    .section_map:hover
+      text-decoration: underline
+      color: #FFF
+    .analytic_group
+      .analytic_name_box
+        margin: 10px 0
+        label
+          display: inline
+      .analytic_total_ventilation
+        color: #FF0921 !important
+      .analytic_total_ventilation.green
+        color: #22780F !important
+    .chosen-container
+      width: 160px
+    select
+      width: 160px
+    .analytic_name_sections
+      .analytic_section_group
+        border: 1px solid #dddddd
+        margin: 5px 10px 0 0
+        padding: 5px
+        // width: 160px
+        // float: left
+    .analytic_ventilation_group
+      margin-top: 5px
+      .analytic_ventilation
+        width: 150px !important
+    .analytic_axis_group
+      margin-top: 5px
+    label
+      font-weight: bold
+      display: inline-block
+      width: 100px
+    .help-block
+      display: inline-block
+      clear: both
+      margin-bottom: 10px
+    .no_analytic
+      position: relative
+      top: 5px
+
+#news.modal
+  .title
+    h4
+      float: left
+    .date
+      float: right
+  .body
+    padding-top: 10px
+    clear: both
+  .link
+    float: right
+  hr
+    clear: both
+
+.modal-backdrop
+  z-index: 1040
+
+.modal form
+  margin-bottom: 0
+
+#returnLabelsDialog
+  top: 50%
+  left: 50%
+  width: 100%
+  height: 100%
+  margin: -250px 0 0 -550px !important
+  .modal-dialog
+    margin: 0
+  .modal-content
+    width: 150%
+  .modal-body
+    max-height: 450px
+    iframe
+      width: 843px
+      height: 415px
+
+  #returnLabelsForm
+    width: 222px
+    height: 419px
+    float: left
+    .list
+      overflow: auto
+      height: 380px
+    .action
+      height: 35px
+      text-align: right
+      input[type=submit]
+        margin-top: 4px
+        margin-right: 4px
+    table
+      width: 100% !important
+      th
+        text-align: left
+      .check_box
+        width: 13px
+      td
+        vertical-align: middle
+      input[type=checkbox]
+        margin-top: 0
+      input[type=number]
+        width: 47px
+        margin-bottom: 0
+        height: 37px
+        font-size: 11px
+      label
+        margin-bottom: 0
+
+/*** Other ***/
+.green
+  color: #c9dd03
+.red
+  color: red
+.white
+  color: white
+.gray
+  background-color: #eeeeee
+
+.back_red
+  background-color: red
+.back_orange
+  background-color: orange
+.back_green
+  background-color: green
+.back_gray
+  background-color: gray
+
+.inlinning
+  display: inline-block
+
+.wauto
+  width: auto
+.w50
+  width: 50px
+.w150
+  width: 150px
+.w175
+  width: 175px
+.w200
+  width: 200px
+
+.padding05
+  padding: 5px
+.margin05left
+  margin-left: 5px
+
+.btn
+  font-size: 11px
+
+.popover-inner
+  width: 400px
+.popover-content
+  width: 372px
+
+#documentslist, #pageslist
+  min-height: 350px
+
+.margin3
+  margin: 0px 1px 1px 5px
+
+.margin0
+  margin: 0 !important
+
+.color_red
+  color: red  
+
+.text-center
+  text-align: center !important
+
+.ml-14
+  margin-left: 14px !important
+
+.padding0
+  padding: 0 !important
+
+.scroll_on_top
+  position: fixed
+  bottom: 67px
+  padding: 10px
+  border-radius: 50%
+  background-color: #e8e7e7
+  right: 1%
+  opacity: 0.6
+  z-index: 20
+  cursor: pointer
+
+.scroll_on_top:hover
+  opacity: 1  
+  -webkit-box-shadow: 0px 0px 13px 0px rgba(0,0,0,0.75)
+  -moz-box-shadow: 0px 0px 13px 0px rgba(0,0,0,0.75)
+  box-shadow: 0px 0px 13px 0px rgba(0,0,0,0.75)
+
+.step_navigation
+  .step
+    margin: 1%
+    color: #b0b1b3
+    float: left
+    &.active
+      color: #584528
+    .number
+      font-size: 18px
+    .title
+      font-size: 12px
+
+.border_action_preseizure
+  border: 2px solid #058acd
+  padding: 5px
+  border-radius: 3px
+
+.border_action_piece_preseizure
+  border: 2px solid #058acd
+  padding: 4px 4px 6px 4px
+  border-radius: 3px
+
+.border_piece_action
+  border: 2px solid #b1d837
+  padding: 4px 2px 6px 6px
+  border-radius: 3px
+
+.word_wrap
+  display: inline-block
+  width: 33%
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
+
+/*** Action bar ***/
+
+.feedback
+  display: block !important
+  position: relative !important
+  top: -5px
+  height: 31px
+  width: 175px
+  span
+    display: block !important
+    position: relative !important
+    width: auto
+    line-height: 11px
+    top: 9px
+    margin-left: 35px
+    font-weight: bolder
+    color: #484848
+.feedback.inactive
+  background: url("/assets/application/spinner_stopped_gray_alpha.gif")
+  background-repeat: no-repeat
+  background-position: left center
+  span
+    color: #bab9b9
+.feedback.active
+  background: url("/assets/application/spinner_gray_alpha.gif")
+  background-repeat: no-repeat
+  background-position: left center
+  span
+    color: #484848
+
+.actionbar
+  ul.token-input-list-facebook
+    margin: 5px 0 0 5px
+    height: 21px !important
+    position: relative
+    top: -5px
+  li.token-input-token-facebook
+    line-height: 15px
+    margin: 2px 0 0 2px
+  label
+    padding-top: 2px
+  select
+    height: 23px
+    font-size: 11px
+  .per_page
+    margin-bottom: 0
+  .filter
+    width: 200px
+    height: 13px
+    font-size: 11px
+    margin: 0 0 0 5px
+
+.filter-result-type
+  color: gray
+  font-style: italic
+
+/*** Global ***/
+#documentslist .header, #pageslist .header
+  margin-bottom: 5px
+#documentslist h3, #pageslist h3, #selectionlist h3, #preseizuresList h3
+  font-size: 16px
+
+#pageslist
+  #do-showAllPieces
+    font-weight: bold
+  #panel2
+    .stamp
+      margin-top: -19px
+      position: absolute
+      margin-left: -163px
+      img
+        width: 130px
+
+.piece_deleted_selection_content
+  padding: 1%
+
+#PdfViewerDialog
+  .modal-header
+    padding: 1%
+    background-color: #7cbbff
+    border-bottom: 1px solid #CCC
+    -webkit-box-shadow: 0px 6px 18px -13px rgba(0,0,0,0.75)
+    -moz-box-shadow: 0px 6px 18px -13px rgba(0,0,0,0.75)
+    box-shadow: 0px 6px 18px -13px rgba(0,0,0,0.75)
+    h3
+      color: white !important
+      font-weight: bold
+    a
+      color: white
+
+  .modal-dialog
+    width: auto
+  .view-content
+    hr
+      margin: 0
+
+/*** Documents ***/
+#documents
+  .oi
+    padding: 0px 3px
+    color: #3e2f24 !important
+  ul
+    padding: 0px
+  .piece_deleted_count
+    margin-left: 10px
+    .content-list-pieces-deleted
+      background-color: #f5fafd
+      color:  #2499d3
+      padding: 5px
+      position: absolute
+      margin-top: 3px
+      border: 1px dotted #D4DDF5
+      border-radius: 3px
+      z-index: 10
+      -webkit-box-shadow: 0px 0px 19px -1px rgba(102, 151, 189, 0.3)
+      -moz-box-shadow: 0px 0px 19px -1px rgba(102, 151, 189, 0.3)
+      box-shadow: 0px 0px 19px -1px rgba(102, 151, 189, 0.3)
+      ul
+        margin: 0
+        li
+          list-style: none
+          padding: 2px
+          font-weight: initial
+        li:hover
+          background-color: white
+          font-weight: bold
+  .piece_deleted_count:hover
+    .content-list-pieces-deleted
+      display: block !important
+      cursor: pointer
+
+
+#documents_actions
+  .filter_indication
+    margin-top: -3px
+    color: #584528
+    font-size: 12px
+    display: none
+    overflow: hidden
+    border-radius: 5px
+    .filter_indication_text
+      padding: 0px 5px
+#documents_view
+  text-align: center
+  padding-top: 11px
+  padding-bottom: 10px
+  #pieces_view
+    border-radius: 10px 0px 0px 10px
+  #preseizures_view
+    border-radius: 0px 10px 10px 0px
+  .block_view
+    color: #aaa
+    cursor: pointer
+    display: inline-block
+    font-weight: bold
+    margin: 0px auto
+    border: 1px solid #aaa
+    width: 48%
+    min-height: 25px
+    padding: 5px 0px
+    text-align: center
+    background: linear-gradient(#ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%)
+    box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.3)
+  .block_view.active
+    color: #444
+    background-color: #fff
+    box-shadow: 0px 3px 13px -2px rgba(0, 0, 0, 0.3) inset
+
+#document_owner_list, #document_owner_list_chosen
+  width: 98%
+  /**** max and min width must be set because of web responsive format *****/
+  max-width: 98%
+  min-width: 98%
+
+#documentslist
+  .actionfilter
+    border-bottom: 1px solid #ddd
+    margin-bottom: 5px
+    padding-bottom: 5px
+  #per_page
+    border-radius: 3px
+    height: 25px
+    border: 1px solid #aaa
+    background: linear-gradient(#ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%)
+  .subView
+    margin-bottom: -1px
+    .tab-nav
+      padding: 5px
+      cursor: pointer
+      display: inline-block
+      text-align: center
+      border: 1px solid #ddd
+      border-bottom: none
+      border-radius: 2px
+    .tab-nav.selected
+      background-color: #FFF
+  .packsList, .reportsList
+    background-color: #FFF
+    padding: 10px 7px
+    border: 1px solid #ddd
+
+#documentslist .content ul
+  list-style: none
+  li
+    font-size: 11px
+  li:hover
+    background-color: #eeeeee
+  li.activated
+    border: 1px solid #cccccc
+  li.selected
+    background-color: #dddddd
+  li.selected:hover
+    background-color: #cccccc
+  .pack, .report
+    padding: 2px 0px
+
+#documentslist .header .actiongroup
+  position: relative
+  top: 5px
+
+.pagination
+  height: 15px
+  margin-top: 10px
+  margin-bottom: 0
+.pagination a
+  float: none
+  padding: 0
+  line-height: 18px
+  text-decoration: none
+  border: none
+  border-left-width: 0
+
+/*** Pages ***/
+#show_pages, #show_pieces
+  background-color: #E1E1E1
+
+#show_pages, #presPanel1
+  .actiongroup-fixed
+    position: fixed
+    right: calc(1% + 50px)
+    bottom: 67px
+    z-index: 20
+    background-color: #e1e1e1
+    padding: 10px
+    border: 1px solid #999
+    border-radius: 3px
+
+.pages
+  height: 100%
+  ul#pages li
+    counter-increment: par-num
+    display: block
+    position: relative
+    float: left
+    width: 100%
+    height: auto
+    text-align: center
+    background-color: white
+    margin-bottom: 30px
+    border-radius: 3px
+    -webkit-box-shadow: 0px 0px 16px -2px rgba(0,0,0,0.47)
+    -moz-box-shadow: 0px 0px 16px -2px rgba(0,0,0,0.47)
+    box-shadow: 0px 0px 16px -2px rgba(0,0,0,0.47)
+    .piece_head 
+      height: 40px
+      text-align: left
+      font-size: 14px
+      border-bottom: 2px dotted #d4ddf5
+      background-color: #f5fafd
+      .position_label 
+        margin: 10px
+        display: block
+        float  : left
+        color: white
+      .preseizure_label
+        padding: 10px
+        display: block
+        float  : left
+        font-weight: bold
+        color: #0088cc
+      .preseizure_status
+        margin: 10px
+        display: block
+        float  : left
+      .choose_action_piece
+        padding: 10px
+        display: block
+        float  : right
+        width  : 280px
+        .stamp_head
+          width: 60px
+          float: left
+        a 
+          margin: 0px 4px 0px 4px    
+    .piece_body       
+      margin: 0
+      width: 100%      
+      .piece_image 
+        margin: 1%
+        width: 10%
+        float: left
+        
+        .image_piece
+          display: block
+          position: absolute
+          margin: -2px
+          img
+            max-width: 93px
+            max-height: 133px
+        .zoom
+          z-index: 11
+          display: block                    
+          cursor: pointer          
+          width: 33px
+          height: 33px
+          background: url("/assets/application/sprite_active_corner.png")
+          background-position: left top
+          position: relative
+          float: right
+          margin: 2px
+        .zoom:hover
+          background-position: left -33px 
+        .pagethumb
+          background: url("/assets/application/sprite_vertical_page_n2.png")
+          background-position: -5px -183px
+          background-repeat: no-repeat
+          display: block
+          width: 96px
+          height: 136px
+          margin: 9px auto 0px auto
+        .foot
+          margin-top: 30px
+          img
+            max-width: 100%
+
+      .preseizure_description 
+        margin: 1%
+        width: 86%
+        float: left
+        .analytics
+          table
+            td li 
+              margin: 0
+              box-shadow: none
+        .content_details
+          overflow: auto
+          max-height: 173px
+          .entries, .analytics 
+            text-align: left 
+          .tab_preseizures
+            text-align: left
+            padding: 1px
+            margin-bottom: -1px
+            .tab
+              border: 1px solid #e1e1e1
+              padding: 3px 3px 0px 2px
+              border-bottom: none
+              margin-right: 2px
+              cursor: pointer
+              font-weight: bold
+              width: 13%
+              float: left
+              input[type="checkbox"]
+                margin: 0
+            .tab:hover
+              background-color: #f0f0f0
+            .tab_active
+              background-color: #DBDBDB
+            .check_modif_preseizure 
+              width: 10%
+              display: inline-block
+              float: left
+              margin-right: 10%
+              margin-top: 0
+
+        .content_preseizure
+          border: 1px solid #CCC
+          padding: 6px
+          border-radius: 3px  
+          margin-top: -1px        
+          .preseizure_head
+            border-bottom: 1px solid #CCC
+            height: 18px
+            .preseizure_name
+              font-weight: bold
+              color: cadetblue
+              input
+                margin-top: -2px
+                margin-left: 5px
+                float: left
+                display: none
+              span
+                float: left
+                margin-top: -2px
+            .choose_action_preseizure
+              cursor: pointer
+          .information_section                        
+            display: inline-block
+            float: left
+            margin: 0 !important
+            margin-top: 5px !important
+            table 
+              .date
+                width: 20%
+                input
+                  width: 90% !important
+              .third_party
+                width: 80%
+                input
+                  width: 90% !important
+          .other_information
+            display: inline-block
+            float: left
+            padding-top: 1px
+            border-left: 2px solid #609fa1
+            margin-top: 1%
+            text-align: left
+            min-height: 42px
+            .error_message
+              display: inline-block
+              width: 100%
+              overflow: hidden
+              text-overflow: ellipsis
+              white-space: nowrap
+              color: #b11818
+          table
+            .date
+              width: 20%
+              input
+                width: 90% !important
+            .third_party
+              width: 80%
+              input
+                width: 90% !important
+        .content_preseizure .entries, .content_preseizure .analytics
+          text-align: left
+          table .account
+            width: 50%
+          table .entry
+            width: 25%
+          .edit_account
+            input
+              width: 90% !important
+          .edit_amount
+            input
+              width: 90% !important
+              display: inline
+            div.input-group-append
+              display: inline
+          .content_amount
+            span
+              cursor: pointer
+            .content_amount_number
+              display: inline            
+        .no_preseizure 
+          border: 1px solid #CCC
+          padding: 54px
+          font-size: 25px
+          color: #CCC
+          margin-top: 10px
+          border-radius: 4px
+
+  ul#pieces li
+    counter-increment: par-num
+    display: block
+    position: relative
+    float: left
+    width: 119px
+    height: 163px
+    text-align: center
+    a.zoom
+      z-index: 11
+      display: none
+      position: absolute
+      float: right
+      cursor: pointer
+      right: 7px
+      top: 13px
+      width: 33px
+      height: 33px
+      background: url("/assets/application/sprite_active_corner.png")
+      background-position: left top
+    a.zoom:hover
+      background-position: left -33px
+    .pagethumb
+      background: url("/assets/application/sprite_vertical_page_n2.png")
+      background-position: 6px -183px
+      background-repeat: no-repeat
+      display: block
+      width: 98%
+      height: 100%
+      margin: 9px auto 0px auto
+      padding: 0 0 0 12px
+      .thumb
+        display: block
+        position: absolute
+        z-index: 8
+        background: url("/assets/application/spinner_gray.gif")
+        background-position: 50% 50%
+        background-repeat: no-repeat
+        margin: 1px 4px
+        img
+          display: block !important
+          position: relative !important
+          width: 100%
+          height: 100%      
+      .foot
+        z-index: 8
+        display: block
+        position: absolute
+        padding-top: 2px
+        float: left
+        left: 0px
+        bottom: 0px
+        top: 72px
+        width: 56px
+        height: 19px
+        text-align: center
+        span
+          border-radius: 4px
+          font-size: 10px
+          line-height: 10px
+          font-weight: bold
+          top: 4px
+          text-align: left
+          padding-top: 3px
+          padding-bottom: 3px
+          padding-left: 6px
+          padding-right: 6px
+          min-height: 22px
+          max-height: 44px
+          height: auto
+          width: 50px
+   
+  ul li:hover
+    .zoom
+      display: block !important
+      margin: 2px -1px !important
+    .toolbar
+      display: block !important
+    .pagethumb
+      padding: 2px
+      width: 98%
+      height: 100%
+      border: 2px solid #a6a6a6
+      background: none
+      background-color: #FFF
+      border-radius: 3px
+      margin: 0px auto
+      -webkit-box-shadow: 0px 3px 15px -4px rgba(0,0,0,0.75)
+      -moz-box-shadow: 0px 3px 15px -4px rgba(0,0,0,0.75)
+      box-shadow: 0px 3px 15px -4px rgba(0,0,0,0.75)
+      .thumb
+        left: 3px
+        top: 12px
+        width: 90%
+        height: 95%
+    .stamp
+      top: 37px
+      background-color: #fff
+      width: 92.5%
+      transform: none
+      right: auto
+      img
+        height: 54px
+        /*width: 114px*/
+        width: 100%
+  ul li.selected
+    border: 3px solid #b1d837 !important    
+    .foot span
+      color: black
+    .toolbar ul li
+      a.select
+        background-position: -76px -19px
+      a.select:active
+        background-position: -76px 0px
+  ul li.ui-sortable-helper
+    opacity: 0.5
+    cursor: move
+    .handle
+      z-index: 10
+      display: block
+      position: absolute
+      float: left
+      cursor: move
+      left: 3px
+      top: 4px
+      width: 51px
+      height: 71px
+      background: url("/assets/application/blank.png")
+      background-color: transparent
+    .foot span:after
+      content: counter(par-num, decimal)
+  ul li.ui-sortable-helper .foot span:after
+    content: "← déplacer vers →"
+
+  .pagination li a
+    font-size: 14px !important
+
+.account_section 
+  display: inline-block
+  width: 44%
+  margin-left: 11%
+  border-right: 1px solid #CCC
+  select, input 
+    margin-bottom: 4px !important
+    margin-right: 6% !important
+  label
+    display: inline
+
+.entry_section 
+  display: inline-block
+  width: 30%
+  margin-left: 4%
+  select, input 
+    margin-bottom: 4px !important
+    margin-right: 6% !important
+  label
+    display: inline
+
+/*** Pages selection ***/
+.selection-fixed-bottom
+  position: fixed
+  bottom: 0
+  left: 0
+  z-index: 999
+  width: 100%
+#selectionlist
+  margin-bottom: 0
+  padding: 5px 10px 0 10px
+  background-color: #f5f5f5
+  border-top: 1px #aaa solid
+  .header
+    .actiongroup
+      line-height: 27px
+      position: absolute
+      top: -41px
+      right: 0
+      background-color: #F5F5F5
+      padding: 7px 20px
+      border-top-left-radius: 60px
+      border: 1px #aaa solid
+      border-bottom: none
+      .icon_actions
+        border-right: 1px #000 solid
+        padding: 0px 5px
+        margin-right: 5px
+      .button_actions
+        padding: 0px 5px
+  .content
+    max-height: 180px
+    overflow-y: auto
+    ul.list
+      margin: 0 0 0 25px
+
+/** Suggestion List**/
+.suggestion_account_list
+  border: 1px solid rgba(183, 204, 217, 0.8)
+  padding: 5px
+  position: absolute
+  background-color: white
+  width: 28%
+  margin-top: 1px
+  border-radius: 3px
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
+  max-height: 150px
+  overflow-y: auto
+  ul
+    margin: 0
+    li
+      position: relative
+      float: left
+      width: 98%
+      height: auto
+      margin-bottom: 3px !important
+      cursor: pointer
+      text-align: left !important
+      padding: 0 3px
+      box-shadow: none !important
+    li:hover
+      background-color: #879ca6 !important
+      color: #FFF
+    li.no_result
+      color: #000
+      font-style: italic !important
+    li.no_result:hover
+      background-color: #CCC
+
+/*** Preseizures ***/
+
+.preseizure_selected  
+  border: 2px solid #058acd !important
+
+#preseizuresList
+  display: none
+  #do-showAllPreseizures
+    font-weight: bold
+  #presPanel1
+    .header
+      .actiongroup
+        a
+          margin: 1px
+  #show_preseizures
+    #lists_preseizures
+      #lists_preseizures_content
+      padding: 1px
+      margin-top: 10px
+      .selected
+        border: 3px solid #058acd!important
+      .preseizure
+        background-color: #FFF
+        border: 1px solid rgb(221,221,221)
+        margin: 10px 25px
+        -webkit-box-shadow: 0px 0px 16px -2px rgba(0,0,0,0.47)
+        -moz-box-shadow: 0px 0px 16px -2px rgba(0,0,0,0.47)
+        box-shadow: 0px 0px 16px -2px rgba(0,0,0,0.47)
+        .title
+          padding-top: 3px
+          padding-left: 3px
+          a
+            color: white
+            font-size: 10px
+            cursor: initial
+        .actionbox
+          padding-right: 0
+          a
+            padding: 2px
+        .preseizure_label a
+            font-weight: bold
+            color: #0088cc
+            cursor: initial
+        .information_section                        
+          display: inline-block     
+          float: left
+          margin: 0 !important
+          margin-top: 5px !important
+        .other_information
+          display: inline-block
+          float: left
+          padding-top: 1px
+          border-left: 2px solid #609fa1
+          margin-top: 1%
+          text-align: left
+          min-height: 42px
+          .error_message
+            display: inline-block
+            width: 100%
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
+            color: #b11818
+        .piece_number
+          cursor: pointer
+        a.label:hover
+          color: #c9dd03 !important
+        .name
+          border-bottom: 1px solid #ECECEC
+          width: 100%
+          padding: 5px
+          margin: 0
+          background-color: whitesmoke
+          .preseizure_label
+            margin-left: 10px
+            font-weight: bold
+        .informations
+          margin-bottom: 10px
+          margin-left: 0px
+          .stamp_image_content
+            padding-top: 1%
+            cursor: pointer
+            .stamp_head
+              padding-top: 1%
+              img
+                width: 100%
+            .stamp_head:hover
+              padding: 0
+              position: absolute
+              width: 150%
+
+        .content_details
+          background-color: #fff
+          border-top: 1px solid rgb(221,221,221)
+          padding: 10px
+        .content_detail
+          padding: 5px
+          /*** <<<<<<< HEAD ***/
+        table
+          .date
+            width: 20%
+            input
+              width: 90% !important
+          .third_party
+            width: 20%
+            input
+              width: 90% !important
+          .erreur
+            width: 20%
+      .content_preseizure .entries, .content_preseizure .analytics
+        text-align: left
+        table .account
+          width: 50%
+        table .entry
+          width: 25%
+        .edit_account
+          input
+            width: 90% !important
+        .edit_amount
+          input
+            width: 90% !important
+            display: inline
+          div.input-group-append
+            display: inline
+        .content_amount
+          span
+            cursor: pointer
+          .content_amount_number
+            display: inline          
+  #presPanel2
+    #preseizuresFilterForm
+      .control-group
+        clear: both !important
+        .control-label
+          width: 80px !important
+        .controls
+          margin-left: 5px !important
+          float: left
+          input, select
+            width: 180px
+          .select_operation
+            width: 50px !important
+          .input_with_operation
+            width: 130px !important
+      .buttons-group
+        width: 100%
+        text-align: center
+        a, input
+          margin: auto
+/*** ======= ***/
+
+/*** Filter ***/
+#packFilterForm
+  .form-group
+    .control-section
+      .select_operation
+        width: 50px !important
+      .input_with_operation
+        width: calc(100% - 55px) !important
+        max-width: calc(400px - 55px) !important
+  .buttons-group
+    width: 100%
+    text-align: center
+    a, input
+      margin: auto
+/*** WIP: upgrade rails 5 #013 ***/
+
+
+/*** Payment Management ***/
+#payment_management
+  table
+    th
+      width: 50px
+
+/***** Reporting *****/
+
+/*** Global ***/
+table td.first
+  width: 145px
+table td.second
+  width: 90px
+
+.documentslist table td.name
+  width: 180px
+
+.actiongroup.first
+  width: 16px
+  height: 16px
+  a
+    font-size: 16px
+
+.header.first
+  font-size: 11px
+  padding-left: 16px
+  h3
+    font-size: 11px
+  .actiongroup.first
+    position: relative
+    top: 4px
+
+/*** Month ***/
+.month
+  margin-bottom: 5px
+  padding: 4px 12px 5px 12px
+  border-radius: 4px
+  background-color: white
+  .header
+    height: 20px
+    padding: 4px
+  .header h3
+    font-size: 11px
+    position: relative
+    top: -4px
+
+.state
+  position: relative
+  top: -2px
+  text-align: center
+  border-radius: 4px
+  height: 21px
+  width: 146px
+  border: 1px solid white
+  background-color: #fafafa
+.state1
+  height: 19px
+  width: 46px
+  border: 1px solid #c9dd03
+  border-top-left-radius: 4px
+  border-bottom-left-radius: 4px
+.state1.active
+  background-color: #c9dd03
+.state2
+  height: 19px
+  width: 46px
+  border: 1px solid #c9dd03
+  margin-left: 1px
+  margin-right: 1px
+.state2.active
+  background-color: #c9dd03
+.state3
+  height: 19px
+  width: 46px
+  border: 1px solid #c9dd03
+  border-top-right-radius: 4px
+  border-bottom-right-radius: 4px
+.state3.active
+  background-color: #c9dd03
+
+/*** User ***/
+.user
+  margin-bottom: 5px
+  border-radius: 4px
+  .header
+    border-radius: 4px
+    height: 20px
+    background-color: #ffcf40
+    h3
+      font-size: 11px
+  .content
+    text-align: right
+    .documents
+      text-align: left
+      padding-left: 23px
+.user.active
+  border: 1px solid #ffcf40
+
+/*** Total ***/
+.total
+  border: 1px solid #ffa500
+  border-radius: 4px
+  background-color: white
+  .header
+    border-radius: 4px
+    height: 20px
+    background-color: #ffa500
+    h3
+      font-size: 11px
+  .content
+    text-align: right
+    th.first, td.first
+      text-align: center
+      width: 168px
+
+/***** Reporting *****/
+#reporting
+  table
+    thead tr th.month
+      width: 7%
+      padding-right: 7px
+    tbody tr td.align-middle
+      vertical-align: middle
+    .month
+      background-color: #000
+      border-radius: 0
+      text-align: center
+    tr.user
+      td:first-child
+        background-color: #000 !important
+  .period
+    text-align: right
+    min-height: 24px
+    border: 3px solid #BBBBBB
+    margin: 0
+    padding: 2px 3px 3px
+    font-size: 9px
+    font-weight: normal
+    color: white
+    text-transform: uppercase
+    border-radius: 3px
+  td.block
+    width: 7%
+    text-align: center
+  .period:hover
+    border: 3px solid #999999
+    background-color: #999999
+  .period.selected
+    border: 3px solid #00FF7F
+  .period
+    table td
+      height: 10px
+      font-size: 8px
+    .badge
+      height: 6px
+      width: 6px
+      margin-top: 1px
+      padding: 3px
+  .badge-important
+    background-color: red
+  .legend
+    .delivery_state
+      display: inline-block !important
+      float: none !important
+      margin-left: 15px
+  .delivery_state
+    border-radius: 7px
+    margin-top: 3px
+    margin-right: 3px
+    float: left
+    width: 10px
+    height: 10px
+  .half-delivery_state
+    float: left
+    width: 5px
+    height: 10px
+  .half-delivery_state.left
+    border-top-left-radius: 7px
+    border-bottom-left-radius: 7px
+  .half-delivery_state.right
+    border-top-right-radius: 7px
+    border-bottom-right-radius: 7px
+  .period
+    .value
+      display: block
+      float: left
+      text-align: right
+      position: relative
+      .period_1, .period_2, .period_3, .period_4, .period_5, .period_6, .period_7, .period_8, .period_9, .period_10, .period_11, .period_12
+        float: left
+      .period_2, .period_3, .period_4, .period_5, .period_6, .period_7, .period_8, .period_9, .period_10, .period_11, .period_12
+        margin-left: 37.58px
+    .value.duration-3
+      width: calc(100% - 13px)
+      .period_1, .period_2, .period_3, .period_4, .period_5, .period_6, .period_7, .period_8, .period_9, .period_10, .period_11, .period_12
+        margin: 0!important
+        width: calc(100% / 3)
+    .value.duration-12
+      width: calc(100% - 13px)
+      .period_1, .period_2, .period_3, .period_4, .period_5, .period_6, .period_7, .period_8, .period_9, .period_10, .period_11, .period_12
+        margin: 0!important
+        width: calc(100% / 12)
+  .table tbody tr:hover td, .table tbody tr:hover th
+    background-color: none
+
+.modal .delivery_state
+  margin-right: 5px
+.delivery_state
+  .received
+    background-color: green
+  .not_received
+    background-color: whiteSmoke
+
+#legendModal
+  .delivery_state
+    margin-top: 5px
+
+#periodModal
+  .modal-dialog
+    max-height: 500px
+    max-width: 1080px !important
+  .modal-header
+    table
+      float: left
+    .user
+      width: 425px
+    .period
+      width: 450px
+  .modal-body
+    clear: both
+    overflow: scroll
+    min-height: 200px
+  .modal-footer
+    text-align: left
+    .actions
+      width: 100%
+  .documentslist
+    width: 695px
+    float: left
+    table
+      th
+        background-color: rgba(0, 0, 0, 0.08)
+  .optionslist
+    width: 325px
+    float: right
+    table
+      .header
+        font-weight: bold
+        border-bottom: 1px solid #666
+  table
+    tr
+      td.center, th.center
+        text-align: center
+      td, th
+        border: none
+    tr.selected
+      td
+        border-top: 2px solid #00FF7F
+        border-bottom: 2px solid #00FF7F
+      td.first
+        border-left: 2px solid #00FF7F
+      td.last
+        border-right: 2px solid #00FF7F
+
+table.historic
+  th, td
+    padding: 5px
+  th.right, td.right
+    text-align: right
+  .first
+    padding-left: 0
+
+.popover-title
+  font-size: 14px !important
+
+.important
+  font-weight: bold
+  color: red
+
+.pan
+  display: none
+.pan.active
+  display: block
+
+/***** Customers *****/
+.price
+  text-align: right !important
+
+.pannel
+  padding: 14px 19px 14px
+  background-color: white
+  border: 1px solid #DDD
+  border-radius: 4px
+  box-shadow: rgba(0, 0, 0, .065) 0 3px 5px
+
+#customer.subscription table td.input
+  width: 15px
+
+/***** Notification *****/
+.dropdown-notifications
+  .dropdown-menu::before, .dropdown-menu::after
+    border: none
+    content: none
+  .dropdown-notif-items
+    padding: 0px
+    max-height: 330px
+    overflow-y: scroll
+    background-color: #FFF
+  h3
+    font-size: 14px
+  ul.dropdown-menu
+    background-color: white
+  .dropdown-toolbar-actions
+    line-height: 27px
+  a
+    padding: 0
+    font-size: 14px
+    color: #0088cc !important
+  .notification-icon
+    position: relative
+    top: 0px
+    margin-right: 0
+  .dropdown-footer
+    text-align: center
+#notifications
+  ul
+    margin-left: 0
+  .media-body
+    ul
+      margin-left: 10px
+      padding-left: 10px
+      list-style: disclosure-closed
+.notification
+  .media-body
+    padding-top: 0
+
+/* ibiza edition */
+#ibiza.edit
+  form
+    fieldset
+      legend
+        margin: 10px 0px
+
+/* Footer */
+
+footer
+  background-image: url('application/bg_body.png')
+  background-repeat: repeat
+  background-attachment: fixed
+  background-color: #DAE0E2
+  color: #214255
+  margin: 0
+  height: auto!important
+  width: 100%
+  position: fixed
+  bottom: 0
+  z-index: 200
+  .centered
+    /* max-width: 1200px */
+    padding: 5px 0
+    text-align: center
+    .copyright
+      text-align: right
+      font-size: .8em
+      text-transform: uppercase
+      margin: auto
+    .footer-logo
+      margin: auto
+      .logo-container
+        margin: auto 40px auto auto
+        text-align: center
+        float: right
+      img.logo
+        margin: 0 7px
+        padding: 7px
+        max-width: 70%
+        border-radius: 6px 6px 6px 6px
+        box-shadow: #ffffff 0 1px 0px inset
+        background-color: white
+    .contact-number
+      background-image: url('application/bg_body.png')
+      background-repeat: repeat
+      background-attachment: fixed
+      margin: -40px 14px
+      padding: 5px 10px
+      position: absolute
+      background-color: #DAE0E2
+      border-top-right-radius: 33px
+      z-index: 200
+      text-align: left
+      img
+        width: 190px
+      .commercial-contact, .client-contact
+        .contact-label
+          font-size: 12px
+          padding: 5px
+          border-radius: 5px
+        .contact-tel
+          font-size: 14px
+          font-weight: bold
+      .client-contact
+        .open-time
+          font-size: 10px
+          font-weight: bold
+          text-align: center
+          background-color: #fff
+          border-bottom-left-radius: 10px
+          border-bottom-right-radius: 10px
+          border: 1px #D9D9D9 solid
+          color: #910c69
+        .number
+    .footer-contact
+      width: 20%
+      margin-top: 15px
+    .footer-navigation
+      width: 60%
+      margin-top: 15px
+      .footer-links-holder
+        width: 33.33333%
+        position: relative
+        float: left
+        margin: 0
+        .footer-links
+          margin: 0
+          padding: 0
+          list-style: none
+          -webkit-transition: max-height .5s
+          transition: max-height .5s
+  .bottom-bar
+    text-align: center
+    position: relative
+    background: #214255
+    color: #FFF
+    padding: 4px 0
+
+//workaround Bootstrap
+.badge-inline
+  display: inline
+
+/* Responsive Tablet Sizes */
+@media only screen and (max-width: 749px)
+  footer
+    .centered
+      flex-wrap: wrap
+      margin: 0 auto
+      .footer-logo
+        max-width: 250px
+        margin: 0 auto
+        /* width: 50% */
+      .contact-number
+        position: relative
+        margin: 0 auto
+      .footer-contact
+        width: 50%
+        padding: 0 20px
+      .footer-navigation
+        width: 100%
+        .footer-links-holder
+          padding: 0 20px
+
+/* Responsive Mobile Sizes */
+@media only screen and (max-width: 500px)
+  footer
+    .centered
+      .footer-logo
+        /* width: 100% */
+        margin: 0 auto
+      .footer-contact
+        width: 100%
+      .footer-navigation
+        .footer-links-holder
+          width: 100%
+          padding: 0
+          h3
+            margin: 0
+            padding: 10px 20px
+            border-top: #000 1px solid
+            cursor: pointer
+            /* Down Arrows */
+            &::after
+              float: right
+              margin-right: 10px
+              content: ""
+              display: inline-block
+              vertical-align: middle
+              margin-top: 7px
+              width: 7px
+              height: 7px
+              border-top: 2px solid #fff
+              border-right: 2px solid #fff
+              -moz-transform: rotate(135deg)
+              -ms-transform: rotate(135deg)
+              -webkit-transform: rotate(135deg)
+              transform: rotate(135deg)
+              -webkit-transition: transform .5s
+              transition: transform .5s
+          .footer-links
+            max-height: 0
+            overflow: hidden
+            padding: 0 20px
+          &.active
+            h3
+              &::after
+                -moz-transform: rotate(-45deg)
+                -ms-transform: rotate(-45deg)
+                -webkit-transform: rotate(-45deg)
+                transform: rotate(-45deg)
+            .footer-links
+              max-height: 10000px
+
+/* Social Icons */
+footer
+  .social
+    float: right
+    text-align: center
+    margin: auto
+    a
+      display: inline-block
+      padding: 7px
+      width: 27px
+      height: 27px
+      margin: 0 2px
+      background: #fff
+      border-radius: 50%
+      vertical-align: middle
+      &:hover
+        background: #65c2ed
+      svg
+        .face, .twit, .link
+          fill: #000
+
+/* Typography */
+footer
+  h3
+    font-weight: lighter
+    font-style: italic
+    margin-bottom: 0
+  p, li
+    font-weight: 400
+    letter-spacing: 0.05em
+    margin: 10px 0
+  a
+    color: #fff
+    text-decoration: none
+    -webkit-transition: color .5s, background .5s
+    transition: color .5s, background .5s
+    &:hover
+      color: #65c2ed
+
+/* Misc CSS */
+footer
+  .clearfix
+    &:before,
+    &:after
+      content: '\0020'
+      display: block
+      overflow: hidden
+      visibility: hidden
+      width: 0
+      height: 0
+      clear: both
+
+/* Wrapper for page content to push down footer */
+#wrap
+  min-height: 100%
+  height: auto !important
+  height: 100%
+  /* Negative indent footer by it's height */
+  margin: 0 auto -96px
+
+/* Set the fixed height of the footer here */
+#push, footer
+  height: 96px
+
+/* Bootstrap overwrite */
+.badge
+  white-space: normal !important
+
+

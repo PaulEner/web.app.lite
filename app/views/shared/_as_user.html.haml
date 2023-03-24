@@ -1,0 +1,18 @@
+- if current_user.is_admin?
+  .as-user-with-overlay
+  .box.as-user-notification
+    %form{ action: dashboard_index_path, method: 'GET', class: 'form-inline margin0bottom' }
+      .form-group
+        %label{ for: 'user_code'  } Visualiser et agir en tant que :
+        .select-container.no-padding.w-100
+          %input#user_code{  placeholder: 'code utilisateur', value: session[:user_code].presence, name: 'user_code' }      
+      %hr
+      .row
+        .col-md-4.text-center.for-margin-right.no-margin.ps-0.pe-0.semibold
+          = link_to 'Annuler', '#', class: 'close_as_user_modal' 
+        .col-md-5.text-center.for-margin-right.semibold
+          = link_to 'Réinitialiser', dashboard_index_path(Hash[:user_code, current_user.memberships.first&.code]), class: ''                    
+        .col-md-3.text-center.semibold.no-padding.no-margin
+          = submit_tag 'OK', class: 'btn btn-default w-100'
+        
+

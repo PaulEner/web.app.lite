@@ -1,0 +1,35 @@
+!!!
+%html
+  %head
+    %title
+      Idocus | Connexion
+    %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-type" }
+    %meta{ name: "viewport", content: "width=device-width, initial-scale=1" }
+
+    %link{ :rel => 'shortcut icon', :type => "image/ico", :href => image_path('favicon.ico') }
+    = stylesheet_link_tag 'front/main'
+
+  .body_content
+    .container-fluid.text-center
+      .box.text-center.fadein
+        %h4.regular.m-3.p-4.semibold
+          Modifier votre mot de passe
+
+        %p Utilisez le formulaire ci-dessous, pour modifier votre mot de passe.
+
+        - if devise_error_messages!.present?
+          .alert.alert-danger
+            = devise_error_messages!
+
+          %i.badge.bg-warning
+            Vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant 
+            %a{ href: 'https://my.idocus.com/users/password/new'} ici
+          %br
+          %br
+
+        = simple_form_for resource, url: password_path(resource_name), method: 'patch' do |f|
+          = f.hidden_field :reset_password_token
+          = f.input :password, label: 'Nouveau mot de passe :'
+          = f.input :password_confirmation, label: 'Confirmation du nouveau mot de passe :'
+          .form-actions.padding0bottom
+            = f.submit 'Valider', class: 'btn btn-primary float-left'

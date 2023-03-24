@@ -1,0 +1,18 @@
+.form-group.affect_to
+  .alert.alert-info.text-center.semibold.head_affect_to.hide.scalein Choisir le(s) groupe(s) et/ou client(s) affectés par la règle.
+  
+  .controls.users.row
+    .form-group.customers-list.hide.scalein
+      .label-section
+        = label_tag 'account_number_rule[user_ids][]', t('activerecord.models.account_number_rule.attributes.users'), class: 'control-label semibold', for: 'customers-list'
+      .control-section
+        - users = @account_number_rule.present? ? @account_number_rule.users : []
+        - customers = @organization.customers.active.order(code: :asc)
+        = select_tag 'account_number_rule[user_ids][]', options_from_collection_for_select(customers, 'id', 'info', (customers.map{ |user| "#{ user.id}" if users.include?(user) })), class: 'select form-select-sm optional searchable-option-list', id: 'customers-list', multiple: true
+
+    .form-group.groups-list.hide.scalein
+      .label-section
+        = label_tag 'account_number_rule[group][]', "Groupes", class: 'control-label semibold', for: 'groups-list'
+      .control-section
+        - groups = @organization.groups.includes(:members).order(name: :asc)
+        = select_tag 'account_number_rule[group][]', options_for_select(groups.collect{ |group| [group.name, group.members.map{ |m| m.id.to_s }.join(' ')] }), class: 'select form-select-sm optional searchable-option-list', id: 'groups-list', multiple: true

@@ -1,0 +1,2 @@
+INVOICE_RECOGNITION_URL = YAML.load_file('config/invoice_recognition.yml').freeze['invoice_recognition_url']
+INVOICE_RECOGNITION_TOKEN = YAML.load_file('config/invoice_recognition.yml').freeze['invoice_recognition_token']

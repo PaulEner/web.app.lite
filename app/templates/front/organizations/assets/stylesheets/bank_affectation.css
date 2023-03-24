@@ -1,0 +1,49 @@
+table{
+  font-size: 0.9rem;
+}
+
+table .checkmark{
+  left: 4% !important;
+  margin-top: 0.45%;
+}
+
+.container input {
+  position: relative;
+}
+
+h6{
+  color: rgba(26, 26, 26, 0.7);
+}
+
+.chevron-add-rule{
+
+}
+
+.sub_rule_menu {
+  position: absolute;
+  width: 100%;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 16px rgba(26, 26, 26, 0.24);
+  border-radius: 8px;
+  z-index: 5;
+  font-size: 0.8rem;
+}
+
+.sub_rule_menu li{
+  display: block !important;
+  padding: 4% 6%;
+  cursor: pointer;
+  color: rgba(26, 26, 26, 0.7);
+}
+
+.sub_rule_menu li:hover{
+  background-color: rgba(26, 26, 26, 0.04);
+}
+
+#add-new-rule, #import-rule, #add-new-rule .btn, #import-rule .btn{
+  font-size: 0.9rem;
+}
+
+#add-new-rule i{
+  font-size: 0.7rem;
+}

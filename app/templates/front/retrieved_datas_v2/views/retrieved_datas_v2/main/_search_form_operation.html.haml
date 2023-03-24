@@ -1,0 +1,40 @@
+%form#filter-operations-form
+  .form-group
+    %label.semibold Date
+    .input-group.mb-3
+      %span.show-calendar.calendar-field-customer.input-group-text{ data: { ref: 'operation-date' } }= glyphicon('calendar', { size: '14', color: 'background: rgba(26, 26, 26, 0.7)' })
+      %input.form-control.calendar-field-customer.date.daterange#operation-date{ name: 'banking_operation_contains[date]', type: :text }
+      %span.show-calendar.calendar-field-customer.input-group-text-right{ data: { ref: 'operation-date' } }= glyphicon('chevron-bottom', { size: '12', color: 'background: rgba(26, 26, 26, 0.7)' })
+
+  .form-group
+    %label.semibold Automate
+    .select-container.no-padding.w-100
+      %input{ name: 'banking_operation_contains[bank_account][bank_name]', type: :text }
+
+
+  .form-group
+    %label.semibold Compte
+    .select-container.no-padding.w-100
+      %input{ name: 'banking_operation_contains[bank_account][number]', type: :text }
+
+  .form-group
+    %label.semibold Libellé
+    .select-container.no-padding.w-100
+      %input{ name: 'banking_operation_contains[label]', type: :text }
+
+  .form-group
+    %label.semibold Montant
+    .row.me-0
+      .w-50
+        = select_tag 'banking_operation_contains[amount_operation]', options_for_select([['=', 0], ['>=', 1], ['<=', 2]]), include_blank: false, class: 'form-select operator'
+      .w-50.select-container.no-padding
+        %input#amount.p-1{ name: 'banking_operation_contains[amount]' }
+
+  - if @user.pre_assignement_displayed?
+    .form-group
+      %label.semibold Pré-affectation
+      %select.form-select#preseizure{ name: 'banking_operation_contains[pre_assigned]', "aria-label" => "Default select"  }
+        %option{value: ''}
+        %option{value: 'pre_assigned'} Oui
+        %option{value: 'not_pre_assigned'} Non
+        %option{value: 'is_waiting'} En attente

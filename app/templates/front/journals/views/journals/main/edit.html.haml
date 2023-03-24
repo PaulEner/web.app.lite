@@ -1,0 +1,11 @@
+= stylesheet_link_tag 'front/customers/assets/stylesheets/main'
+
+%input#organization_id{type: :hidden, value: @organization.id, name: 'organization_id'}
+
+#journal.edit
+  - if @customer.try(:uses_ibiza_analytics?)
+    .w-100.text-end
+      - idocus_params = param_encode({ name: 'compta_analytic.edit_journal_compta' })
+      %a.btn.btn-default.edit_journal_analytics.as_idocus_emit{ idocus: idocus_params, href: '#', data: { code: @customer.code, customer_id: @customer.id, journal_id: @journal.id } }Édition Compta Analytique
+    = render file: Rails.root.join('app/templates/front/compta_analytics/views/compta_analytics/_analytics.html.haml'), locals: { with_validate_button: true }
+  = render partial: 'form'

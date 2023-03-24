@@ -1,0 +1,130 @@
+= stylesheet_link_tag 'front/external_file_storages/assets/stylesheets/main'
+
+- external_file_storage = user.find_or_create_external_file_storage.reload
+- options = { size: '15', color: 'rgba(26, 26, 26, 0.7);'}
+
+- if user.is_prescriber
+  - member = @member rescue user
+  - _redirect_to = { url: organization_collaborator_path(@organization, member, tab: 'file_storages'), method: 'get', html: { target: '#file_storages_services' } }
+- else
+  - _redirect_to = { url: organization_customer_efs_path(@organization, user, tab: 'file-storages'), method: 'get', html: { target: '#file_storages_services' } }
+
+#file_storages_services.derivationLeft
+  %table.table.table-striped
+    %thead
+      %tr
+        %th Service
+        %th Autorisé ?
+        %th Configuré ?
+        %th Utilisé ?
+        %th Chemin de livraison
+        %th.text-end Action
+    %tbody
+      %tr.hide
+        %th Dropbox Extended
+        %td.text-center= icon_tag(user.is_dropbox_extended_authorized, options)
+        %td.text-center= icon_tag(DropboxExtended.access_token.present?, options)
+        %td
+        %td= user.dropbox_delivery_folder
+        %td.text-end.pointer
+          .action
+            %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+          .sub_menu.text-start.hide
+            %ul.no-margin.no-padding.regular
+              - idocus_params = param_encode({ url: organization_user_file_storage_authorizations_path(@organization, user), method: 'PATCH', datas: { dropbox_extended: true }, redirect_to: _redirect_to })
+              - if not user.is_dropbox_extended_authorized
+                %li.as_idocus_ajax{ idocus: idocus_params }
+                  = link_to glyphicon('circle-check', { size: '15', color: "#72AA42" }) + ' Activé', '#', class: 'green-label-dark semi-bold'
+              - else
+                %li.as_idocus_ajax{ idocus: idocus_params }
+                  = link_to glyphicon('circle-x', { size: '15', color: "#FF4848" }) + ' Désactiver', '#', class: 'red-label'
+      %tr
+        %th Dropbox
+        %td.text-center= icon_tag(external_file_storage.is_dropbox_basic_authorized?, options)
+        %td.text-center= icon_tag(external_file_storage.dropbox_basic.try(:is_configured?), options)
+        %td.text-center= icon_tag(external_file_storage.is_used?(ExternalFileStorage::F_DROPBOX), options)
+        %td= external_file_storage.dropbox_basic.try(:path)
+        %td.text-end.pointer
+          .action
+            %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+          .sub_menu.text-start.hide
+            %ul.no-margin.no-padding.regular
+              - idocus_params = param_encode({ url: organization_user_file_storage_authorizations_path(@organization, user), method: 'PATCH', datas: { dropbox_basic: true }, redirect_to: _redirect_to })
+              - if not external_file_storage.is_dropbox_basic_authorized?                                
+                %li.as_idocus_ajax{ idocus: idocus_params }
+                  = link_to glyphicon('circle-check', { size: '15', color: "#72AA42" }) + ' Activé', '#', class: 'green-label-dark semi-bold'
+              - else
+                %li.as_idocus_ajax{ idocus: idocus_params }
+                  = link_to glyphicon('circle-x', { size: '15', color: "#FF4848" }) + ' Désactiver', '#', class: 'red-label'
+      %tr
+        %th Google Drive
+        %td.text-center= icon_tag(external_file_storage.is_google_docs_authorized?, options)
+        %td.text-center= icon_tag(external_file_storage.google_doc.try(:is_configured?), options)
+        %td.text-center= icon_tag(external_file_storage.is_used?(ExternalFileStorage::F_GOOGLE_DOCS), options)
+        %td= external_file_storage.google_doc.try(:path)
+        %td.text-end.pointer
+          .action
+            %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+          .sub_menu.text-start.hide
+            %ul.no-margin.no-padding.regular
+              - idocus_params = param_encode({ url: organization_user_file_storage_authorizations_path(@organization, user), method: 'PATCH', datas: { google_docs: true }, redirect_to: _redirect_to })
+              - if not external_file_storage.is_google_docs_authorized?
+                %li.as_idocus_ajax{ idocus: idocus_params }
+                  = link_to glyphicon('circle-check', { size: '15', color: "#72AA42" }) + ' Activé', '#', class: 'green-label-dark semi-bold'
+              - else
+                %li.as_idocus_ajax{ idocus: idocus_params }
+                  = link_to glyphicon('circle-x', { size: '15', color: "#FF4848" }) + ' Désactiver', '#', class: 'red-label'
+      %tr
+        %th FTP
+        %td.text-center= icon_tag(external_file_storage.is_ftp_authorized?, options)
+        %td.text-center= icon_tag(external_file_storage.ftp.try(:is_configured?), options)
+        %td.text-center= icon_tag(external_file_storage.is_used?(ExternalFileStorage::F_FTP), options)
+        %td= external_file_storage.ftp.try(:path)
+        %td.text-end.pointer
+          .action
+            %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+          .sub_menu.text-start.hide
+            %ul.no-margin.no-padding.regular
+              - idocus_params = param_encode({ url: organization_user_file_storage_authorizations_path(@organization, user), method: 'PATCH', datas: { ftp: true }, redirect_to: _redirect_to })
+              - if not external_file_storage.is_ftp_authorized?
+                %li.as_idocus_ajax{ idocus: idocus_params }
+                  = link_to glyphicon('circle-check', { size: '15', color: "#72AA42" }) + ' Activé', '#', class: 'green-label-dark semi-bold'
+              - else
+                %li.as_idocus_ajax{ idocus: idocus_params }
+                  = link_to glyphicon('circle-x', { size: '15', color: "#FF4848" }) + ' Désactiver', '#', class: 'red-label'
+      %tr
+        %th SFTP
+        %td.text-center= icon_tag(external_file_storage.is_sftp_authorized?, options)
+        %td.text-center= icon_tag(external_file_storage.sftp.try(:is_configured?), options)
+        %td.text-center= icon_tag(external_file_storage.is_used?(ExternalFileStorage::F_FTP), options)
+        %td= external_file_storage.sftp.try(:path)
+        %td.text-end.pointer
+          .action
+            %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+          .sub_menu.text-start.hide
+            %ul.no-margin.no-padding.regular
+              - idocus_params = param_encode({ url: organization_user_file_storage_authorizations_path(@organization, user), method: 'PATCH', datas: { sftp: true }, redirect_to: _redirect_to })
+              - if not external_file_storage.is_sftp_authorized?
+                %li.as_idocus_ajax{ idocus: idocus_params }
+                  = link_to glyphicon('circle-check', { size: '15', color: "#72AA42" }) + ' Activé', '#', class: 'green-label-dark semi-bold'
+              - else
+                %li.as_idocus_ajax{ idocus: idocus_params }
+                  = link_to glyphicon('circle-x', { size: '15', color: "#FF4848" }) + ' Désactiver', '#', class: 'red-label'
+      %tr.hide
+        %th Box
+        %td.text-center= icon_tag(external_file_storage.is_box_authorized?, options)
+        %td.text-center= icon_tag(external_file_storage.box.try(:is_configured?), options)
+        %td.text-center= icon_tag(external_file_storage.is_used?(ExternalFileStorage::F_BOX), options)
+        %td= external_file_storage.box.try(:path)
+        %td.text-end.pointer
+          .action
+            %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+          .sub_menu.text-start.hide
+            %ul.no-margin.no-padding.regular
+              - idocus_params = param_encode({ url: organization_user_file_storage_authorizations_path(@organization, user), method: 'PATCH', datas: { box: true }, redirect_to: _redirect_to })
+              - if not external_file_storage.is_box_authorized?
+                %li.as_idocus_ajax{ idocus: idocus_params }
+                  = link_to glyphicon('circle-check', { size: '15', color: "#72AA42" }) + ' Activé', '#', class: 'green-label-dark semi-bold'
+              - else
+                %li.as_idocus_ajax{ idocus: idocus_params }
+                  = link_to glyphicon('circle-x', { size: '15', color: "#FF4848" }) + ' Désactiver', '#', class: 'red-label'

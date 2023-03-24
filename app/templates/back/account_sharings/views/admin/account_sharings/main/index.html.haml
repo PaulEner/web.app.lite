@@ -1,0 +1,72 @@
+#account_sharings
+  .row.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-6      
+      %h3
+        Liste des partages de compte
+        %span.badge.bg-dark= @account_sharings.total_count
+    .col-md-6.text-end
+      %button.btn.btn-warning.filter-account-sharing
+        %span.me-2= glyphicon('transfer', { size: '10', color: '#000', style: 'transform: rotate(90deg)'})
+        %span Filtrer
+  .row.box.derivationRight
+    .col-md-12#table_account_sharing
+      %table.table.table-condensed.table-striped
+        %thead
+          %tr
+            %th= sortable :created_at, 'Date'
+            %th Dossier
+            %th Client ou contact
+            %th Etat
+        %tbody
+          - @account_sharings.each do |account_sharing|
+            %tr
+              %td.date= account_sharing.created_at.strftime('%d/%m/%Y %H:%M')
+              %td= link_to account_sharing.account.info, organization_customer_path(account_sharing.account.organization, account_sharing.account)
+              %td
+                - if account_sharing.collaborator.is_guest
+                  = account_sharing.collaborator.info
+                - else
+                  = link_to account_sharing.collaborator.info, organization_customer_path(account_sharing.collaborator.organization, account_sharing.collaborator)
+              %td= account_sharing.is_approved? ? 'Partagé' : 'En attente de validation'
+      = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: admin_account_sharings_path, target: '#table_account_sharing', total_pages: @account_sharings.total_pages, filter: 'filter-account-sharing' }  
+
+
+.modal#filter-account-sharing
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h5.modal-title.bold Filtrer
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      = form_tag admin_account_sharings_path, method: :get, class: 'form-filter' do
+        .modal-body
+          = hidden_field_tag :direction, sort_direction
+          = hidden_field_tag :sort, sort_column
+          = hidden_field_tag :per_page, per_page
+          .form-group
+            .label-section
+              = label_tag 'account_sharing_contains[created_at]', t('activerecord.models.common.attributes.created_at')
+            .control-section
+              .form-group
+                = text_field_tag 'account_sharing_contains[created_at]', (params[:account_sharing_contains][:created_at] rescue ''), class: 'form-control daterange'
+          .form-group
+            .label-section
+              = label_tag 'account_sharing_contains[account]', 'Dossier'
+            .control-section
+              = text_field_tag 'account_sharing_contains[account]', (params[:account_sharing_contains][:account] rescue ''), class: 'form-control'
+          .form-group
+            .label-section
+              = label_tag 'account_sharing_contains[collaborator]', 'Client ou contact'
+            .control-section
+              = text_field_tag 'account_sharing_contains[collaborator]', (params[:account_sharing_contains][:collaborator] rescue ''), class: 'form-control'
+          .form-group
+            .label-section
+              = label_tag 'account_sharing_contains[is_approved]', 'Etat'
+            .control-section
+              = select_tag 'account_sharing_contains[is_approved]', options_for_select([['En attente de validation', 0],['Partagé', 1]], (params[:account_sharing_contains][:is_approved] rescue '')), include_blank: true, class: 'form-control'
+        .modal-footer
+          .form-actions
+            = link_to "Réinitialiser", admin_account_sharings_path, class: 'btn btn-light', title: t('filters.reset')
+            = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+
+
+= javascript_include_tag 'back/account_sharings/assets/javascripts/main'

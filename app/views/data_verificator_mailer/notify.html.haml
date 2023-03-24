@@ -1,0 +1,43 @@
+!!!
+%html
+  %head
+    %title [iDocus] Verificateur de données journalière
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour,
+    %br
+    %br
+    Verificateur de données journalière du #{@notify_content[:date_scan]} :
+    %br
+    %br
+    Détails:
+    %ul
+    - @notify_content[:details].each do |info|
+      %li
+        %i= info[:title].to_s
+        - if info[:message].present?
+          %br
+          - if info[:type].to_s == 'text'
+            %p= info[:message].to_s
+          - else
+            - messages  = []
+            - keys_list = []
+            - arr_messages = info[:message].split("; ") || info[:message]
+            - arr_messages.each do |message|
+              - messages << Hash[message.split(", ").map { |s| s = s.split(": "); keys_list << s[0].to_sym; [s[0].to_sym, s[1]] }]
+
+            %table
+              %thead
+                %tr
+                  - keys_list.uniq.each do |th_text|
+                    %th{style: 'border: 1px solid #dee2e6; background-color: #696969; color: #FFF; padding: 5px'}= th_text.to_s
+              %tbody
+                - messages.each_with_index do |message, index|
+                  %tr{style: "background-color: #{(index%2 == 0)? '#E0E0E0' : '#FFF'}"}
+                    - message.each do |key, value|
+                      %td{style: 'border: 1px solid #dee2e6; padding: 5px'}= sanitize(value, :tags => %w(br))
+      %br
+    %br
+    Cordialement
+    %br
+    SI iDocus

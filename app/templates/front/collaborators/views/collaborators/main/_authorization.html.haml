@@ -1,0 +1,44 @@
+#authorization.box.no-margin.tab-pane.fade{ class: ('active show' if params[:tab] == 'authorization') }
+  #collaborator_rights.derivationRight
+    = simple_form_for @member, url: organization_collaborator_rights_url(@organization, @member), html: { class: 'form form-horizontal margin0' } do |f|
+      .form-group.row
+        .col-md-11
+          = f.label :manage_collaborators, class: 'semibold'
+        .col-md-1
+          .form-check.form-switch
+            = f.input :manage_collaborators, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'manage_collaborators_field' }
+            %label.semibold{class: 'form-check-label label_check_field', for: 'manage_collaborators_field'} Non
+      .form-group.row
+        .col-md-11
+          = f.label :manage_customers, class: 'semibold'
+        .col-md-1
+          .form-check.form-switch
+            = f.input :manage_customers, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'manage_customers_field' }
+            %label.semibold{class: 'form-check-label label_check_field', for: 'manage_customers_field'} Non
+      .form-group.row
+        .col-md-11
+          = f.label :manage_groups, class: 'semibold'
+        .col-md-1
+          .form-check.form-switch
+            = f.input :manage_groups, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'manage_groups_field' }
+            %label.semibold{class: 'form-check-label label_check_field', for: 'manage_groups_field'} Non
+      .form-group.row
+        .col-md-11
+          = f.label :manage_journals, class: 'semibold'
+        .col-md-1
+          .form-check.form-switch
+            = f.input :manage_journals, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'manage_journals_field' }
+            %label.semibold{class: 'form-check-label label_check_field', for: 'manage_journals_field'} Non
+      .form-group.row
+        .col-md-11
+          = f.label :manage_customer_journals, class: 'semibold'
+        .col-md-1
+          .form-check.form-switch
+            = f.input :manage_customer_journals, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'manage_customer_journals_field' }
+            %label.semibold{class: 'form-check-label label_check_field', for: 'manage_customer_journals_field'} Non
+      - unless @member.user.is_admin
+        - if @organization.is_active
+          %hr
+          .form-group
+            .w-100.text-center
+              = f.submit t('actions.submit'), class: 'btn btn-primary w-25'

@@ -1,0 +1,113 @@
+.multi-select-container {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    background: rgba(26, 26, 26, 0.04);
+    border-radius: 6px;
+    border-radius: 4px;
+    padding: 2%;
+}
+
+.multi-select-menu {
+    position: absolute;
+    left: 0;
+    top: 85%;
+    z-index: 1;
+    float: left;
+    min-width: 100%;
+    background: #fff;
+    margin: 15px 0;    
+    display: none;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 16px rgba(26, 26, 26, 0.24);
+    border-radius: 8px;
+    border: none;
+}
+
+.multi-select-menuitem {
+    display: block;
+    font-size: 14px;
+    padding: 1% 2%;    
+    cursor: pointer;
+}
+
+.multi-select-menuitems label {
+  margin-bottom: 0 !important;
+}
+
+.multi-select-menuitem--titled:before {
+    display: block;
+    font-weight: bold;
+    content: attr(data-group-title);
+    margin: 0 0 0.25em -20px;
+}
+
+.multi-select-menuitem--titledsr:before {
+    display: block;
+    font-weight: bold;
+    content: attr(data-group-title);
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.multi-select-presets {
+    border-bottom: 1px solid #ddd;
+}
+
+.multi-select-menuitem input {    
+    margin-top: 0.25em;    
+}
+
+.multi-select-button {
+    display: inline-block;    
+    padding: 0.2em 0.6em;    
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: -0.5em;
+    cursor: pointer;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    color: #1A1A1A;
+    opacity: 0.4;
+    width: 90%;
+}
+
+.multi-select-container--open .multi-select-menu {
+    display: block;
+}
+
+.multi-select-container--open .multi-select-button:after {
+    border-width: 0 0.4em 0.4em 0.4em;
+    border-color: transparent transparent #999 transparent;
+}
+
+.multi-select-container--positioned .multi-select-menu {
+    /* Avoid border/padding on menu messing with JavaScript width calculation */
+    box-sizing: border-box;
+}
+
+.multi-select-container--positioned .multi-select-menu label {
+    /* Allow labels to line wrap when menu is artificially narrowed */
+    white-space: normal;
+}
+
+.arrow {
+  transform: rotate(90deg);
+  padding: 1% 3%;
+}
+
+.multi-select-menuitem:hover{
+  background: rgba(26, 26, 26, 0.04);
+}
+
+.checkmark {  
+  right: 2% !important; 
+}

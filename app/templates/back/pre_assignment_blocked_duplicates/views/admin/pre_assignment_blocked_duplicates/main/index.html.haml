@@ -1,0 +1,89 @@
+#pre_assignment_blocked_duplicates
+  .row.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-6      
+      %h3
+        Liste des doublons de pré-affectation
+        %span.badge.bg-dark= @duplicates.total_count
+    .col-md-6.text-end
+      %button.btn.btn-warning.retriever-admin-filter
+        %span.me-2= glyphicon('transfer', { size: '10', color: '#000', style: 'transform: rotate(90deg)'})
+        %span Filtrer  
+
+  .row.box.derivationRight
+    .col-md-12
+      %table.table.table-condensed.table-striped
+        %thead
+          %tr
+            %th= sortable :created_at, 'Date de création'
+            %th= sortable :piece_name, 'N° pièce'
+            %th= sortable :piece_number, 'N° facture'
+            %th= sortable :third_party, t('activerecord.models.pack_report_preseizure.attributes.third_party')
+            %th= sortable :amount, t('activerecord.models.pack_report_preseizure.attributes.amount')
+            %th= sortable :date, t('activerecord.models.pack_report_preseizure.attributes.date')
+            %th Pièces (PDF)
+            %th Statut
+        %tbody
+          - @duplicates.each do |object|
+            %tr
+              %td
+                %b
+                  - if object.created_at
+                    - if object.created_at.today?
+                      = l(object.created_at, format: '%H:%M')
+                    - else
+                      = l(object.created_at, format: '%d %b %Y %H:%M')
+                  - else
+                    \-
+                %br
+                - if object.similar_preseizure.created_at
+                  - if object.similar_preseizure.created_at.today?
+                    = l(object.similar_preseizure.created_at, format: '%H:%M')
+                  - else
+                    = l(object.similar_preseizure.created_at, format: '%d %b %Y %H:%M')
+                - else
+                  \-
+
+              %td
+                %b= object.piece.name
+                %br
+                = object.similar_preseizure.piece.name
+              %td
+                %b= object.piece_number
+                %br
+                = object.similar_preseizure.piece_number
+              %td
+                %b= object.third_party
+                %br
+                = object.similar_preseizure.third_party
+              %td
+                %b= object.cached_amount.to_s + ' €'
+                %br
+                = object.similar_preseizure.cached_amount.to_s + ' €'
+              %td
+                %b= l object.date, format: '%d %b %Y'
+                %br
+                = l object.similar_preseizure.date, format: '%d %b %Y'
+              %td
+                = link_to icon_show, '#', class: 'do-showPieces', title: 'Voir la différence entre les 2 pièces PDF', data: { duplicate_url: object.piece.cloud_content_object.url, original_url: object.similar_preseizure.piece.cloud_content_object.url }
+              %td
+                %b Doublon
+                %br
+                Original
+
+  #showPieces.modal.hide.fade.in
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %a.close{ data: { dismiss: :modal } } ×
+          %h3 Différence
+        .modal-body
+          .row
+            .col-6.aligncenter
+              %h3 Doublon
+            .col-6.aligncenter
+              %h3 Original
+          .aligncenter
+            %iframe.duplicate{ src: '' }
+            %iframe.original{ src: '' }
+
+= javascript_include_tag 'admin/pre_assignment_blocked_duplicates'

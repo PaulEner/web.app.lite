@@ -1,0 +1,56 @@
+#mcf.clearfix.derivationLeft
+  - if @mcf_settings.try(:access_token).present?
+    = simple_form_for @mcf_settings, url: organization_mcf_settings_path(@organization), html: { id: 'edit_mcf_settings', class: 'form' } do |f|      
+      = f.input :is_delivery_activated, as: :boolean, input_html: { class: 'form-check-input m-2' }, wrapper: :inline_checkbox
+      .select-container.no-padding.w-100
+        = f.input :delivery_path_pattern
+
+      %label.semibold Choisissez l’ordre de classement de vos documents en modifiant leur positionnement dans le champ ci-dessus.
+      %br
+      %label
+        Exemple : 
+        %span.semibold /:account_book/:year:month/
+      %br
+      %label Attention à respecter le contenu de chacun des champs :
+      %br
+      %label
+        %span.badge.bg-dark.semibold :year
+        %span pour l'année du lot iDocus
+      %br
+      %label
+        %span.badge.bg-dark.semibold :month
+        %span pour le mois du lot iDocus
+      %br
+      %label
+        %span.badge.bg-dark.semibold :account_book
+        %span pour le journal comptable iDocus
+
+    %hr
+    .text-end
+      - idocus_params = param_encode({ url:  organization_mcf_settings_path(@organization), method: 'delete', confirm: 'Voulez vous vraiment supprimer vos parametres?', redirect_to: { url: organization_efs_path(@organization, tab: 'mcf'), method: 'GET', html: { target: '.general' } } })
+      %button.btn.btn-danger.as_idocus_ajax{ type: 'button', idocus: idocus_params } Supprimer mes paramètres de liaison MCF
+
+      - idocus_params = param_encode({ url: '#url', form: { id: 'edit_mcf_settings', dump_action: true }, redirect_to: { url: organization_efs_path(@organization, tab: 'mcf'), method: 'GET', html: { target: '.general' } } })
+      %button.btn.btn-primary.as_idocus_ajax{ type: 'button', idocus: idocus_params } Valider les modification
+  - else
+    %table.table.table-striped
+      %tbody
+        %tr
+          %th Statut de la liaison
+          %td
+            - if @mcf_settings.try(:access_token).present?
+              %span.badge.bg-success OK
+            - else
+              %span.badge.bg-light.text-dark Non configuré
+        - if @mcf_settings.try(:access_token).present?
+          %tr
+            %th Livraison activé ?
+            %td
+              - if @mcf_settings.try(:is_delivery_activated)
+                %span.badge.bg-success= t('yes_value')
+              - else
+                %span.badge.bg-important= t('no_value')
+        %tr
+          %th Chemin de livraison
+          %td= @mcf_settings.try(:delivery_path_pattern) || McfSettings.new.delivery_path_pattern
+    = link_to 'Configurer la liaison', authorize_organization_mcf_settings_path(@organization), class: 'btn btn-primary', method: :post

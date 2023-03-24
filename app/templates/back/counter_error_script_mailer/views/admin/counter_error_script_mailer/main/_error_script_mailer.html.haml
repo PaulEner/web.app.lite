@@ -1,0 +1,42 @@
+%table.table.table-condensed.table-striped
+  %thead
+    %tr
+      %th N°
+      %th=sortable :error_type,"Type d'erreurs"
+      %th.text-center=sortable :is_enable, "Etat"
+      %th.text-center=sortable :counter, "Compte"
+      %th.text-center=sortable :created_at, "Date de Création"
+      %th.text-center=sortable :updated_at, "Date de Modification"
+      %th.text-end Action
+  %tbody
+    - @counter_error_script_mailers.each do |error_script_mailer|
+      %input#error_script_mailer_id{ name: :id, value: error_script_mailer.id, type: 'hidden' }
+      %tr{id:"tr_#{error_script_mailer.id}"}
+        %td= error_script_mailer.id
+        %td= error_script_mailer.error_type
+        %td.text-center= error_script_mailer.is_enable
+        %td.text-center= error_script_mailer.counter
+        %td.text-center= error_script_mailer.created_at.try(:to_formatted_s, :db)
+        %td.text-center= error_script_mailer.updated_at.try(:to_formatted_s, :db)        
+        %td.text-end.pointer
+          - state = error_script_mailer.is_enable
+          - counter = error_script_mailer.counter
+          .action.sub_edit_delete
+            %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+          .sub_menu.text-start.hide
+            %ul.no-margin.no-padding.regular
+              - if state == true
+                %li                               
+                  = link_to '#', class: 'no-style black-label set-state', id: "state_#{error_script_mailer.id}", state: state do
+                    %span.me-2= glyphicon('circle-x', size: 12)                
+                    %span Désativer
+              - else
+                %li                               
+                  = link_to '#', class: 'no-style black-label set-state', id: "state_#{error_script_mailer.id}", state: state do
+                    %span.me-2= glyphicon('circle-check', size: 12)                  
+                    %span Activer
+              - if counter > 0
+                %li                               
+                  = link_to '#', class: 'no-style set-counter-to-initialize', id: "initialize_#{error_script_mailer.id}", counter: counter do
+                    %span.me-2= glyphicon('timer', size: 12)
+                    %span Réinitialiser

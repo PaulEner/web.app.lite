@@ -1,0 +1,21 @@
+%tr.loaded{ class: "loaded_#{@organization.id}" }
+
+  %td.information= @date.strftime('%Y-%m')
+  %td.information.code= @organization.code
+  %td.information.name= @organization.name
+
+  %td.subscription.ido_classic= link_to @counts[:ido_classic].to_i, "#", class: 'do-showAccounts', title: "iDo Classique", type: "basic_package", org_id: @organization.id
+  %td.subscription.ido_micro= link_to @counts[:ido_micro].to_i, "#", class: 'do-showAccounts', title: "iDo Micro", type: "micro_package", org_id: @organization.id
+  %td.subscription.ido_nano= link_to @counts[:ido_nano].to_i, "#", class: 'do-showAccounts', title: "iDo Nano", type: "nano_package", org_id: @organization.id
+  %td.subscription.ido_x= link_to @counts[:ido_x].to_i, "#", class: 'do-showAccounts', title: "iDo X", type: "idox_package", org_id: @organization.id
+  %td.subscription.ido_retriever= link_to @counts[:ido_retriever].to_i, "#", class: 'do-showAccounts', title: "Automate uniquement", type: "retriever_only_package", org_id: @organization.id
+  %td.subscription.ido_digitize= link_to @counts[:ido_digitize].to_i, "#", class: 'do-showAccounts', title: "Numérisation uniquement", type: "digitize_only_package", org_id: @organization.id
+  %td.subscription.ido_premium= link_to @counts[:ido_premium].to_i, "#", class: 'do-showAccounts', title: "iDo Premium", type: "premium_package", org_id: @organization.id
+
+  %td.options.mail_active= link_to @counts[:mail_active].to_i, "#", class: 'do-showAccounts', title: "Fofait Courrier", type: "mail_package", org_id: @organization.id
+  %td.options.scan_active= link_to @counts[:scan_active].to_i, "#", class: 'do-showAccounts', title: "Numériser", type: "digitize_package", org_id: @organization.id
+  %td.options.bank_active= link_to @counts[:bank_active].to_i, "#", class: 'do-showAccounts', title: "Forfait automates", type: "retriever_package", org_id: @organization.id
+
+  %td.clients.active= @packages.size
+  %td.clients.new= @organization.customers.active_at(@date.end_of_month).where("DATE_FORMAT(created_at, '%Y%m') = #{@period}").count
+  %td.clients.closed= @organization.customers.closed.where('created_at < ?', @date.end_of_month).count

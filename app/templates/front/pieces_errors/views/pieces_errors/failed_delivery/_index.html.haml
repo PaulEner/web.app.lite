@@ -1,0 +1,52 @@
+.derivationLeft
+  - total_nb = 0
+  .row
+    .col-md-12
+      %table.table.table-striped.table_integration
+        %thead
+          %th Date
+          %th Lot
+          %th Nb.
+          %th Erreur
+        %tbody
+          - if @errors.any?
+            - @errors.each do |object|
+              %tr
+                %td
+                  - if object.try(:max_date)
+                    - if object.max_date.today?
+                      = l(object.max_date, format: '%H:%M')
+                    - else
+                      = l(object.max_date, format: '%d %b %Y %H:%M')
+                  - else
+                    \-
+                %td
+                  - if object.try(:pack_id).to_i == 0
+                    - url = operations_details_path({ id: object.report_id.presence || 0, _ext: 1, k: Base64.encode64({ by_preseizure: { is_delivered: "3" }, reinit: true }.to_json) })
+                  - else
+                    - url = documents_details_path({ id: object.try(:pack_id).presence || 0, _ext: 1, k: Base64.encode64({ by_preseizure: { is_delivered: "3" }, reinit: true }.to_json) })
+
+                  = link_to object.name.presence || "", url, class: 'no-style bold black-label underlined-pointer', target: '_blank'
+                %td
+                  - nb = object.preseizures_count.presence || 0
+                  - total_nb += nb
+                  %span= nb
+                %td
+                  - preseizure = Pack::Report::Preseizure.where(id: object.try(:preseizure_id)).try(:first)
+                  - if preseizure
+                    - message_ibiza         = preseizure.get_delivery_message_of('ibiza')
+                    - message_exact_online  = preseizure.get_delivery_message_of('exact_online')
+                    - message_my_unisoft    = preseizure.get_delivery_message_of('my_unisoft')
+                    - message_sage_gec      = preseizure.get_delivery_message_of('sage_gec')
+                    - message_acd           = preseizure.get_delivery_message_of('acd')
+
+                    - full_message = message_ibiza.presence || message_exact_online.presence || message_my_unisoft.presence || message_sage_gec.presence || message_acd.presence
+                    = sanitize(full_message, :tags => %w(br))
+                  - else
+                    \-
+          - else
+            %tr
+              %td{ colspan: 4 }= t('global.no-data-found')
+  = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { name: 'failed-delivery', filter: 'filter-duplicated-pre-assignment-form', mark: 'pieces_errors', total_pages: @errors.total_pages }
+
+  %input#failed-delivery-size{ type: 'hidden', value: total_nb }

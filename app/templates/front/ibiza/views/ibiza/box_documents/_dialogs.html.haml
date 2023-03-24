@@ -1,0 +1,31 @@
+- if action_name == 'index'
+  - path = organization_customer_ibizabox_documents_path(@organization, @customer)
+  - title = 'Historique des documents'
+- elsif action_name == 'select'
+  - path = select_organization_customer_ibizabox_documents_path(@organization, @customer)
+  - title = 'Sélection des documents'
+
+.modal.fade.in{ id: "filter_#{action_name}"}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold= title
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        = form_tag path, method: :get, class: 'form-filter', id: "form_filter_#{action_name}" do
+          .form-group.clearfix
+            .label-section
+              = label_tag 'document_contains[name]', 'Nom original', class: 'semibold'
+            .control-section
+              .select-container.no-padding.w-100
+                = text_field_tag 'document_contains[name]', (params[:document_contains][:name] rescue ''), class: 'span12'
+          .form-group.clearfix
+            .label-section
+              = label_tag 'document_contains[journal]', 'Journal', class: 'semibold'
+            .control-section
+              = select_tag 'document_contains[journal]', options_for_select(@customer.ibizabox_folders.includes(:journal).map { |e| [e.journal.name] }, (params[:document_contains][:journal] rescue nil)), include_blank: true, class: 'form-select'
+      .modal-footer
+        .w-100.text-end
+          %button.btn.btn-light.semibold{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'} Annuler
+          - idocus_params = param_encode({ url: '#url', form: { id: "form_filter_#{action_name}", dump_action: true }, html: { target: "#ibizabox_#{action_name}" }, modal: { id: "filter_#{action_name}", close_after_error: true } })
+          %button.btn.btn-primary.as_idocus_ajax{ type: 'button', idocus: idocus_params }= t('filters.action')

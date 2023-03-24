@@ -1,0 +1,46 @@
+.mb-3
+.row
+  .col-md-12
+    %table.table.table-condensed.table-striped#table_temp_document
+      %thead
+        %tr.text-center
+          %th.text-center
+            .form-check
+              = check_box_tag 'master_checkbox', 0, false, class: 'form-check-input pointer float-none check-all', data: { action: 'temp_document'}
+          %th= sortable :created_at,   'Créé le'
+          %th Nom original
+          %th Nombre de page
+          %th Delivered by
+          %th Delivered type
+          %th Fingerprint
+          %th Api name
+          %th State
+          %th Action
+      %tbody
+        - @temp_documents.each do |temp_document|          
+          %tr.text-center
+            %th.text-center
+              .form-check
+                = check_box_tag 'temp_documents[ids][]', temp_document.id, false, id: "rule_#{temp_document.id}", class: 'form-check-input pointer float-none check check-temp_document checkbox', data: { action: 'temp_document'}
+            %td= l(temp_document.created_at, format: '%d %b %Y %H:%M')
+            %td= temp_document.original_file_name
+            %td= temp_document.pages_number
+            %td= temp_document.delivered_by
+            %td= temp_document.delivery_type
+            %td= temp_document.original_fingerprint
+            %td= temp_document.api_name
+            %td= temp_document.state
+            %td.text-end.pointer
+              .action.sub_edit_delete.list-collaborators
+                %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+              .sub_menu.text-start.hide
+                %ul.no-margin.no-padding.regular
+                  %li.delete_fingerprint_temp_document{ data: { temp_document_id: temp_document.id, title: "Supprimer" } }
+                    = link_to '#' do
+                      %span.me-2= glyphicon('media-record', size: 12)
+                      %span Effacer fingerprint
+                  %li.destroy_temp_document{ data: { temp_document_id: temp_document.id, title: "Supprimer" } }
+                    = link_to '#' do
+                      %span.me-2= glyphicon('trash', size: 12)
+                      %span Supprimer
+    = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: get_temp_document_admin_supports_path, target: '#table_temp_document', total_pages: @temp_documents.total_pages, filter: 'temp_document-filter' }

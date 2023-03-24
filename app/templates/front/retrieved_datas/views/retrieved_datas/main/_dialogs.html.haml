@@ -1,0 +1,78 @@
+.modal.fade.in#filter-operations
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Filtre opération bancaire
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        %form#filter-operations-form
+          .form-group
+            %label.semibold Date opération
+            .select-container.no-padding.w-100
+              %input.date.daterange#operation-date{ name: 'banking_operation_contains[date]', type: :text }
+
+          .form-group
+            %label.semibold Date valeur
+            .select-container.no-padding.w-100
+              %input.date.daterange#value-date{ name: 'banking_operation_contains[value_date]', type: :text }
+
+          .form-group
+            %label.semibold Service
+            .select-container.no-padding.w-100
+              %input{ name: 'banking_operation_contains[bank_account][bank_name]', type: :text }
+
+
+          .form-group
+            %label.semibold Compte
+            .select-container.no-padding.w-100
+              %input{ name: 'banking_operation_contains[bank_account][number]', type: :text }
+
+          .form-group
+            %label.semibold Catégorie
+            .select-container.no-padding.w-100
+              %input{ name: 'banking_operation_contains[category]', type: :text }
+
+          .form-group
+            %label.semibold Libellé
+            .select-container.no-padding.w-100
+              %input{ name: 'banking_operation_contains[label]', type: :text }
+
+          - if @user.pre_assignement_displayed?
+            .form-group
+              %label.semibold Pré-affectation
+              %select.form-select#preseizure{ name: 'banking_operation_contains[pre_assigned]', "aria-label" => "Default select"  }
+                %option{value: ''}
+                %option{value: 'pre_assigned'} Oui
+                %option{value: 'not_pre_assigned'} Non
+                %option{value: 'is_waiting'} En attente
+
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel.reset-filter{ data: { target: 'operations' }, type: :button } Annuler
+        %button.btn.btn-primary.semibold.validate-filter{ data: { target: 'operations' }, type: :button } Valider
+
+.modal.fade.in#filter-documents
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Filtre documents
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        %form#filter-documents-form
+          .form-group
+            %label.semibold Service
+            .select-container.no-padding.w-100
+              %input{ name: 'document_contains[service_name]', type: :text }
+
+          .form-group
+            %label.semibold Date
+            .select-container.no-padding.w-100
+              %input.date.daterange#document-date{ name: 'document_contains[date]', type: :text }
+
+          .form-group
+            %label.semibold Nom original
+            .select-container.no-padding.w-100
+              %input{ name: 'document_contains[name]', type: :text }
+
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel.reset-filter{ data: { target: 'documents' }, type: :button } Annuler
+        %button.btn.btn-primary.semibold.validate-filter{ data: { target: 'documents' }, type: :button } Valider

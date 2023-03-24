@@ -1,0 +1,50 @@
+!!!
+%html
+  %head
+    %title Idocus | Traitements papiers
+    %meta{ content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-type' }
+    %link{ rel: 'shortcut icon', type: 'image/ico', href: image_path('favicon.ico') }    
+    %link{ :rel => 'shortcut icon', :type => "image/ico", :href => image_path('favicon.ico') }
+    = stylesheet_link_tag 'front/main'
+    = javascript_include_tag 'front/main'
+  %body
+    #wrap.extern
+      %nav.navbar.navbar-expand-lg.fixed-top.sticky-top.main_menu.no-padding
+        .row.w-100.no-margin
+          .col-md-1.text-center
+            = link_to image_tag('logo/tiny_logo_2.png', alt: 'logo iDocus'), root_path, class: 'navbar-brand no-margin', data:{ href: '/' }
+          .col-md-6.menu
+            %ul.navbar-nav
+              %li.nav-item{ class: ('active' if controller_name == 'paper_set_orders') }
+                = link_to 'Commandes', paper_set_orders_path, class: 'nav-link bold'
+              %li.nav-item{ class: ('active' if controller_name == 'kits') }
+                = link_to 'Kit', kits_path, class: 'nav-link bold'
+              %li.nav-item{ class: ('active' if controller_name == 'receipts') }
+                = link_to 'Réception', receipts_path, class: 'nav-link bold'
+              %li.nav-item{ class: ('active' if controller_name == 'scans') }
+                = link_to 'Numérisation', scans_path, class: 'nav-link bold'
+              %li.nav-item{ class: ('active' if controller_name == 'returns') }
+                = link_to 'Retour', returns_path, class: 'nav-link bold'
+          - if current_user
+            .col-md-5.text-end.user-action
+              %span.text-grey.semibold Connecté en tant que
+              %span= link_to current_user.email, root_path, class: 'green-label semibold'
+              %span &#124;
+              %span= link_to 'déconnexion', destroy_user_session_path, method: :delete, class: 'red-label semibold'
+    #next-nav-wrapper
+    .body_content.no-margin
+      .container-fluid= yield
+    #push
+
+    .loading_box.hide
+      .box.text-center
+        %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}
+        %label.mt-2.semibold Chargement
+
+    .scroll-on-top.pointer.hide
+      .scroll-arrow= glyphicon('arrow-top', { size: '16', color: 'rgba(26, 26, 26, 0.7)' })
+    = render partial: 'layouts/ppp/footer'
+
+    = render partial: 'layouts/notice_flush_messages'
+    = render '/shared/google_analytics'
+  = javascript_include_tag 'ppp/paper_process'

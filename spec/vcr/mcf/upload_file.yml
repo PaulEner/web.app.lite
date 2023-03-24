@@ -1,0 +1,53 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/Upload
+    body:
+      encoding: UTF-8
+      string: accessToken=dd4e4833304b4bebb9df27d45b1722c04c13b3c83d364ee3&attributeName=Storage&attributeValue=John%20Doe&file=%23%3CFile%3A0x000000000b3bb0b8%3E&force=true&pathFile=201804%2FAC%2FIDO_0001_AC_201804_001.pdf&sendMail=false
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - "*/*"
+      Content-Type:
+      - multipart/form-data
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Transfer-Encoding:
+      - chunked
+      Content-Type:
+      - application/json; charset=utf-8
+      Server:
+      - Microsoft-IIS/10.0
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      Referrer-Policy:
+      - strict-origin
+      X-Content-Type-Options:
+      - nosniff
+      Content-Security-Policy:
+      - default-src 'self'; font-src *;img-src *; script-src 'self' 'unsafe-inline';style-src
+        'self' 'unsafe-inline'
+      Permissions-Policy:
+      - accelerometer=(), camera=(); geolocation=(); gyroscope=(); magnetometer=();
+        microphone=(); payment=(); usb=()
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Powered-By:
+      - ASP.NET
+      Date:
+      - Tue, 09 Aug 2022 13:49:38 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: '{"Status":600,"ProviderId":473,"ProviderName":"Bocasay 2023","Message":"Success","StorageLimitReached":false}'
+  recorded_at: Tue, 09 Aug 2022 13:50:34 GMT
+recorded_with: VCR 6.0.0

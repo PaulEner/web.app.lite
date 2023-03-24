@@ -1,0 +1,36 @@
+!!!
+%html
+  %head
+    %title
+      Idocus | Connexion
+    %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-type" }
+    %meta{ name: "viewport", content: "width=device-width, initial-scale=1" }
+
+    %link{ :rel => 'shortcut icon', :type => "image/ico", :href => image_path('favicon.ico') }
+    = stylesheet_link_tag 'front/main'
+
+  .body_content
+    .container-fluid.text-center.login
+      .box.text-center.fadein
+        %h4.regular.m-3.p-4.semibold
+          Réinitialiser mot de passe
+
+        - if devise_error_messages!.present?
+          .alert.alert-danger
+            = devise_error_messages!
+
+        %p
+          Veuillez saisir votre adresse e-mail. Ensuite, vérifiez votre boîte aux lettres, nous vous envoyons immédiatement un mail qui vous indiquera la démarche à suivre pour réinitialiser votre mot de passe.
+
+        = simple_form_for resource, url: password_path(resource_name), wrapper_html: { class: "text-left w-100 m-1" } do |f|
+          .row.text-center
+            .col-md-12
+              .input-group.mb-3
+                %span.input-group-text#input-email= glyphicon('envelope-closed', { size: '14', color: 'background: rgba(26, 26, 26, 0.7)' })          
+                = f.input :email, wrapper_html: { id: 'email', placeholder: 'identifiant (email)', "aria-label" => "identifiant (email)", "aria-describedby" => "input-email"}
+
+          .row.mt-3
+            .col-md-12.text-center
+              = f.submit 'Valider', class: 'btn btn-primary bold w-100 valid'
+
+  = javascript_include_tag 'front/main'

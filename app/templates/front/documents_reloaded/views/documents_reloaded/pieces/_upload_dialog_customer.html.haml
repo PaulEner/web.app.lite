@@ -1,0 +1,155 @@
+#add-document.modal.fade.in{'aria-hidden' => 'true', :role => 'dialog', :tabindex => '-1'}
+  .modal-dialog
+    .modal-content
+      %form#fileupload{ action: '/documents_reloaded/uploader', method: 'POST', enctype: 'multipart/form-data', data: { params: file_upload_params.to_json } }
+        .modal-header
+          %h5.modal-title.bold Ajouter des documents
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        .modal-body
+          = hidden_field_tag :for_customer, 1
+          - if @users.size > 1
+            .form-group
+              %label.semibold Dossier client
+              = select_tag :file_code, options_for_select(@users.map{ |e| [e.short_info, e.code] }, @user.code), include_blank: true, data: { placeholder: 'Choisir un client'}, id: :file_code_customer, class: 'chosen-list w-100'
+          - else
+            = hidden_field_tag :file_code, @user.code
+          .form-group
+            %label.semibold Type de document
+            - if @users.size > 1
+              %label.semibold
+              = select_tag :l_journal, '', id: :l_journal, class: 'form-select w-100'
+            - else
+              = select_tag :l_journal, options_for_select(AccountBookType.where(user_id: file_upload_users_list.collect(&:id)).map { |journal| [journal.full_name, journal.id] }), id: :l_journal, class: 'form-select w-100'
+            %span#compta_processable.hide
+              %span.badge.bg-warning.mt-2
+                Ce journal n'est pas paramétré pour une pré-saisie comptable.
+          .form-group
+            %label.semibold Tags
+            .select-container.no-padding.no-margin.w-100
+              = text_field_tag :tags, '', id: :tags, class: 'text_field'
+            %i Pour ajouter plusieurs tags à ce(s) document(s), separer les tags avec des espaces.
+
+          .hidden_analytic_fields
+          .analytic_resume_box
+          .fileupload-buttonbar
+            .upload-content.text-center.m-3
+              .import-process.p-5
+                .fileinput-button
+                  .w-100
+                    %span= glyphicon('cloud-download', { size: '22', color: 'rgba(26, 26, 26, 0.7)'})
+                  .w-100 Déposez vos fichiers ici
+                  .w-100
+                    %span ou
+                    %span.pointer.green-label séléctionnez-les depuis votre ordinateur
+                    %input{ id: 'main_input_uploader', type: 'file', name: 'files[]', multiple: true }
+              .import-success.p-5.hide
+                .w-100
+                  %span= glyphicon('check', { size: '22', color: '#72AA42'})
+                .w-100 Importation terminée !
+            .alert-content
+              %label.red-label
+                Attention : Fichier de plus de 100 pages non acceptés. PDF protégés non acceptés
+            %br
+            .file-list-content
+              %table.table.table-striped{ role: "presentation" }
+                %tbody.files{ data: { toggle: "modal-gallery", target: "#modal-gallery" } }
+            .modal-footer
+              %button.btn.btn-light.semibold.cancel{:type => 'button', 'data-bs-dismiss' => 'modal'} Annuler
+              %button.btn.btn-primary.semibold.btn-add.start{:type => 'button', id: 'launch-filter'} Démarrer
+
+        :plain
+          <script>
+            var fileUploadErrors = {
+              maxFileSize: 'File is too big',
+              minFileSize: 'File is too small',
+              acceptFileTypes: 'Filetype not allowed',
+              maxNumberOfFiles: 'Max number of files exceeded',
+              uploadedBytes: 'Uploaded bytes exceed file size',
+              emptyResult: 'Empty file upload result'
+            };
+          </script>
+          <script id="template-upload" type="text/html">
+          {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=0[++i]) { %}
+              <tr class="template-upload fade">
+                  <td class="name pt-2">{%=file.name%}</td>
+                  <td class="size pt-2">{%=o.formatFileSize(file.size)%}</td>
+                  {% if (file.error) { %}
+                    <td class="error pt-2"><span class="badge bg-danger fs-origin">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
+                  {% } else { %}
+                    <td style="width:120px;">
+                        <div class="progress progress-success progress-striped active mt-2"><div class="progress-bar" style="width:0%;"></div></div>
+                    </td>
+                  {% } %}
+                  <td class="text-center pt-2">
+                    {% if (!i) { %}
+                        <button class="cancel btn btn-light btn-sm semibold">
+                          Annuler
+                        </button>
+                    {% } %}
+                    {% if (!i && !o.options.autoUpload && !file.error) { %}
+                      <button class="start btn-add btn btn-primary btn-sm semibold margin1right">
+                        Démarrer
+                      </button>
+                    {% } %}
+                  </td>
+              </tr>
+          {% } %}
+          </script>
+          <script id="template-download" type="text/html">
+            {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=files[++i]) { %}
+              <tr class="template-download fade">
+                  {% if (file.file_corrupted) { %}
+                    <td class="name pt-3">{%=file.name%}</td>
+                    <td class="message pt-3" colspan="2">
+                      <span class="badge bg-success mt-2 p-2">Envoyé</span><br />
+                      <i style='font-size: 8px!important'>Votre document est en-cours de traitement</i>
+                    </td>
+                  {% } else if (file.error) { %}
+                    <td class="name pt-3">{%=file.name%}</td>
+                    <td class="error pt-3" colspan="2"><span class="badge bg-danger fs-origin">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
+                  {% } else { %}
+                      <td class="name pt-3">{%=file.name%}</td>
+                      <td class="new_name pt-3">{%=file.new_name%}</td>
+                    <td class="message">
+                      {% if (file.message) { %}
+                        <span class="badge bg-warning mt-2 p-2">En attente</span>
+                        {%= file.message %}
+                      {% } else { %}
+                        <span class="badge bg-success mt-2 p-2">Envoyé</span>
+                      {% } %}
+                    </td>
+                  {% } %}
+                    <td class="text-center pt-2">
+                      {% if (file.link) { %}
+                        <input type="hidden" class="original_filename" value="{%= file.original_file_name %}">
+                        <input type="hidden" class="file_code" value="{%= file.user_code %}">
+                        <input type="hidden" class="journal" value="{%= file.journal %}">
+                        <input type="hidden" class="prev_period_offset" value="{%= file.prev_period_offset %}">
+                        <input type="hidden" class="api_name" value="{%= file.api_name %}">
+                        <input type="hidden" class="analytic" value="{%= file.analytic %}">
+                        <button class="btn btn-secondary view_already_exist" data-double-id="{%= file.link %}">
+                          Voir le détail
+                        </button>
+                        <button class="btn btn-danger btn-add force" data-link="{%= file.link %}">
+                          Forcer l'intégration
+                        </button>
+                      {% } %}
+                      <button class="cancel btn btn-outline-info">
+                        Vu
+                      </button>
+                    </td>
+              </tr>
+          {% } %}
+          </script>
+
+#AlreadyExistView.modal.fade.in
+  .modal-dialog{ style: "max-width: 1150px" }
+    .modal-content
+      .modal-header
+        %h3 Informations
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body{style: "max-height: none !important; padding:20px;"}
+        .view-content.margin3
+      .modal-footer
+
+= render file: Rails.root.join('app/templates/front/compta_analytics/views/compta_analytics/_analytics.html.haml'), locals: { with_validate_button: false }

@@ -1,0 +1,19 @@
+= stylesheet_link_tag 'front/orders/assets/stylesheets/main'
+
+#order.new.derivationRight
+  .order-content
+    .w-100.text-center
+      %h5.modal-title-text
+        - if @order.dematbox?
+          Commande du scanner iDocus’Box
+        - else
+          Commande de Kit envoi courrier
+        %span.text-info.fs-origin= " : #{@customer}"
+
+
+    .box.order-form-content
+      = simple_form_for @order, url: organization_customer_orders_path(@organization, @customer), html: { class: 'form-horizontal', id: 'new_edit_order_customer' } do |f|
+        = render partial: 'form', locals: { f: f }
+
+
+= javascript_include_tag 'front/orders/assets/javascripts/main'

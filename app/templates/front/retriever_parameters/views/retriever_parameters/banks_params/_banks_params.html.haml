@@ -1,0 +1,65 @@
+.derivationRight
+  .row
+    .col-md-8
+    .col-md-4.text-end
+      %button.btn.btn-light-primary.semibold.create-manual-bank-account
+        %span.me-3= glyphicon('plus', { size: '15', color: '#0d6efd'})
+        %span Créer un compte bancaire
+
+  .mb-4
+
+  .row
+    .col-md-12
+      %table.table.table-striped.banks_params_list
+        %thead
+          %th Banque
+          %th Nom
+          %th Numéro de compte
+          %th Code journal
+          %th Compte de trésorerie
+          %th État Mandat EBICS
+          %th Date historique
+          %th.text-end Action
+        %tbody
+          -if bank_accounts.any?
+            - bank_accounts.each do |bank_account|
+              %tr
+                %td= bank_account.bank_name
+                %td= bank_account.name
+                %td= bank_account.number
+                %td= bank_account.journal
+                %td= bank_account.accounting_number
+                %td
+                  - if bank_account.cedricom_mandate_identifier
+                    = bank_account.cedricom_mandate_state
+                  - elsif bank_account.type_name == "checking" && bank_account.user.organization.cedricom_configured? && bank_account.user.cedricom_configured?
+                    = link_to 'Créer un mandat EBICS', retriever_create_cedricom_mandate_path(bank_account.id), class: 'green-label-dark'
+                  - elsif bank_account.type_name == "checking" && bank_account.user.organization.cedricom_configured?
+                    = link_to 'Créer un mandat EBICS', '#', class: 'green-label-dark', data: { confirm: "La configuration du dossier est incomplète : vous devez spécifier l'adresser complète, les informations légales et les coordonnées du client dans le paramétrage du dossier" }
+                  - else
+                    = link_to 'Créer un mandat EBICS', '#', class: 'green-label-dark', data: { confirm: "Votre cabinet n'est pas configuré pour créer des mandats EBICS, veuillez vous rapprocher du service commercial" }
+                %td
+                  - if bank_account.cedricom_mandate_identifier
+                    = bank_account.ebics_enabled_starting
+                  - else
+                    = bank_account.start_date
+                %td.text-end.pointer
+                  .action.sub-menu-bank-param
+                    %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+                    .sub_menu.text-start.hide
+                      %ul.no-margin.no-padding.regular
+                        - if not bank_account.is_to_be_disabled?           
+                          %li.edit{ data: { id: bank_account.id } }
+                            = link_to glyphicon('pencil', { size: '15', color: "rgba(26, 26, 26, 0.7)" }) + ' Éditer', '#'
+                          - if bank_account.cedricom_mandate_state != "ACTIF" && bank_account.cedricom_mandate_identifier.present?
+                            %li
+                              = link_to glyphicon('check', { size: '15', color: "#72AA42" }) + ' Télécharger le mandat', retriever_download_cedricom_mandate_path(bank_account.id), class: 'green-label-dark'
+                        - if bank_account.can_be_deleted?
+                          %li.activation{ data: { id: bank_account.id, type: 'disable' } }
+                            = link_to glyphicon('trash', { size: '15', color: "#FF4848" }) + ' Supprimer', '#', class: 'red-label'
+                        - elsif bank_account.can_be_reopened?
+                          %li.activation{ data: { id: bank_account.id, type: 'enable' } }
+                            = link_to glyphicon('check', { size: '15', color: "#72AA42" }) + ' Activé', '#', class: 'green-label-dark'
+          - else
+            %tr
+              %td{colspan: 7}= t('global.no-data-found')

@@ -1,0 +1,32 @@
+- emit_params = param_encode({ name: 'close_alert_errors' })
+
+#idocus_notifications_messages.semibold
+  .notice.notice-internal-error.hide
+    .alert.alert-warning.alert-dismissible.fade.show.alert-type{ class: flash.present? ? '' : 'hide' }
+      %span.fs-6.me-2= glyphicon('warning', {size: '16', color: '#664d03'})        
+      %span.fs-6.error-title.bold Attention
+      %button.float-end.btn-close.as_idocus_emit{ "aria-label": "Close", idocus: emit_params }
+      .message-alert
+        - if flash.present?
+          - flash.each do |name, msg|
+            %ul
+              - if msg.present? && name.to_s == 'error'
+                %li.msg_present= msg        
+
+    .alert.alert-danger.alert-dismissible.fade.show.alert-type.hide
+      %span.fs-6.me-2= glyphicon('warning', {size: '16', color: '#842029'})      
+      %span.fs-6.error-title.bold= t('views.flush_notifications.bug_error')
+      %button.float-end.btn-close.as_idocus_emit{ "aria-label": "Close", idocus: emit_params }
+      .message-alert
+        .msg_present
+          Nous faisons tout notre possible pour régler le problème au plus vite. Merci de votre patience
+
+  .notice.notice-internal-success.text-center.text-white.hide
+    .no-margin.alert-dismissible.fade.show      
+      - flash.each do |name, msg|
+        - if msg.present? && name.to_s == 'success'
+          .row-fluid.derivationLeft.msg_present
+            .col-sm-12              
+              - if msg.is_a?(String)
+                %div{ id: "flash_#{twitterized_type(name)}" }
+                  != msg

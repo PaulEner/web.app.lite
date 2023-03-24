@@ -1,0 +1,9 @@
+%ul.nav
+  %li
+    = link_to 'Automates de récupération', admin_retrievers_path, class: 'btn btn-secondary'
+  &nbsp;
+  %li.hide{ class: ('active' if controller_name == 'retriever_services') }
+    = link_to 'Services', admin_retrievers_services_path, class: 'btn btn-secondary'
+  &nbsp;
+  %li{ class: ('active' if controller_name == 'budgea_users') }
+    = link_to 'Archives', archives_budgea_users_admin_retrievers_path(tab: 'budgea_users'), class: 'btn btn-secondary'  

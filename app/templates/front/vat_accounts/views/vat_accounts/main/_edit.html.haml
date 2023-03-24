@@ -1,0 +1,6 @@
+- url = @vat_accounts.persisted? ? organization_customer_accounting_plan_vat_account_path(@organization, @customer) : organization_customer_accounting_plan_vat_accounts_path(@organization, @customer)
+
+= simple_form_for @vat_accounts, url: url, html: { id: 'vat_account_edit_form', class: 'form-group' }, wrapper: :form_v3 do |f|
+  = f.input :code
+  = f.input :nature
+  = f.input :account_number

@@ -1,0 +1,291 @@
+#packages_price
+  %input{ id: 'subscription_packages_price', type: 'hidden', value: Subscription::Package::PRICES_LIST.to_json }
+#personalize_subscription_package_form
+  - if @subscription
+    - current_package = @subscription.current_packages
+  - else
+    - current_package = []
+
+  - organization = @subscription.try(:user).try(:organization).presence || Organization.find(params[:organization_id]).presence || FakeObject.new
+
+  - reduced_retriever_option = @subscription.try(:retriever_price_option).to_s == 'reduced_retriever'
+
+  - to_disable = !current_user.try(:is_admin) && @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)
+
+  .ido_x_content.derivationLeft
+    .row.box
+      .col-md-3.text-center
+        .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'ido_x')}"}
+          .label-package.label-ido-x.bold iDo'X
+      .col-md-6
+        .semibold.description= Subscription::Package.infos_of(:ido_x)[:tooltip]
+        %p= Subscription::Package.infos_of(:ido_x)[:mark]
+      .col-md-3
+        .row
+          .col-md-2.text-center
+            %span.no-price.price.bold 10€
+          .col-md-6.text-end
+            %label.price.bold
+              = Subscription::Package.price_of(:ido_x)
+              %span €/mois
+            %br
+            %i.remark offre de lancement
+          .col-md-4.text-center
+            = radio_button_tag 'subscription[subscription_option]', 'ido_x', current_package.include?('ido_x'), class: 'form-check-input ido_x radio-button main-option', data: { package: "ido_x" }
+    .row.ido-x-content.package-options.p-4.hide
+      .col-md-6
+        .form-group
+          = label_tag 'user[jefacture_account_id]', "Identifiant Jefacture (SIREN)", class: 'col-form-label semibold'
+          .select-container.no-padding.w-100
+            = text_field_tag 'user[jefacture_account_id]', @customer.jefacture_account_id, class: 'form-control ido_x_option option_checkbox', disabled: !current_package.include?('ido_x'), placeholder: "ex : 278 254 652"
+        .row.retriever-option{data: {active: "#{(current_package.include?('ido_x') && current_package.include?('retriever_option'))}", disabled: "#{(!current_package.include?('ido_x') && @subscription)}", notify: "#{notify_warning(@subscription, 'ido_x', 'retriever_option')}"}}
+      .col-md-6.journal-numbers
+
+  .ido_nano_content.derivationRight
+    .row.box
+      .col-md-3.text-center
+        .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'ido_nano')}"}
+          .label-package.label-ido-micro.bold iDo'Nano
+      .col-md-6
+        .semibold.description= Subscription::Package.infos_of(:ido_nano)[:tooltip]
+        %p= Subscription::Package.infos_of(:ido_nano)[:mark]
+        - if current_package.include?('ido_nano') && @subscription.commitment_counter == 1
+          %hr
+            %label.semibold Information :
+            %label
+              votre engagement de 12 mois se termine le
+              - if @subscription.end_date.strftime('%Y%m') == Date.today.strftime('%Y%m')
+                %span.badge.bg-danger.semibold= l @subscription.end_date
+              - else
+                %label= l @subscription.end_date
+      .col-md-3
+        .row
+          .col-md-8.text-end                  
+            %label.price.bold
+              = Subscription::Package.price_of(:ido_nano)
+              %span €/mois
+          .W-2.col-md-4.text-center
+            = radio_button_tag 'subscription[subscription_option]', 'ido_nano', current_package.include?('ido_nano'), class: "form-check-input ido_nano radio-button main-option #{'commitment_pending' if to_disable}", data: { package: "ido_nano" }
+    .ido-nano-content.package-options.p-4.hide
+      .row
+        .col-md-6
+          .row.retriever-option{data: {active: "#{(current_package.include?('ido_nano') && current_package.include?('retriever_option'))}", disabled: "#{(!current_package.include?('ido_nano') && @subscription)}", notify: "#{notify_warning(@subscription, 'ido_nano', 'retriever_option')}"}}
+          .row.mail-option{data: {active: "#{(current_package.include?('ido_nano') && current_package.include?('mail_option'))}", disabled: "#{!current_package.include?('ido_nano')}", notify: "#{notify_warning(@subscription, 'ido_nano')}"}}
+          - if CustomUtils.is_manual_paper_set_order?(organization)
+            .row.digitization-option{data: {active: "#{(current_package.include?('ido_nano') && current_package.include?('digitize_option'))}", disabled: "#{!current_package.include?('ido_nano')}", notify: "#{notify_warning(@subscription, 'ido_nano', 'digitize_option')}"}}
+        .col-md-6.journal-numbers
+  - if organization.uses_micro_plus?
+    .ido_plus_micro_content.derivationLeft
+      .row.box
+        .col-md-3.text-center
+          .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'ido_plus_micro')}"}
+            .label-package.label-ido-micro.bold iDo’Micro
+        .col-md-6
+          .semibold.description= Subscription::Package.infos_of(:ido_plus_micro)[:tooltip]
+          %p= Subscription::Package.infos_of(:ido_plus_micro)[:mark]
+          - if current_package.include?('ido_plus_micro') && @subscription.commitment_counter == 1
+            %hr
+              %label.semibold Information :
+              %label
+                votre engagement de 12 mois se termine le
+                - if @subscription.end_date.strftime('%Y%m') == Date.today.strftime('%Y%m')
+                  %span.badge.bg-danger.semibold= l @subscription.end_date
+                - else
+                  = l @subscription.end_date
+        .col-md-3
+          .row
+            .col-md-8.text-end
+              %label.price.bold
+                = Subscription::Package.price_of(:ido_plus_micro)
+                %span €/mois
+            .W-2.col-md-4.text-center
+              = radio_button_tag 'subscription[subscription_option]', 'ido_plus_micro', current_package.include?('ido_plus_micro'), class: "form-check-input ido_plus_micro radio-button main-option #{'commitment_pending' if to_disable}", data: { package: "ido_plus_micro" }
+      .ido-micro-plus-content.package-options.p-4.hide
+        .row
+          .col-md-6
+            .row.retriever-option{data: {active: "#{(current_package.include?('ido_plus_micro') && current_package.include?('retriever_option'))}", disabled: "#{(!current_package.include?('ido_plus_micro') && @subscription)}", notify: "#{notify_warning(@subscription, 'ido_plus_micro', 'retriever_option')}"}}
+            .row.mail-option{data: {active: "#{(current_package.include?('ido_plus_micro') && current_package.include?('mail_option'))}", disabled: "#{!current_package.include?('ido_plus_micro')}", notify: "#{notify_warning(@subscription, 'ido_classique', 'mail_option')}"}}
+            - if CustomUtils.is_manual_paper_set_order?(organization)
+              .row.digitization-option{data: {active: "#{(current_package.include?('ido_plus_micro') && current_package.include?('digitize_option'))}", disabled: "#{!current_package.include?('ido_plus_micro')}", notify: "#{notify_warning(@subscription, 'ido_plus_micro', 'digitize_option')}"}}
+          .col-md-6.journal-numbers
+  - else     
+    .ido_micro_content.derivationLeft
+      .row.box
+        .col-md-3.text-center
+          .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'ido_micro')}"}
+            .label-package.label-ido-micro.bold iDo’Micro
+        .col-md-6
+          .semibold.description= Subscription::Package.infos_of(:ido_micro)[:tooltip]
+          %p= Subscription::Package.infos_of(:ido_micro)[:mark]
+          - if current_package.include?('ido_micro') && @subscription.commitment_counter == 1
+            %hr
+              %label.semibold Information :
+              %label
+                votre engagement de 12 mois se termine le
+                - if @subscription.end_date.strftime('%Y%m') == Date.today.strftime('%Y%m')
+                  %span.badge.bg-danger.semibold= l @subscription.end_date
+                - else
+                  = l @subscription.end_date
+        .col-md-3
+          .row
+            .col-md-8.text-end                  
+              %label.price.bold
+                = Subscription::Package.price_of(:ido_micro)
+                %span €/mois
+            .W-2.col-md-4.text-center
+              = radio_button_tag 'subscription[subscription_option]', 'ido_micro', current_package.include?('ido_micro'), class: "form-check-input ido_micro radio-button main-option #{'commitment_pending' if to_disable}", data: { package: "ido_micro" }
+      .ido-micro-content.package-options.p-4.hide
+        .row
+          .col-md-6
+            .row.mail-option{data: {active: "#{(current_package.include?('ido_micro') && current_package.include?('mail_option'))}", disabled: "#{!current_package.include?('ido_micro')}", notify: "#{notify_warning(@subscription, 'ido_classique', 'mail_option')}"}}
+            - if CustomUtils.is_manual_paper_set_order?(organization)
+              .row.digitization-option{data: {active: "#{(current_package.include?('ido_micro') && current_package.include?('digitize_option'))}", disabled: "#{!current_package.include?('ido_micro')}", notify: "#{notify_warning(@subscription, 'ido_micro', 'digitize_option')}"}}
+          .col-md-6.journal-numbers
+  
+  .ido_classique_content.derivationRight
+    .row.box
+      .col-md-3.text-center
+        .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'ido_classique')}"}
+          .label-package.label-ido-basic.bold iDo’Classique
+      .col-md-6
+        .semibold.description= Subscription::Package.infos_of(:ido_classique)[:tooltip]
+        %p= Subscription::Package.infos_of(:ido_classique)[:mark]
+      .col-md-3
+        .row
+          .col-md-8.text-end
+            %label.price.bold
+              = Subscription::Package.price_of(:ido_classique).to_f + Subscription::Package::PRICES_LIST[:pre_assignment_option].to_f
+              %span €/mois
+          .col-md-4.text-center
+            = radio_button_tag 'subscription[subscription_option]', 'ido_classique', ((@subscription && current_package.include?('ido_classique')) || !@subscription), class: 'form-check-input ido_classique radio-button main-option', data: { package: "ido_classique" }
+
+    .ido-basic-content.package-options.p-4.hide
+      .row
+        .col-md-6
+          .row.retriever-option{data: {active: "#{(current_package.include?('ido_classique') && current_package.include?('retriever_option'))}", disabled: "#{(!current_package.include?('ido_classique') && @subscription)}", notify: "#{notify_warning(@subscription, 'ido_classique', 'retriever_option')}"}}
+
+          .row.mail-option{data: {active: "#{(current_package.include?('ido_classique') && current_package.include?('mail_option'))}", disabled: "#{(!current_package.include?('ido_classique') && @subscription)}", notify: "#{notify_warning(@subscription, 'ido_classique', 'mail_option')}"}}
+
+          - if CustomUtils.is_manual_paper_set_order?(organization)
+            .row.digitization-option{data: {active: "#{(current_package.include?('ido_classique') && current_package.include?('digitize_option'))}", disabled: "#{(!current_package.include?('ido_classique') && @subscription)}", notify: "#{notify_warning(@subscription, 'ido_classique', 'digitize_option')}"}}
+
+          .row.ido-basic-pre-assignment-option
+            .col-md-10.form-group
+              .form-check.form-check-inline.pre_assignment{ class: "#{'notify-warning' if notify_warning(@subscription, @subscription.try(:current_package?).to_s, 'pre_assignment_option')}", style: "#{'padding-top: 1.5%' if notify_warning(@subscription, @subscription.try(:current_package?).to_s, 'pre_assignment_option')}" }
+                %label.semibold Pré-saisie comptable
+            .col-md-2.form-check.form-switch
+              %label.form-check-label.pre-assignment-state{title: 'Pré-saisie comptable activée', data: { toggle: 'tooltip', placement: 'bottom' }} Oui
+              - is_pre_assignment_checked = (current_package.include?('ido_classique') && !current_package.include?('pre_assignment_option'))? false : true
+              = check_box_tag 'subscription[is_pre_assignment_active]', true, is_pre_assignment_checked, class: "is_pre_assignment_active_true is_pre_assignment_active form-check-input option_checkbox input_switch", data: { package: "mail_option" }
+
+        .col-md-6.journal-numbers
+
+  .ido_retriever_only_content.derivationLeft
+    .row.box
+      .col-md-3.text-center
+        .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'retriever_option')}", title: Subscription::Package.infos_of(:retriever_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+          .label-package.label-ido-retriever.bold.no-padding Automate
+          %p.grey-label.semibold uniquement
+      .col-md-6
+        .semibold.description= Subscription::Package.infos_of(:retriever_option)[:tooltip]
+      .col-md-3
+        .row
+          .col-md-8.text-end
+            %label.price.bold
+              = Subscription::Package.price_of(:retriever_option, reduced_retriever_option)
+              %span €/mois
+          .col-md-4.text-center
+            = radio_button_tag 'subscription[subscription_option]', 'retriever_option', (current_package.include?('retriever_option') && !current_package.include?('ido_classique') && !current_package.include?('ido_nano') && !current_package.include?('ido_micro') && !current_package.include?('ido_x') && !current_package.include?('ido_plus_micro')), class: 'form-check-input ido_retriever_only radio-button main-option', data: { retriever_price_option: @subscription.try(:retriever_price_option).to_s.presence || 'retriever' }
+
+    .ido-retriever-only-content.package-options.p-4.hide
+      .row
+        .col-md-6
+          - if CustomUtils.is_manual_paper_set_order?(organization)
+            .row.digitization-option{data: {active: "#{(current_package.include?('retriever_option') && current_package.include?('digitize_option') && !current_package.include?('ido_classique') && !current_package.include?('ido_nano') && !current_package.include?('ido_micro') && !current_package.include?('ido_x'))}"}}
+        .col-md-6.journal-numbers
+
+  - if CustomUtils.is_manual_paper_set_order?(organization)
+    .ido_digitization_only_content.derivationRight
+      .row.box
+        .col-md-3.text-center
+          .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'digitize_option')}"}
+            .label-package.label-ido-digitization.bold.no-padding Numérisation
+            %p.grey-label.semibold uniquement
+        .col-md-6
+          .semibold.description= Subscription::Package.infos_of(:digitize_option)[:tooltip]
+        .col-md-3
+          .row
+            .col-md-8.text-end
+              %label.price.bold
+                = Subscription::Package.price_of(:digitize_option)
+                %span €/mois
+            .col-md-4.text-center
+              = radio_button_tag 'subscription[subscription_option]', 'digitize_option', (current_package.include?('digitize_option') && !current_package.include?('ido_classique') && !current_package.include?('ido_nano') && !current_package.include?('ido_micro') && !current_package.include?('ido_x') && !current_package.include?('retriever_option')), class: 'form-check-input ido_digization_only radio-button main-option', data: { retriever_price_option: @subscription.try(:scan_price_option).to_s.presence || 'scan' }
+
+      .row.ido-digitization-only-content.package-options.p-4.hide
+        .col-md-6
+        .col-md-6.journal-numbers
+  
+  %hr
+  .form-group.row.w-100
+    .col-md-6.text-start.ps-3
+      - if current_user.is_admin
+        .form-check.form-check-inline.me-5
+          %label.form-check-label Appliquer tout de suite les options à la baisse ?
+          = check_box_tag 'subscription[is_to_apply_now]', true, false, class: 'form-check-input'
+    .col-md-6.text-start
+      %h5
+        Prix du forfait avec les options sélectionnées :
+        %b.total_price.bold 0,00 €
+
+- if @subscription.try(:futur_packages) && @subscription.try(:futur_packages) != @subscription.try(:current_package)
+  .text-center
+    .alert.alert-warning.mb-3{ class: "#{(@subscription && @subscription.try(:futur_packages).present? && @subscription.try(:futur_packages) != '[]') ? '' : 'hide' }" }
+      %h4.bold Votre abonnement du mois prochain :
+      %hr
+      %table.future_packages
+        %tbody
+          - total_price = 0
+          - JSON.parse(@subscription.futur_packages).each do |package|
+            - total_price += Subscription::Package.price_of(package.to_sym, reduced_retriever_option)
+            %tr.package
+              %td.text-start.semibold.p-2= Subscription::Package.infos_of(package.to_sym)[:group]
+              %td.text-end.p-2= Subscription::Package.price_of(package.to_sym, reduced_retriever_option).to_s + " €"
+          %tr.total
+            %td
+            %td.text-end.p-2= total_price.to_s + " €"
+
+.input-journal-numbers.clonable_fields.hide
+  .form-group
+    = label_tag 'subscription[number_of_journals]', "Nombre de journaux", class: 'col-form-label required semibold'
+    .select-container.no-padding.w-100.subscription_number_of_journals
+      = number_field_tag 'subscription[number_of_journals]', @subscription.try(:number_of_journals).presence || 5, class: 'form-control special_input ', min: 5, max: 30, required: true, autofocus: true, pattern: '/^[0-9]+$/', placeholder: "5"
+      - if @customer.account_book_types.count > 5
+        &nbsp;
+        %span{id: 'err-msg-input-number'}
+        %div.clearfix
+          %i Supprimez un journal comptable avant de baisser cette option.
+
+.input-mail-option.clonable_fields.hide
+  .col-md-10.form-group
+    .form-check.form-check-inline{title: Subscription::Package.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+      %label.semibold Avec option courrier
+  .col-md-2.form-check.form-switch
+    %label.form-check-label Non
+    = check_box_tag 'subscription[mail_option]', true, false, class: "form-check-input option_checkbox input_switch", data: { package: "mail_option" }, disabled: false
+
+.input-retriever-option.clonable_fields.hide
+  .col-md-10.form-group
+    .form-check.form-check-inline{title: Subscription::Package.infos_of(:retriever_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+      %label.semibold Avec option  automate
+  .col-md-2.form-check.form-switch
+    %label.form-check-label Non
+    = check_box_tag 'subscription[retriever_option]', true, false, class: "form-check-input input_switch option_checkbox", data: { retriever_price_option: @subscription.try(:retriever_price_option).to_s.presence || 'retriever' }, disabled: false
+
+.input-digitization-option.clonable_fields.hide
+  .col-md-10.form-group
+    .form-check.form-check-inline{title: Subscription::Package.infos_of(:digitize_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+      %label.semibold Avec option numérisation
+  .col-md-2.form-check.form-switch
+    %label.form-check-label Non
+    = check_box_tag 'subscription[digitize_option]', true, false, class: "form-check-input input_switch option_checkbox", data: { package: "digitize_option" }, disabled: false

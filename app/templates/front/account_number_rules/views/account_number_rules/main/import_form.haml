@@ -1,0 +1,35 @@
+#account_number_rule.import.derivationRight
+  .card
+    .card-header
+      %h3 Importer des règles d'affectations bancaires en masse
+    = form_tag import_organization_account_number_rules_path(@organization), method: 'patch', multipart: true, class: 'form-horizontal' do
+      .card-body
+        .row
+          .col-md-6
+            %p Une règle d'affectation doit avoir un nom unique. Si des règles dans le fichier d'import portent le même nom qu'une règle déjà existante, ces règles seront auto incrémentées. 
+            .form-group.clearfix
+              .label-section
+                = label_tag 'import_file', 'Fichier à importer'
+              .control-section
+                = file_field_tag :file, class: 'filestyle', data: { classButton: 'btn btn-secondary pointer', input: true, buttonText: (glyphicon('file') + ' CSV') }
+                %br
+                = link_to "Télécharger le modèle d'import .csv", import_model_organization_account_number_rules_path(@organization)
+            .form-group.clearfix.radio_buttons
+              .label-section
+                = label_tag 'account_number_rule[affect]', t('activerecord.models.account_number_rule.attributes.affect')
+              .control-section
+                %span.radio
+                  %label
+                    = radio_button_tag 'account_number_rule[affect]', 'organization', true
+                    Organization
+                %span.radio
+                  %label
+                    = radio_button_tag 'account_number_rule[affect]', 'user'
+                    Client
+                %i.help-block Ne pourra plus être changé par la suite. 
+          .col-md-6.affect_to{ style: 'display:none'}
+            = render partial: 'affect_to_form'
+      .card-footer
+        .form-actions.margin0bottom
+          = submit_tag 'Importer', class: 'btn btn-primary'
+          = link_to t('actions.cancel'), organization_account_number_rules_path(@organization), class: 'btn btn-light'

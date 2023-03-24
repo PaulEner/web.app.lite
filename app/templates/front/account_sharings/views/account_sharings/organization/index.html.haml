@@ -1,0 +1,32 @@
+= stylesheet_link_tag 'front/account_sharings/assets/stylesheets/main'
+
+.container-fluid
+  .row.derivationLeft
+    .col-md-10.text-start
+      %h3.bold Dossier partagés et contacts  
+    .col-md-2.text-end.p-1
+      %button.btn.btn-light.semibold.account_sharings_filter.w-100{ disabled: false }
+        %span.me-2 Filtrer
+        %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+
+  .mb-4
+
+  .derivationRight
+    %ul.nav.nav-tabs.ms-3{ "role" => "tablist" }
+      %li.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link{ "data-bs-toggle" => "tab", "data-bs-target" => "#shared_accounts", type: :button, "role" => "tab", "aria-controls" => "shared_accounts", "aria-selected" => "true", class: (params['tab']!='contacts')? 'active' : ''} 
+          Dossiers partagés
+          %span.ms-1.badge.badge-secondary.regular#total-account-sharing
+      %li.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link{ "data-bs-toggle" => "tab", "data-bs-target" => "#contacts", type: :button, "role" => "tab", "aria-controls" => "contacts", "aria-selected" => "true", class: (params['tab']=='contacts')? 'active' : ''} 
+          Contacts
+          %span.ms-1.badge.badge-secondary.regular#total-contact
+
+    .tab-content
+      .tab-pane.box.no-margin#shared_accounts{ "role" => "tabpanel", "aria-labelledby" => "shared-accounts-tab", class: (params['tab']!='contacts')? 'active' : ''}
+      .tab-pane.box.no-margin#contacts{ "role" => "tabpanel", "aria-labelledby" => "contacts-tab", class: (params['tab']=='contacts')? 'active' : ''}
+
+    = render partial: 'dialogs'
+
+    %input#organization_id{ type: 'hidden', value: @organization.id }
+= javascript_include_tag 'front/account_sharings/assets/javascripts/organization'

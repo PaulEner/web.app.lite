@@ -1,0 +1,135 @@
+#user.show{ data: { user_id: @user.id } }
+  .box.derivationLeft
+    .row
+      .col-md-10
+        - if @user.inactive?
+          %span.badge.bg-danger.float-start.closed_account Dossier clôturé
+        %h3.semibold= @user.info
+      .col-md-2.text-end.readonly-container
+        = link_to send_reset_password_instructions_admin_user_path(@user), method: :post, data: { confirm: t('actions.confirm') }, class: 'btn btn-dark', title: 'Envoie un email' do
+          %span.me-2= glyphicon('reload', size: 12, color: 'white')
+          %span Réinitialiser le mot de passe
+
+  .box.derivationRight
+    #information.row.margin1top
+      .col-sm-4
+        %table.table.table-striped.table-bordered.table-condensed.bestinplace
+          %tbody
+            %tr
+              %th.first= t('activerecord.models.common.attributes.created_at')
+              %td= l(@user.created_at)
+            %tr
+              %th.first= t('activerecord.models.user.attributes.inactive_at')
+              %td= l(@user.inactive_at) rescue nil
+            %tr
+              %th.first= t('activerecord.attributes.user.email')
+              %td= render partial: 'text_field', locals: { value: @user.email, name: 'user[email]' }
+            %tr
+              %th.first= t('activerecord.models.user.attributes.last_name')
+              %td= render partial: 'text_field', locals: { value: @user.last_name, name: 'user[last_name]' }
+            %tr
+              %th.first= t('activerecord.models.user.attributes.first_name')
+              %td= render partial: 'text_field', locals: { value: @user.first_name, name: 'user[first_name]' }
+            %tr
+              %th.first= t('activerecord.models.user.attributes.company')
+              %td= render partial: 'text_field', locals: { value: @user.company, name: 'user[company]' }
+            %tr
+              %th.first Code utilisateur
+              %td
+                - if @user.collaborator?
+                  - @user.memberships.order(:code).each do |membership|
+                    = membership.code
+                    %br
+                - elsif @user.is_guest
+                  = @user.code
+                - else
+                  = link_to @user.code, organization_customer_path(@user.organization, @user)
+            %tr
+              %th.first= t('activerecord.models.user.attributes.knowings_code')
+              %td= render partial: 'text_field', locals: { value: @user.knowings_code, name: 'user[knowings_code]' }
+            %tr
+              %th.first= t('activerecord.models.user.attributes.knowings_visibility')
+              %td= render partial: 'text_field', locals: { value: @user.knowings_visibility, name: 'user[knowings_visibility]' }
+            %tr
+              %th.first= t('activerecord.models.organization.name')
+              %td
+                - if @user.collaborator?
+                  - @user.organizations.each do |organization|
+                    = link_to organization.name, organization_path(organization)
+                    = (result = organization_status(@user, organization)) ? "(#{result})" : ''
+                    %br
+                - else
+                  = link_to @user.organization.name, organization_path(@user.organization)
+                  = (result = organization_status(@user, @user.organization)) ? "(#{result})" : ''
+            %tr
+              %th.first= t('activerecord.models.scanning_provider.name')
+              %td
+                - if @user.scanning_provider
+                  .float-left= link_to @user.scanning_provider, [:admin, @user.scanning_provider]
+                  .float-right= link_to icon_edit, [:edit, :admin, @user.scanning_provider], target: '_blank'
+      .col-sm-8
+        %table.table.table-striped.table-bordered.table-condensed
+          %tbody
+            %tr
+              %th= t('activerecord.models.user.attributes.is_prescriber')
+              %td.value
+                %span.readonly-container= check_box_tag 'user[is_prescriber]', 1, @user.is_prescriber, disabled: true
+                - if @user.is_prescriber
+                  %span Oui
+                - else
+                  %span Non
+            %tr
+              %th= t('activerecord.models.user.attributes.is_fake_prescriber')
+              %td.value
+                %span.readonly-container= check_box_tag 'user[is_fake_prescriber]', 1, @user.is_fake_prescriber
+                - if @user.is_fake_prescriber
+                  %span Oui
+                - else
+                  %span Non
+            %tr
+              %th= t('activerecord.models.user.attributes.is_guest')
+              %td.value
+                %span.readonly-container= check_box_tag 'user[is_guest]', 1, @user.is_guest, disabled: true
+                - if @user.is_guest
+                  %span Oui
+                - else
+                  %span Non
+            %tr
+              %th= t('activerecord.models.user_options.attributes.is_retriever_authorized')
+              %td.value
+                %span.readonly-container= check_box_tag 'user[options][is_retriever_authorized]', 1, @user.my_package.try(:bank_active), disabled: true
+                - if @user.options.try(:is_retriever_authorized)
+                  %span Oui
+                - else
+                  %span Non
+            %tr
+              %th= t('activerecord.models.user.attributes.is_access_by_token_active')
+              %td.value
+                %span.readonly-container= check_box_tag 'user[is_access_by_token_active]', 1, @user.is_access_by_token_active
+                - if @user.is_access_by_token_active
+                  %span Oui
+                - else
+                  %span Non
+            %tr
+              %th= t('activerecord.models.user.attributes.is_dematbox_authorized')
+              %td.value
+                %span.readonly-container= check_box_tag 'user[is_dematbox_authorized]', 1, @user.is_dematbox_authorized, disabled: true
+                - if @user.is_dematbox_authorized
+                  %span Oui
+                - else
+                  %span Non
+            %tr
+              %th Stamp - Nombre
+              %td.value
+                = render partial: 'text_field', locals: { name: 'user[stamp_name]', value: @user.stamp_name }
+            %tr
+              %th Stamp - Fond présent ?
+              %td.value
+                %span.readonly-container= check_box_tag 'user[is_stamp_background_filled]', 1, @user.is_stamp_background_filled
+                - if @user.is_stamp_background_filled
+                  %span Oui
+                - else
+                  %span Non
+
+
+= javascript_include_tag 'admin/user'

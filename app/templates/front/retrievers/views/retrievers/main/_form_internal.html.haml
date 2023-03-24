@@ -1,0 +1,10 @@
+#internal-retrievers.container-fluid
+  %input#retriever_id{ type: 'hidden', value: @retriever.try(:id).to_i }
+  .row
+    .col-md-12
+      = simple_form_for [:account, @retriever], url: retrievers_path, html: { id: 'internal-retriever-form', class: 'form form-horizontal margin0' } do |f|
+        = f.input :connector_id, collection: @connectors.map {|c| [c.name, c.id]}, input_html: { class: 'form-select' }
+        = f.input :name
+        = f.input :journal_id, collection: @account.account_book_types.map {|c| [c.name, c.id]}, input_html: { class: 'form-select' }
+        = f.input :login
+        = f.input :password

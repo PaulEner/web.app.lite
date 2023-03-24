@@ -1,0 +1,9 @@
+.derivationRight
+  %form
+    .form-group
+      %label.semibold Banque
+      = select_tag "retriever_selector", options_for_select(retrievers_of(@account), params[:bank_account_contains].try(:[], :retriever_budgea_id)), include_blank: false, class: 'form-select bank-selection-select'
+  #bank_selection
+  .form-group.no-margin
+    .w-100.text-end            
+      %button.btn.btn-primary.bold.validate_banks_selection Valider les changements

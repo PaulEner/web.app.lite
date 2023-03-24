@@ -1,0 +1,63 @@
+= stylesheet_link_tag 'front/profiles/assets/stylesheets/main'
+
+.container-fluid
+  .row.derivationLeft
+    .col-md-8.text-start
+    .col-md-2.text-center
+      - unless organizations_suspended? && @user.active?
+        %button.btn.btn-light-primary.semibold.change-password.w-100{'data-bs-target' => '#change-password', 'data-bs-toggle' => 'modal', :type => 'button'}
+          %span.me-4= glyphicon('key', { size: '15', color: '#0d6efd'})
+          %span Changer mot de passe
+          
+    .col-md-2.text-center
+      - if @user.active?
+        - if @user.organization.is_active
+          - unless organizations_suspended?
+            %button.btn.btn-light.semibold.external-file-storage.w-100{'data-bs-target' => '#external-file-storage', 'data-bs-toggle' => 'modal', :type => 'button'}
+              %span.me-4= glyphicon('external-link', { size: '15', color: '#72AA42'})
+              %span Stockage externes
+
+  .mb-4
+
+  - if @user.active?
+    - if @user.organization.is_active
+      - unless organizations_suspended?
+
+        - if !@user.is_prescriber && @user.organization.is_active
+          .form-group
+            = render file: Rails.root.join('app/templates/front/account_sharings/views/account_sharings/profile/_show.html.haml')
+        
+
+        - if @user.is_guest
+          .form-group
+            - addresses = OpenStruct.new({ paper_return_address: @user.paper_return_address, paper_set_shipping_address: @user.paper_set_shipping_address, dematbox_shipping_address: @user.dematbox_shipping_address })
+            = render file: Rails.root.join('app/templates/front/addresses/views/addresses/_show.html.haml'), locals: { addresses: addresses, addr_for: 'user', id: @user.id }
+        
+        .form-group
+          = render file: Rails.root.join('app/templates/front/dematboxes/views/dematboxes/_show.html.haml')
+        
+        = simple_form_for true_user, url: profiles_path, html: { id: 'subscription_options' } do |f|          
+          = render partial: 'notifications', locals: { f: f }
+          %hr
+          .form-group.text-center
+            - idoc_params = param_encode({ url: '/profiles', method: 'put', form:{ id: 'subscription_options' } })
+            %button.btn.btn-primary.semibold.w-25.as_idocus_ajax{ type: 'button', idocus: idoc_params } Mettre à jour
+
+        - if @user.my_package.try(:upload_active) && !(@user.is_admin || @user.is_prescriber || @user.inactive?)
+          - period_service = Billing::Period.new user: @user, current_time: Time.now.beginning_of_month
+          #emailed_documents_view
+            %h3 Adresse email d'envoi de documents
+            = render file: Rails.root.join('app/templates/front/customers/views/customers/main/upload_by_email.html.haml'), locals: { view_from_profile: true }
+
+    - if !@user.organization.is_active && @user.leader?
+      #active_organization.row
+        .col-md-12
+          .card
+            .card-header
+              %h3 Réactiver mon compte client
+            .card-body
+              Pour réactiver votre compte client veuillez envoyer un courriel à
+              = link_to 'commercial@idocus.com', 'mailto:commercial@idocus.com'
+
+
+= render partial: 'dialogs'

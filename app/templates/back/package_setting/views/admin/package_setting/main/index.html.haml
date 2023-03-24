@@ -1,0 +1,16 @@
+.container-fluid
+  .box.m-2.derivationLeft
+    %h3 Configuration Forfait iDo'Premium
+    .alert.alert-danger.semibold ATTENTION : Veuillez mettre à jour le fichier de configuration : mods/billing/libs/configuration
+  .box.m-2.derivationBottom
+    .row
+      .col-md-4
+        %input.form-control.w-100#organization_code{ placeholder: "Code de l'organisation"}
+      .col-md-8
+        %button.btn.btn-dark.w-25.package#update_customers Mettre à jour les dossiers
+        %button.btn.btn-danger.w-25.package#rollback_customers Rollback des dossiers
+  .mb-4
+  .box.result.m-2.hide
+    Chargement ...
+
+= javascript_include_tag 'back/package_setting/assets/javascripts/main'

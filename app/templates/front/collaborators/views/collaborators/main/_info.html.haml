@@ -1,0 +1,55 @@
+#information.tab-pane{ class: ('active show' if params[:tab] == 'information' || params[:tab].blank?) }
+  = simple_form_for @member, url: collaborator_form_url(@organization, @member), html: { class: 'create_update_form' } do |f| 
+    .box.no-margin
+      .derivationLeft
+        - company_value = @member.persisted? ? @member.user.company : current_user.company
+        %input{type: :hidden, name: 'from_show', value: 'true'}
+        - if @user.leader?
+          .form-group
+            %label.semibold= t('activerecord.models.member.attributes.role')
+            .select-container.no-padding.w-100
+              = f.input :role, label: false, collection: organization_role_options, input_html: { class: 'form-select' }, required: true, prompt: ''
+        .form-group
+          %label.semibold= t('activerecord.models.group.name').pluralize        
+          = f.input :group_ids, label: false, collection: @organization.groups, input_html: { class: 'select-organization-group-list', id: 'select-organization-group-list', 'multiple' => 'multiple' }
+        .form-group
+          %label.semibold= t('activerecord.models.common.attributes.created_at')
+          .select-container.no-padding.w-100
+            %input{ type: :text, disabled: true, value: "#{l(@member.user.created_at)}"}  
+
+        .form-group
+          %label.semibold Membre depuis
+          .select-container.no-padding.w-100
+            %input{ type: :text, disabled: true, value: "#{l(@member.created_at)}"}     
+
+        = f.simple_fields_for :user, html: { class: 'form-horizontal' } do |uf| 
+          .form-group
+            %label.semibold= t('activerecord.models.user.attributes.email')
+            .select-container.no-padding.w-100      
+              = uf.input :email, label: false, hint: "Correspond à l'identifiant de connexion de votre collaborateur", disabled: @member.user.admin?
+
+          .form-group
+            %label.semibold= t('activerecord.models.user.attributes.first_name')
+            .select-container.no-padding.w-100
+              = uf.input :first_name, label: false
+          
+          .form-group
+            %label.semibold= t('activerecord.models.user.attributes.last_name')
+            .select-container.no-padding.w-100
+              = uf.input :last_name, label: false
+
+          .form-group
+            %label.semibold= t('activerecord.models.user.attributes.company')
+            .select-container.no-padding.w-100
+              = uf.input :company, label: false, input_html: { class: 'book-code-software ', placeholder: "iDocus", value: company_value }
+
+        .form-group
+          %label.semibold= t('activerecord.models.user.attributes.code')
+          .select-container.no-padding.w-100
+            = f.input :code, label: false, hint: "Doit impérativement commencer par : #{@organization.code}%", required: true
+
+        - if @organization.is_active
+          %hr
+          .form-group
+            .w-100.text-center
+              = f.submit t('actions.submit'), class: 'btn btn-primary w-25 semibold valid-collaborator-modification'

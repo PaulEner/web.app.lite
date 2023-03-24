@@ -1,0 +1,37 @@
+= simple_form_for @ticket, url: (@ticket.persisted? ? admin_ticket_path : admin_tickets_path), html: { class: 'form form-horizontal', id: 'form-ticket' } do |f|
+  .form-group    
+    .row
+      .col-md-5.semibold 
+        %label.semibold Type :
+      .col-md-3
+        .form-check.form-check-inline
+          = f.radio_button :category, 'ticket', id: '', class: 'form-check-input', checked: true
+          %label.semibold.form-check-label Ticket
+      .col-md-4
+        .form-check.form-check-inline
+          = f.radio_button :category, 'projet', id: '', class: 'form-check-input'
+          %label.semibold.form-check-label Projet    
+  .form-group
+    %label.semibold Libellé:
+    .select-container.no-padding.w-100
+      = f.input :title, label: false  
+  .form-group
+    %label.semibold Contenu :
+    .select-container.no-padding.w-100
+      - if @ticket.persisted?
+        %textarea{ disabled: true }= @ticket.content
+      - else
+        = f.input :content, label: false, as: :ckeditor
+  - if @ticket.persisted?
+    .form-group
+      %label.semibold Nouvelle échange :
+      .select-container.no-padding.w-100
+        %textarea{ name: 'content_add'}        
+  .form-group
+    %label.semibold Priorité :
+    .select-container.no-padding.w-100
+      = f.input :priority, label: false, collection: [[1, 1], [2, 2], [3, 3], [4, 4],[5, 5]], include_blank: false, input_html: { class: 'form-select'}
+  .form-group
+    %label.semibold Assigné à :
+    .select-container.no-padding.w-100
+      = f.input :assigned_to, label: false, collection: User.developer.order(:first_name), include_blank: true, input_html: { class: 'form-select'}

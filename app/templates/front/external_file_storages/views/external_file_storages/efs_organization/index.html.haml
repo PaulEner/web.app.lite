@@ -1,0 +1,23 @@
+= stylesheet_link_tag 'front/external_file_storages/assets/stylesheets/main'
+
+- efs_list = ['mcf', 'ftp', 'sftp']
+
+.general
+  .row.derivationRight
+    .col-md-8
+      %h3.bold Paramètres : Stockage externe
+
+
+  .mb-4
+  .derivationLeft
+    %ul.nav.nav-tabs.ms-4{ "role" => "tablist" }
+      - efs_list.each_with_index do |efs, index|
+        - is_active = (params[:tab] == efs.to_s) || ( params[:tab].blank? && index == 0 )
+        %li.nav-item.no-margin{ "role" => "presentation" }
+          %button.semibold.nav-link{ id: "#{efs}-software-tab", "data-bs-toggle" => "tab", "data-bs-target" => "##{efs}-software", type: :button, "role" => "tab", "aria-controls" => "#{efs}-software", "aria-selected" => "true", class: (is_active)? 'active' : '' }= efs    
+
+    .tab-content
+      - efs_list.each_with_index do |efs, index|
+        - is_active = (params[:tab] == efs) || ( params[:tab].blank? && index == 0 )
+        .tab-pane.box.no-margin{ id: "#{efs}-software", "role" => "tabpanel", "aria-labelledby" => "#{efs}-software-tab", class: (is_active)? 'active' : '' }
+          = render partial: efs.to_s

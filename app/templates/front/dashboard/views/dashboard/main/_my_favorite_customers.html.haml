@@ -1,0 +1,100 @@
+- favorites.each do |user_id|
+
+  - infos    = FavoriteCustomer.get_infos_of(user_id)
+  - customer = User.find(user_id)
+
+
+  .box.animatedChild.animated-pointer{ class: animation }
+    .favorite-list
+      .row
+        .col-md-10.float-start
+          = link_to infos.try(:code), documents_path({ _ext: 1, k: Base64.encode64({ view: customer.id }.to_json) }), class: 'no-style bold black-label underlined-pointer'
+          %br
+          %i.text-muted
+            = infos.try(:name)
+            %span.text-muted-light= infos.try(:message)
+
+        .col-md-1.no-padding.semibold.text-end
+          = tag_state infos.try(:active) ? infos.try(:document_state) : 'cloturé'
+        .col-md-1.text-center
+          = link_to glyphicon('chevron-right', {size: '17', color: '#b5a6a6'}), '#', class: 'favorite-link', id: infos.try(:id)
+
+    .favorite-customer-content.hide{id: "details_#{infos.try(:id)}"}
+      %hr.clearfix 
+      .row
+        .col-md-10
+          %h6.bold= t('dashboard.configuration_state')
+          .text-small-content
+            %a.support-chat-link.no-style.black-label.underlined-pointer{ href: organization_customer_path(customer.try(:organization), customer) }
+              %span
+              - if infos.try(:active)
+                = t('dashboard.configuration_text')
+              - else
+                = "Dossier cloturé le: #{customer.inactive_at.strftime('%d-%m-%Y')}"
+              %span= glyphicon('cog', {size: '11', color: '#b5a6a6'})
+        .col-md-1.no-padding.semibold.text-end
+          = tag_state ( infos.try(:active)? 'good' : 'critical' )
+      %hr.clearfix
+      .row
+        .col-md-12
+          %h6.bold= t('dashboard.folder_activity')
+          .row              
+            .col-md-3
+              %span
+                %span= t('dashboard.last_pack_added') + ' :'
+            .col-md-4.text-end
+              - link_document = infos.last_pack.present? ? documents_details_path(id: infos.last_pack.id, reinit: true) : '#'
+              %a.support-chat-link.no-style.black-label.underlined-pointer{ href: link_document}
+                %span= infos.try(:last_pack).try(:name).try(:gsub, ' all', '') || '-'
+                %span= glyphicon('chevron-right', {size: '11', color: '#b5a6a6'})
+          .row
+            .col-md-3
+              %span
+                %span= t('dashboard.pack_size') + ' :'
+            .col-md-4.text-end
+              %span
+                %span= customer.packs.count || '-'
+          .row
+            .col-md-3
+              %span
+                %span= t('dashboard.journal_size') + ' :'
+            .col-md-4.text-end
+              %span
+                %span= customer.account_book_types.count || '-'
+          .row
+            .col-md-3
+              %span
+                %span= t('dashboard.last_activity') + ' :'
+            .col-md-4.text-end
+              %span
+                %span= infos.try(:last_pack).try(:updated_at).try(:strftime, '%d/%m/%Y %H:%M:%S') || '-'
+
+      %hr.clearfix
+      .row
+        .col-md-10
+          %h6.bold= t('dashboard.add_documents')
+          .row
+            .col-md-5
+              %span= t('dashboard.failed_delivery') + ' :'
+            .col-md-2.text-end
+              %a.support-chat-link.no-style.black-label.underlined-pointer{ href: pieces_errors_path({ _ext: 1, k: Base64.encode64({ tab: 'failed-delivery', account_id: customer.id}.to_json) })}
+                %span= infos.try(:failed_delivery).to_i
+                %span= glyphicon('chevron-right', {size: '11', color: '#b5a6a6'})
+          .row
+            .col-md-5
+              %span= t('dashboard.pre_assignement_duplicated') + ' :'
+            .col-md-2.text-end
+              %a.support-chat-link.no-style.black-label.underlined-pointer{ href: pieces_errors_path({ _ext: 1, k: Base64.encode64({ tab: 'duplicated-pre-assignment', account_id: customer.id}.to_json) }) }
+                %span= infos.try(:duplicated_preseizures_size).to_i
+                %span= glyphicon('chevron-right', {size: '11', color: '#b5a6a6'})
+          - if infos.try(:retriever_option_active)
+            .row
+              .col-md-4
+                %span= t('dashboard.retrievers_failing') + ' :'
+              .col-md-3.text-end
+                %a.support-chat-link.no-style.black-label.underlined-pointer{ href: retrievers_path({ _ext: 1, k: Base64.encode64({ account_id: customer.id, state: 'error' }.to_json) }) }
+                  %span= infos.try(:retriever_error_size).to_i
+                  %span= glyphicon('chevron-right', {size: '11', color: '#b5a6a6'})
+        .col-md-1.no-padding.semibold.text-end
+          = tag_state infos.try(:anomaly_state)
+          

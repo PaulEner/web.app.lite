@@ -1,0 +1,153 @@
+.modal.fade.in#connectors-list
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Liste des automates disponibles
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.back-grey
+        .box.overflow-auto
+          .form-group.no-margin
+            %ul.retriever-index.d-block.no-padding.text-center
+              %li 
+                %a{ href: '#', data:{ index: '.*' }} Tous
+              %li 
+                %a{ href: '#', data:{ index: '[0-9]' }} (1-9)
+              %li 
+                %a{ href: '#', data:{ index: 'A' }} A
+              %li 
+                %a{ href: '#', data:{ index: 'B' }} B
+              %li 
+                %a{ href: '#', data:{ index: 'C' }} C
+              %li 
+                %a{ href: '#', data:{ index: 'D' }} D
+              %li 
+                %a{ href: '#', data:{ index: 'E' }} E
+              %li 
+                %a{ href: '#', data:{ index: 'F' }} F
+              %li 
+                %a{ href: '#', data:{ index: 'G' }} G
+              %li 
+                %a{ href: '#', data:{ index: 'H' }} H
+              %li 
+                %a{ href: '#', data:{ index: 'I' }} I
+              %li 
+                %a{ href: '#', data:{ index: 'J' }} J
+              %li 
+                %a{ href: '#', data:{ index: 'K' }} K
+              %li 
+                %a{ href: '#', data:{ index: 'L' }} L
+              %li 
+                %a{ href: '#', data:{ index: 'M' }} M
+              %li 
+                %a{ href: '#', data:{ index: 'N' }} N
+              %li 
+                %a{ href: '#', data:{ index: 'O' }} O
+              %li 
+                %a{ href: '#', data:{ index: 'P' }} P
+              %li 
+                %a{ href: '#', data:{ index: 'Q' }} Q
+              %li 
+                %a{ href: '#', data:{ index: 'R' }} R
+              %li 
+                %a{ href: '#', data:{ index: 'S' }} S
+              %li 
+                %a{ href: '#', data:{ index: 'T' }} T
+              %li 
+                %a{ href: '#', data:{ index: 'U' }} U
+              %li 
+                %a{ href: '#', data:{ index: 'V' }} V
+              %li 
+                %a{ href: '#', data:{ index: 'W' }} W
+              %li 
+                %a{ href: '#', data:{ index: 'X' }} X
+              %li 
+                %a{ href: '#', data:{ index: 'Y' }} Y
+              %li 
+                %a{ href: '#', data:{ index: 'Z' }} Z
+
+        .box.overflow-auto
+          .form-group.no-margin
+            %label.semibold Banques
+            %span.badge.badge-secondary.regular.banks-size 0                
+          %hr
+          .form-group.no-margin
+            %ul.connectors-list.banks
+
+        .box.overflow-auto.providers-box.hide
+          .form-group.no-margin              
+            %label.semibold Document
+            %span.badge.badge-secondary.regular.providers-size 0              
+          %hr
+          .form-group
+            %ul.connectors-list.providers
+
+      .modal-footer
+        %button#export_connectors.btn.btn-primary.semibold Exporter en format XLS
+
+.modal.fade.in#filter-retriever
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Recherche
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        .form-group
+          %label.semibold Nom personnalisé
+          .select-container.no-padding.w-100.date.date-picker
+            %input#search_name{ type: :text }
+
+        .form-group
+          %label.semibold Etat :
+          %select.form-select#search_state{ "aria-label" => "Default select"  }              
+            %option{value: ''}
+            %option{value: 'ready'} OK
+            %option{value: 'error' } Erreur
+            %option{value: 'unavailable'} Indisponnible
+        
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel#filter_cancel{ type: :button } Annuler
+        %button.btn.btn-primary.semibold#filter_button{ type: :button } Rechercher
+
+.modal.fade.in#add-retriever{data: { 'bs-backdrop': "static" } }
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Configuration d'un nouveau récupérateur
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.back-grey
+        #step1.step1.steps
+          = render file: Rails.root.join('app/templates/front/retrievers/views/retrievers/configuration_steps/_step1.html.haml')
+        #step2.step2.steps
+        #step3.step3.steps
+        #step4.step4.steps
+      .modal-footer{ style: 'display: block' }
+        .w-30.float-start
+          %img{ src: "/assets/application/budgealogo.png", alt: "Budget Insight", style: 'max-width: 216px' }
+        .w-50.float-end.text-end
+          %button.btn.btn-light.semibold.cancel{ type: :button, data: { 'bs-dismiss': 'modal' } } Annuler
+          %button.btn.btn-secondary.semibold.secondary{ type: :button, disabled: 'disabled' } Précédent
+          %button.btn.btn-primary.semibold.primary{ type: :button } Valider
+
+.modal.fade.in#showCguBI.hide.fade{data: { 'bs-backdrop': "static" } }
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3 Condition générale d'utilisation
+      .modal-body
+        %p#terms
+      .modal-footer
+        =button_tag "J'accepte les conditions générales d'utilisation et j’accepte la transmission de mes transactions à Idocus", type: 'button', id: 'cgu_bi_validate', class: 'btn-primary btn semibold'
+        %a{href: '#', id: 'cgu_bi_exit', class: 'btn-danger btn semibold ms-2'} Sortir
+
+
+.modal.fade.in#add-internal-retriever
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Configuration d'un nouveau récupérateur
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.back-grey
+      .modal-footer
+        .w-100.text-end
+          %button.btn.btn-light.semibold.cancel{ type: :button, data: { 'bs-dismiss': 'modal' } } Annuler
+          %button.btn.btn-primary.semibold.validate{ type: :button } Valider

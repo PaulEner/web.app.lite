@@ -1,0 +1,42 @@
+#analytic_fields.control-group
+  %label.control-label Compta analytique :
+  #analytic.controls
+    %span.no_compta_analysis.badge.badge-secondary.fs-origin Aucune analytique pour ce dossier.
+    .analytic_loading.hide
+      .feedback.active
+    %span.help-block
+      %span.badge.bg-warning{ style: "margin: 0 5px 0 0" }
+        Attention :
+      %span.warning-span Ventilation à 100% par Analyse.
+      %i{ id: "actual_ventilation_rate" }
+    .fields.hide
+      - 3.times do |e|
+        - i = e+1
+        .box.analytic_group{ id: "analytic_#{i}_group" }
+          .analytic_title.section_map.bold{ data: { group_number:"#{i}" } }= "Analyse #{i}"
+          %hr.m-1
+          .analytic_parent_box{ id: "analytic_parent_box#{i}", class: (i != 1 ? "analytic_box hide" : "") }
+            .analytic_name_box.mb-2{ id: "analytic_#{i}_name_box" }
+              = label_tag "h_analytic_#{i}_name", "Analyse :", class: 'semibold'
+              = select_tag "h_analytic_#{i}_name", nil, class: 'form-select analytic_select analytic_name mb-3', data: { analytic_number: i, target: "analytic_#{i}_name" }
+              %span.analytic_total_ventilation.red.red-label.semibold{ id: "total_ventilation_#{i}" } Total Ventilation: 0%
+            .row.analytic_name_sections.clearfix
+              - 3.times do |a|
+                - j = a+1
+                .col-md-4
+                  .analytic_section_group{ id: "analytic_#{i}#{j}_section-group" }
+                    .analytic_title.semibold= "Axes"
+                    .section_group_box{ id: "section_group_#{i}#{j}" }
+                      .analytic_ventilation_group{ id:"analytic_ventilation_#{i}#{j}-group" }
+                        = label_tag "h_analytic[#{i}#{j}][ventilation]", 'Ventilation (%) : '
+                        .select-container.p-1.w-100
+                          = number_field_tag "h_analytic[#{i}#{j}][ventilation]", 0, min: 0, max: 100, class: "analytic_ventilation form-input analytic_ventilation_group_#{i}", step: 0.25, data: {ventilation_number: i, target: "analytic_#{i}#{j}_ventilation"}
+                      .analytic_axis_group{ id: "analytic_#{i}#{j}_axis1-group" }
+                        = label_tag "h_analytic_#{i}#{j}_axis1", 'Axe:', class: 'semibold'
+                        = select_tag "h_analytic_#{i}#{j}_axis1", nil, class: 'analytic_select analytic_axis form-select', data: { target: "analytic_#{i}#{j}_axis1" }
+                      .analytic_axis_group.hide{ id: "analytic_#{i}#{j}_axis2-group" }
+                        = label_tag "h_analytic_#{i}#{j}_axis2", 'Axe:', class: 'semibold'
+                        = select_tag "h_analytic_#{i}#{j}_axis2", nil, class: 'analytic_select analytic_axis form-select', data: { target: "analytic_#{i}#{j}_axis2" }
+                      .analytic_axis_group.hide{ id: "analytic_#{i}#{j}_axis3-group" }
+                        = label_tag "h_analytic_#{i}#{j}_axis3", 'Axe:', class: 'semibold'
+                        = select_tag "h_analytic_#{i}#{j}_axis3", nil, class: 'analytic_select analytic_axis form-select', data: { target: "analytic_#{i}#{j}_axis3" }

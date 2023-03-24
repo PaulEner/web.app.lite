@@ -1,0 +1,242 @@
+﻿.customer-form-content.p-2
+  = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { class: 'form form-horizontal margin0 subscription_option_form', id: 'create-customer-form-data' } do |f|
+    .carousel.slide#carousel_customer_form{  "data-bs-touch" => "false", "data-bs-interval" => "false" }
+      .carousel-inner
+        .carousel-item.active
+          .row.customer-base-form
+            .col-md-6.derivationLeft
+              .box.heightGroups.groups_1
+                %h5.semibold Identification du client
+                %hr
+                = f.label :company, :class => "required semibold"
+                .select-container.no-padding.w-100
+                  = f.input :company, label: false, input_html: { class: 'company_field required_field', placeholder: "ex : iDocus", :required => true }
+                = f.label :type_of_entity, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :type_of_entity, label: false, input_html: { class: 'type_of_entity_field', placeholder: "ex : SARL", :required => true }
+                = f.label :legal_registration_city, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :legal_registration_city, label: false, input_html: { class: 'legal_registration_city_field', placeholder: "ex : Paris", :required => true }
+                = f.label :registration_number, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :registration_number, label: false, input_html: { class: 'address_street_field', placeholder: "ex : 123456789", :required => true }
+                = f.label :address_street, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :address_street, label: false, input_html: { class: 'address_street_field', placeholder: "ex : 1 rue demonstration", :required => true }
+                = f.label :address_zip_code, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :address_zip_code, label: false, input_html: { class: 'address_zip_code_field', placeholder: "ex : 75000", :required => true }
+                = f.label :address_city, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :address_city, label: false, input_html: { class: 'address_city_field', placeholder: "ex : Paris", :required => true }
+                - if !@organization.specific_mission && action_name != 'new' && @customer.is_package?('ido_x')
+                  = f.label :jefacture_account_id, :class => "semibold"
+                  .select-container.no-padding.w-100
+                    = f.input :jefacture_account_id, label: false, input_html: { class: 'jefacture_account_id_field', placeholder: "ex : T4534638846" }
+                = f.label :code, :class => "required semibold"
+                .select-container.no-padding.w-100
+                  - to_disable = @customer.try(:persisted?)? true : false
+                  = f.input :code, hint: "Doit impérativement commencer par : #{@organization.code}%, 15 caractères alphanumériques maximum, code cabinet inclus.", label: false, input_html: { class: 'code_field required_field', placeholder: "IDOC%CLIENT10", disabled: ('disabled' if to_disable) }, :required => true
+                = f.label :first_name, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :first_name, label: false, input_html: { class: 'first_name_field' }
+                = f.label :last_name, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :last_name, label: false, input_html: { class: 'last_name_field' }
+                = f.label :phone_number, :class => "semibold"
+                .select-container.no-padding.w-100
+                  = f.input :phone_number, label: false, input_html: { class: 'phone_number_field' }
+                = f.label :email, :class => "required semibold"
+                .select-container.no-padding.w-100
+                  = f.input :email, label: false, input_html: { class: 'email_field required_field', :required => true }, hint: "Le courriel sert d’identifiant à iDocus et de contact principal en cas de besoin de la part d’iDocus"
+            .col-md-6.derivationRight
+              .bg-light.heightGroups.clearfix.small-shadow.p-3.groups_1
+                %h5.semibold Paramètre de base
+                %hr
+                - unless @organization.specific_mission
+                  .form-group.row
+                    .col-md-10
+                      = label_tag 'user[is_pre_assignement_displayed]', t('activerecord.models.user.attributes.is_pre_assignement_displayed'), class: 'control-label required semibold'
+                    .col-md-2
+                      .form-check.form-switch.idocus-custom-form-check
+                        = f.input :is_pre_assignement_displayed, as: :boolean, label: false, label_html: { class: 'required semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'check-displayed-pre-assignment' }
+                        %label.semibold{class: 'form-check-label label_check_field', for: 'check-displayed-pre-assignment'} Non
+                  .form-group.row
+                    .col-md-10
+                      = label_tag 'user[act_as_a_collaborator_into_pre_assignment]', t('activerecord.models.user.attributes.act_as_a_collaborator_into_pre_assignment'), class: 'control-label required semibold'
+                    .col-md-2
+                      .form-check.form-switch.idocus-custom-form-check
+                        = f.input :act_as_a_collaborator_into_pre_assignment, as: :boolean, label: false, label_html: { class: 'required semibold form-check-label', id: 'check-collaborator-pre-assignment' }, input_html: { class: 'form-check-input input_switch input_check_field' }
+                        %label.semibold{class: 'form-check-label label_check_field', for: 'check-collaborator-pre-assignment'} Non
+
+                  .form-group.row
+                    .col-md-10
+                      = label_tag 'user[display_period_upload]', t('activerecord.models.user.attributes.display_period_upload'), class: 'control-label required semibold'
+                    .col-md-2
+                      .form-check.form-switch.idocus-custom-form-check
+                        = f.input :display_period_upload, as: :boolean, label: false, label_html: { class: 'required semibold form-check-label', id: 'check_display_period_upload' }, input_html: { class: 'form-check-input input_switch input_check_field' }
+                        %label.semibold{class: 'form-check-label label_check_field', for: 'check_display_period_upload'} Non
+
+                = f.input :group_ids, collection: @user.groups.order(name: :asc), label: 'A quel groupe, le dossier doit-il être attribué ?', label_html: { class: 'control-label required semibold' }, input_html: { class: 'select optional searchable-option-list', id: 'select-group-list', include_blank: true, multiple: true } 
+                = f.association :manager, collection: managers_options_for_select, include_blank: true, label: 'Qui est le collaborateur en charge du dossier?', hint: 'IMPORTANT! Indiquer le collaborateur en charge du dossier permettra à iDocus de le contacter en cas de soucis. Autrement tous les mails seront adressés à l’administrateur de l’organisation.', label_html: { class: 'control-label required semibold' }, input_html: { class: 'form-control select form-select optional', id: 'select-customer-list'}
+                - unless @organization.specific_mission
+                  .form-group.row
+                    .col-md-10
+                      = label_tag 'user[options_attributes][is_taxable]', "Le dossier est-il assujetti à TVA?", class: 'control-label required semibold'
+                      %br
+                      %i.help-block Non (aucune TVA ne sera reportée en pré-saisie).
+                    .col-md-2
+                      = f.simple_fields_for :options do |o|
+                        = o.hidden_field :id
+                        .form-check.form-switch.idocus-custom-form-check
+                          = o.input :is_taxable, as: :boolean, label: false, label_html: { class: 'required semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'check-taxable-options' }
+                          %label.semibold{class: 'form-check-label label_check_field', for: 'check-taxable-options'} Non
+
+                - if !@organization.specific_mission && params[:action].in?(%w(new create))
+                  .mb-5
+                  %h6.semibold Logiciels comptables utilisés:
+                  %hr
+                  .form-group
+                    .softwares-section{load: 'NO'}
+                      - if @organization.try(:ibiza).try(:used?)
+                        = f.simple_fields_for :ibiza do |software|
+                          = software.input :ibiza_id, collection: [], label: 'Dossier correspondant dans iBiZa', label_html: { class: 'control-label required semibold' }, input_html: { class: 'form-control select form-select optional ibiza-customers-list', id: 'ibiza-customers-list', "data-placeholder": 'Choisissez un dossier iBiza', data: { original_value: nil, users_list_url: organization_ibiza_users_path(@organization, format: 'json') }, multiple: false }
+                  .form-group
+                    .row
+                      .col-md-6
+                        = f.simple_fields_for :ibiza do |software|
+                          = software.hidden_field :id
+                          .form-check.idocus-custom-form-check
+                            = software.input :is_used, as: :boolean, label: false, input_html: { disabled: !@organization.try(:ibiza).try(:used?), class: 'form-check-input pointer float-none softwares_setting check-ibiza m-1', id: 'check-ibiza' }
+                            %label.ms-2.semibold{class: 'form-check-label', for: 'check-ibiza'} Ibiza
+                      .col-md-6
+                        = f.simple_fields_for :my_unisoft do |software|
+                          = software.hidden_field :id
+                          .form-check.idocus-custom-form-check
+                            = software.input :is_used, as: :boolean, label: false, input_html: { disabled: !@organization.try(:my_unisoft).try(:used?), class: 'form-check-input pointer float-none softwares_setting check-my-unisoft m-1', id: 'check-my-unisoft' }
+                            %label.ms-2.semibold{class: 'form-check-label', for: 'check-my-unisoft'} My Unisoft
+                    .row
+                      .col-md-6
+                        = f.simple_fields_for :exact_online do |software|
+                          = software.hidden_field :id
+                          .form-check.idocus-custom-form-check
+                            = software.input :is_used, as: :boolean, label: false, input_html: { disabled: !@organization.try(:exact_online).try(:used?), class: 'form-check-input pointer float-none softwares_setting check-exact-online m-1', id: 'check-exact-online' }
+                            %label.ms-2.semibold{class: 'form-check-label', for: 'check-exact-online'} Exact Online
+                      .col-md-6
+                        = f.simple_fields_for :fec_agiris do |software|
+                          = software.hidden_field :id
+                          .form-check.idocus-custom-form-check
+                            = software.input :is_used, as: :boolean, label: false, input_html: { disabled: !@organization.try(:fec_agiris).try(:used?), class: 'form-check-input pointer float-none softwares_setting check-fec-agiris m-1', id: 'check-fec-agiris' }
+                            %label.ms-2.semibold{class: 'form-check-label', for: 'check-fec-agiris'} Fec Agiris
+
+                    .row
+                      .col-md-6
+                        = f.simple_fields_for :coala do |software|
+                          = software.hidden_field :id
+                          .form-check.idocus-custom-form-check
+                            = software.input :is_used, as: :boolean, label: false, input_html: { disabled: !@organization.try(:coala).try(:used?), class: 'form-check-input pointer float-none softwares_setting check-coala m-1', id: 'check-coala' }
+                            %label.ms-2.semibold{class: 'form-check-label', for: 'check-coala'} Coala
+                      .col-md-6
+                        = f.simple_fields_for :csv_descriptor do |software|
+                          = software.hidden_field :id
+                          .form-check.idocus-custom-form-check
+                            = software.input :is_used, as: :boolean, label: false, input_html: { disabled: !@organization.try(:csv_descriptor).try(:used?), class: 'form-check-input pointer float-none softwares_setting check-csv-descriptor m-1', id: 'check-csv-descriptor' }
+                            %label.ms-2.semibold{class: 'form-check-label', for: 'check-csv-descriptor'} Format d’export .csv
+                    .row
+                      .col-md-6
+                        = f.simple_fields_for :quadratus do |software|
+                          = software.hidden_field :id
+                          .form-check.idocus-custom-form-check
+                            = software.input :is_used, as: :boolean, label: false, input_html: { disabled: !@organization.try(:quadratus).try(:used?), class: 'form-check-input pointer float-none softwares_setting check-quadratus m-1', id: 'check-quadratus' }
+                            %label.ms-2.semibold{class: 'form-check-label', for: 'check-quadratus'} Quadratus
+                      .col-md-6
+                        = f.simple_fields_for :cegid do |software|
+                          = software.hidden_field :id
+                          .form-check.idocus-custom-form-check
+                            = software.input :is_used, as: :boolean, label: false, input_html: { disabled: !@organization.try(:cegid).try(:used?), class: 'form-check-input pointer float-none softwares_setting check-cegid m-1', id: 'check-cegid' }
+                            %label.ms-2.semibold{class: 'form-check-label', for: 'check-cegid'} Cegid
+                    .row
+                      .col-md-6
+                        = f.simple_fields_for :sage_gec do |software|
+                          = software.hidden_field :id
+                          .form-check.idocus-custom-form-check
+                            = software.input :is_used, as: :boolean, label: false, input_html: { disabled: !@organization.try(:sage_gec).try(:used?), class: 'form-check-input pointer float-none softwares_setting check-sage-gec m-1', id: 'check-sage-gec' }
+                            %label.ms-2.semibold{class: 'form-check-label', for: 'check-sage-gec'} Sage GEC
+                      .col-md-6
+                        = f.simple_fields_for :acd do |software|
+                          = software.hidden_field :id
+                          .form-check.idocus-custom-form-check
+                            = software.input :is_used, as: :boolean, label: false, input_html: { disabled: !@organization.try(:acd).try(:used?), class: 'form-check-input pointer float-none softwares_setting check-acd m-1', id: 'check-acd' }
+                            %label.ms-2.semibold{class: 'form-check-label', for: 'check-acd'} ACD
+                    .row
+                      .col-md-6
+                        = f.simple_fields_for :ciel do |software|
+                          = software.hidden_field :id
+                          .form-check.idocus-custom-form-check
+                            = software.input :is_used, as: :boolean, label: false, input_html: { disabled: !@organization.try(:ciel).try(:used?), class: 'form-check-input pointer float-none softwares_setting check-sage-gec m-1', id: 'check-sage-gec' }
+                            %label.ms-2.semibold{class: 'form-check-label', for: 'check-sage-gec'} Ciel
+                      .col-md-6
+                        // Free dock for software
+
+                - if !@organization.specific_mission && params[:action].in?(%w(show edit update))
+                  %hr
+                  .form-group
+                    .row
+                      .col-md-12
+                        Paramètrage d'envoi par email :
+                        = link_to "#{@customer.email_code}@fw.idocus.com", upload_email_infos_organization_customer_path(@organization, @customer)
+
+                - if @customer.persisted? && CustomUtils.is_ido_premium?(@organization.code)
+                  .mb-4
+                  .box.no-margin
+                    %h5.semibold Options
+                    %hr
+                      .row.mail-option
+                        .col-md-10.form-group.no-margin
+                          .form-check.form-check-inline{ data: { toggle: 'tooltip', placement: 'right' }}
+                            %label.semibold= "Avec option courrier (#{BillingMod::Configuration.price_of('mail')}€ HT)"
+                            %br
+                            %i.hint
+                              = "Vous permet d’adresser vos pièces par courrier à notre centre de numérisation. Pour #{BillingMod::Configuration.price_of('mail')} € HT"
+                        .col-md-2.form-check.form-switch
+                          %label.form-check-label Non
+                          = hidden_field_tag "package[check]", true
+                          = check_box_tag "package[mail]", "mail", @customer.package_of(CustomUtils.period_of(Time.now)).try(:mail_active), class: "form-check-input option_checkbox input_switch", data: { price: BillingMod::Configuration.price_of('mail', @customer)}
+                      .mb-4
+                      .row
+                        .col-md-6
+                          .form-group.ms-3
+                            = label_tag 'package[jefacture_account_id]', "Identifiant Jefacture (SIREN)", class: 'col-form-label semibold'
+                            .select-container.no-padding.w-100
+                              = text_field_tag 'package[jefacture_account_id]', @customer.jefacture_account_id, class: 'form-control', placeholder: "ex : 278 254 652"
+                        .col-md-6
+                          .form-group
+                            = label_tag "package[number_of_journals]", "Nombre de journaux", class: 'col-form-label required semibold'
+                            .select-container.no-padding.w-100.subscription_number_of_journals
+                              = number_field_tag "package[number_of_journals]", @customer.package_of(CustomUtils.period_of(Time.now)).try(:journal_size) || 5, class: 'form-control special_input number_of_journals', min: 5, max: 30, required: true, autofocus: true, pattern: '/^[0-9]+$/', placeholder: "5", data: { price: BillingMod::Configuration.price_of('journal_excess', @customer)}
+                              - if @customer.account_book_types.count > @customer.package_of(CustomUtils.period_of(Time.now)).try(:journal_size).to_i
+                                &nbsp;
+                                %span{id: 'err-msg-input-number'}
+                                %div.clearfix
+                                  %i Supprimez un journal comptable avant de baisser cette option.
+                      .future_package
+                        - if @customer.next_package && !@customer.next_package.mail_active
+                          .my-4
+                          .text-center
+                            .alert.alert-warning.mb-3.w-100.semibold
+                              L'option courrier sera désactivé le mois prochain
+
+        .carousel-item
+          .subscription-base-form
+            - if !@organization.specific_mission && action_name == 'new'
+              = render file: Rails.root.join('app/templates/front/subscriptions/views/subscriptions/main/_package.html.haml')
+    %hr
+    .form-group.row.w-100.normal-form-action
+      .col-md-8                     
+      .col-md-4.d-inline-block.ps-1.text-end
+        - if params[:action].in?(%w(new create))
+          = submit_tag t('actions.submit'), class: 'btn btn-primary semibold'
+        - else
+          = submit_tag 'Valider les modifications', class: 'btn btn-primary semibold'
+
+= javascript_include_tag 'front/customers/assets/javascripts/main'

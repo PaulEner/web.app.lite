@@ -1,0 +1,58 @@
+- softwares_list = Interfaces::Software::Configuration::SOFTWARES
+- tab_present = @organization.send(params[:tab].to_s.to_sym).try(:used?) rescue nil
+= stylesheet_link_tag 'front/software_setting/assets/stylesheets/main'
+
+
+
+.general
+  .row
+    .col-md-8.derivationRight
+      %h3.bold Paramètres : Logiciels comptables et CSV
+
+    %ul.nav.nav-tabs.ms-4{ "role" => "tablist" }
+      - first_active = false
+      - softwares_list.each_with_index do |software, index|
+        - is_used   = ( @organization.send(software.to_sym).try(:used?) || @organization.send(software.to_sym).try(:is_used) && software == 'ibiza' )
+        - is_active = (tab_present && params[:tab] == software.to_s) || (!tab_present && !first_active)        
+        - if is_used
+          - first_active = true if is_active
+          %li.nav-item.no-margin{ "role" => "presentation" }
+            %button.semibold.nav-link{ id: "#{software}-software-tab", "data-bs-toggle" => "tab", "data-bs-target" => "##{software}-software", type: :button, "role" => "tab", "aria-controls" => "#{software}-software", "aria-selected" => "true", class: (is_active)? 'active' : '' }= Interfaces::Software::Configuration::SOFTWARES_HUMAN_NAME[software.to_sym]
+
+      %li.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link#other-software-tab{ "data-bs-toggle" => "tab", "data-bs-target" => "#other-software", type: :button, "role" => "tab", "aria-controls" => "other-software", "aria-selected" => "false", class: (!first_active)? 'active' : '' } Autres logiciels      
+
+    .tab-content
+      - first_active = false
+      - softwares_list.each_with_index do |software, index|
+        - is_active = (tab_present && params[:tab] == software) || (!tab_present && !first_active)
+        - if @organization.send(software.to_sym).try(:is_used) && software == 'ibiza'
+          - first_active = true if is_active
+          .tab-pane.no-margin#ibiza-software{ "role" => "tabpanel", "aria-labelledby" => "ibiza-software-tab", class: (is_active)? 'active' : '' }
+            = render file: Rails.root.join('app/templates/front/ibiza/views/ibiza/main/setting.html.haml'), locals: { ibiza: @organization.ibiza }
+        - elsif @organization.send(software.to_sym).try(:used?)
+          - first_active = true if is_active
+          .tab-pane{ id: "#{software}-software", "role" => "tabpanel", "aria-labelledby" => "#{software}-software-tab", class: (is_active)? 'active' : '' }
+            = render partial: 'basic_configuration', locals: { software: software.to_s }
+
+      .tab-pane.box.no-margin#other-software{ "role" => "tabpanel", "aria-labelledby" => "other-software-tab", class: (!first_active)? 'active' : '' }
+        %label.semibold.derivationLeft Activer l'option d'export des écritures comptables en cliquant sur le logo et pièces pour :
+        - img_list = { ibiza: '/assets/logo/ibiza-logo.png', quadratus: '/assets/logo/quadratus-logo.png', cegid: '/assets/logo/cegid-logo.png', sage_gec: '/assets/logo/sage-gec-logo.png', acd: '/assets/logo/suite-expert-logo.png', fec_agiris: '/assets/logo/agiris-logo.png', fec_acd: '/assets/logo/acd-logo.png', exact_online: '/assets/logo/exact-logo.png', my_unisoft: '/assets/logo/my-unisoft-logo.png', coala: '/assets/logo/coala-logo.png', csv_descriptor: '/assets/logo/csv-logo.png', cogilog: '/assets/logo/cogilog-logo.png', ciel: '/assets/logo/ciel-logo.png' }
+        - softwares_list.each_slice(3) do |group|
+          .row.derivationRight
+            - group.each do |software|
+              - is_used   = ( @organization.send(software.to_sym).try(:used?) || @organization.send(software.to_sym).try(:is_used) && software == 'ibiza' )
+              - if is_used
+                - url = deactivate_software_path(@organization, software)
+                - confirm = "Voulez vous vraiment désactiver ce logiciel?"
+              - else
+                - url = activate_software_path(@organization, software)
+                - confirm = "Voulez vous vraiment activer ce logiciel?"
+              .col-md-4.box-software.pointer.animated-pointer{ id: software, class: is_used ? 'selected' : '' }
+                %a.no-style.w-100{ href: url, data: { confirm: confirm, method: 'post' } }
+                  - if img_list[software.to_sym].present?
+                    %img{ class: "image-software #{software}", alt: "logo-#{software.to_s}", src: img_list[software.to_sym] }
+                  - else
+                    %span.use-software.bold{ class: software }= Interfaces::Software::Configuration::SOFTWARES_HUMAN_NAME[software.to_sym]
+
+= javascript_include_tag 'front/software_setting/assets/javascripts/main'

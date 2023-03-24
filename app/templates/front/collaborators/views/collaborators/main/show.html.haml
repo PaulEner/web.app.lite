@@ -1,0 +1,43 @@
+= stylesheet_link_tag 'front/collaborators/assets/stylesheets/main'
+
+#member.user
+  %input#organization_id{type: :hidden, value: @organization.id, name: 'organization_id'}
+  .row.derivationRight
+    .col-md-12      
+      .row
+        .col-md-10
+          %h3.m-2
+            = @member.info
+            - if @member.user == @user.user
+              %i (Votre compte)
+        .col-md-2
+          .form-group
+            .w-100.text-end{id: "member-#{@member.id}"}
+              - if (@user.leader? || @user.manage_collaborators) && @organization.is_active
+                = link_to icon_destroy + ' Supprimer le compte', organization_collaborators_path(@organization, @member), class: 'btn btn-danger btn-primary', data: { method: :delete, confirm: t('actions.confirm') }
+  .mb-4
+
+  .derivationLeft         
+    %ul.nav.nav-tabs.ms-3
+      %li.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link{ class: ('active' if params[:tab] == 'information' || params[:tab].blank? ), href: '#information', 'data-bs-toggle' => 'tab' } Information
+      - if multi_organizations? || @member.user.memberships.count > 1
+        %li.nav-item.no-margin
+          %button.semibold.nav-link{ class: ('active' if params[:tab] == 'organization_group'), href: '#organization_group', 'data-bs-toggle' => 'tab' } Organisations
+      %li.nav-item.no-margin
+        %button.semibold.nav-link.collaborator_rights{ class: ('active' if params[:tab] == 'authorization'), href: '#authorization', 'data-bs-toggle' => 'tab' } Autorisation
+      - if @user.is_admin && @organization.is_active
+        %li.nav-item.no-margin
+          %button.semibold.nav-link.collaborator_file_storages{ class: ('active' if params[:tab] == 'file_storages'), href: '#file_storages', 'data-bs-toggle' => 'tab' } Stockages externes
+
+    .tab-content
+      = render partial: 'info'
+      = render partial: 'organization_group'
+      = render partial: 'authorization'
+      = render partial: 'file_storage'
+
+.modal.fade.in#add-edit-collaborator
+  .modal-dialog
+    .modal-content
+
+= javascript_include_tag 'front/collaborators/assets/javascripts/main'

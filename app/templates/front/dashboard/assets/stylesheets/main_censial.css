@@ -1,0 +1,102 @@
+#main-layout{
+  margin-left: 6%;
+  margin-top: 7%;
+}
+
+h1 {
+  font-family: Raleway-Bold;
+  font-size: 34px;
+  line-height: 40px;
+  letter-spacing: -0.5px;
+  color: #1A1A1A;
+}
+
+h3{
+  font-family: Raleway-Bold;
+  font-size: 22px;
+  line-height: 24px;
+  letter-spacing: -0.5px;
+  color: #1A1A1A;
+}
+
+p{
+  color: rgba(26, 26, 26, 0.7);
+}
+
+.favorite_label{
+  padding-top: 1%
+}
+
+.direct_access{
+  margin-bottom: 1%;
+}
+
+.view-documents {
+  margin-bottom: 3%;
+}
+
+.add-to-favorite{
+  color: #1d67be;
+  font-size: 17px;
+  margin-right: 5%;
+}
+
+.add-to-favorite:hover{
+  color: #1d67be;
+  border: 1px solid #1d67be;
+  border-radius: 5px;
+}
+
+.my-favorite-customers {
+  width: 100%;
+}
+
+.box{  
+  padding: 16px;
+  background: #FFFFFF;  
+  box-shadow: 0px 1px 3px rgba(26, 26, 26, 0.1);
+  border-radius: 8px;
+  margin: 2.5% 1%;
+  color: #333333;
+  height: max-content;
+}
+
+.state{  
+  box-shadow: 0px 1px 3px rgba(26, 26, 26, 0.1);
+  border-radius: 4px;
+  color: #FFFF;
+  font-size: 11px;
+  padding: 8% 15%;
+}
+
+.state-good{
+  background: #C1D837;
+}
+
+.state-medium{
+  background: #FDAF3A;
+}
+
+.state-critical{
+  background: #FF4848;
+}
+
+.no-favorite-customer {
+  padding: 4% 25%;
+  font-size: 2.8rem;
+  opacity: 0.5;
+}
+
+@media (max-width: 1280px) {
+  p, .btn{
+    font-size: 13px;
+  }
+  
+  .box, .favorite-customer-content, h6{
+    font-size: 0.8rem;
+  }
+
+  .no-favorite-customer{
+    padding: 5% 15%;
+  }
+}

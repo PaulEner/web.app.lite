@@ -1,0 +1,62 @@
+= render file: Rails.root.join('app/templates/front/documents/views/documents/_dialog_box.html.haml')
+
+#view-document-content.modal.fade.in{'aria-hidden' => 'true', :role => 'dialog', :tabindex => '-1'}
+  .modal-dialog
+    .modal-content
+      .modal-header.no-border
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.m-2.document-content.no-padding
+
+#PdfViewerDialog.modal.fade.in{'aria-hidden' => 'true', :role => 'dialog', :tabindex => '-1'}
+  .modal-dialog{ style: 'min-width: 1180px;' }
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Visionner le document
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body{style: "max-height: none !important; padding:0;"}
+        .view-content
+          .content{ style: "height: 700px" }
+            %span.p-5.loading Chargement en cours ...
+            %iframe.src-piece{ src: "", style: "height: 100%" }
+
+
+#DeletedPiece.modal.fade.in{'aria-hidden' => 'true', :role => 'dialog', :tabindex => '-1'}
+  .modal-dialog{ style: 'min-width: 1180px;' }
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Visionner les pieces supprimées
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        .action-pieces-deleted
+          .piece_deleted_selection_content
+            %button.btn.btn-light.previous{"data-content" => "", id: ""}
+              %span.me-2= glyphicon('arrow-thick-left', size: 12, color: "#72AA42")
+              %span Préc
+            %button.btn.btn-light.next{"data-content" => "", id: ""}
+              %span.me-2 Suiv
+              %span= glyphicon('arrow-thick-right', size: 12, color: "#72AA42")
+            %button.btn.btn-dark.float-end.restore{ "data-piece-id": "" }
+              %span.me-2= glyphicon('share', size: 12, color: "white")
+              %span Restaurer
+        .mb-4
+        .view-content
+      .modal-footer
+
+#TempDocument.modal.fade.in{'aria-hidden' => 'true', :role => 'dialog', :tabindex => '-1'}
+  .modal-dialog{ style: 'min-width: 1180px;' }
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Visionner vos documents
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        .action-pieces-deleted
+          .piece_deleted_selection_content
+            %button.btn.btn-light.previous{ "data-content" => "", "data-each-class" => "", "data-index" => ""}
+              %span.me-2= glyphicon('arrow-thick-left', size: 12, color: "#72AA42")
+              %span Préc
+            %button.btn.btn-light.next{ "data-content" => "", "data-each-class" => "", "data-index" => ""}
+              %span.me-2 Suiv
+              %span= glyphicon('arrow-thick-right', size: 12, color: "#72AA42")
+        .mb-4
+        .view-content
+      .modal-footer

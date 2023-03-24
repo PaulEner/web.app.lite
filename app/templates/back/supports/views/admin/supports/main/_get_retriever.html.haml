@@ -1,0 +1,45 @@
+.mb-3
+
+%label.semibold
+  %span Access token :
+  %span.ms-3= @user.budgea_account.try(:access_token).presence || "Non configuré"
+
+.mb-3
+.row
+  .col-md-12     
+    %table.table.table-condensed.table-striped
+      %thead
+        %tr.text-center
+          %th Créé le
+          %th Modifié le          
+          %th Budgea ID
+          %th Banque
+          %th= t('activerecord.models.retriever.attributes.name')
+          %th Type
+          %th Action
+      %tbody
+        - @user.retrievers.each do |retriever|
+          - present retriever do |retriever_presenter|
+            %tr.text-center
+              %td= l(retriever.created_at, format: '%d %b %Y %H:%M')
+              %td= l(retriever.updated_at, format: '%d %b %Y %H:%M')              
+              %td= retriever.budgea_id              
+              %td= retriever_presenter.service_name
+              %td= retriever_presenter.name
+              %td= (retriever.budgea_id.nil?) ? "Bridge" : "Budgea"
+              %td.text-end.pointer
+                .action.sub_edit_delete.list-collaborators
+                  %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+                .sub_menu.text-start.hide
+                  %ul.no-margin.no-padding.regular
+                    %li.view_bank_accounts{ data: { retriever_id: retriever.id, title: "Compte bancaire" } }
+                      = link_to '#' do
+                        %span.me-2= glyphicon('dollar', size: 12)
+                        %span Compte bancaire
+                    - if retriever.error?
+                      %li.resume_me{ data: { retriever_id: retriever.id } }
+                        = link_to '#' do
+                          %span.me-2= glyphicon('bug', size: 12)
+                          %span Synchroniser
+                    
+

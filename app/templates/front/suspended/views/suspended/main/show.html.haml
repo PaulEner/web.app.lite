@@ -1,0 +1,21 @@
+#suspended.container-fluid
+  .row
+    .col-md-12.box.aligncenter
+      - if @user.collaborator?
+        - if @user.leader?
+          iDocus vous informe que l’accès aux services est suspendu car vos données de facturation ne sont pas complètes.
+          %br
+          Merci de compléter le champ prélèvement dans l’onglet «
+          = link_to 'Mode de paiement', edit_payment_organization_path(@user.organizations.suspended.first)
+          » de votre organisation.
+          %br
+          En cas de souci, envoyez un courriel à
+          = link_to 'support@idocus.com', 'mailto:support@idocus.com'
+        - else
+          iDocus vous informe que l’accès aux services est suspendu.
+          %br
+          Merci de prendre contact avec l’administrateur iDocus au sein de votre cabinet.
+      - else
+        iDocus vous informe que l’accès aux services est suspendu.
+        %br
+        Merci de prendre contact avec votre cabinet d’expertise comptable.

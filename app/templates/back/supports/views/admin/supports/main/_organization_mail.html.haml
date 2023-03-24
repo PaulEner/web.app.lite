@@ -1,0 +1,21 @@
+.mb-3
+
+.row
+  .col-md-12     
+    %table.table.table-condensed.table-striped
+      %thead
+        %tr.text-center
+          %th Organization
+          %th.w-25 Email Administrateurs
+          %th.w-25 Email Collaborateurs
+          %th.w-25 Email Clients
+      %tbody
+        - @datas.each do |data|
+          %tr.text-center
+            %td= data[:organization]
+            %td.w-25
+              %textarea= data[:admin_mails]
+            %td.w-25
+              %textarea= data[:collab_mails]
+            %td.w-25
+              %textarea= data[:customers_mails]

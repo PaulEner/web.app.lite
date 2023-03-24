@@ -1,0 +1,24 @@
+#job_processing
+  .row.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-6      
+      %h3
+        Job processing        
+    .col-md-6.text-end
+      %input#flag_temp_start_stop{ value: '0', type: 'hidden' }
+      %button.btn.btn-warning.retriever-admin-filter
+        %span.me-2= glyphicon('transfer', { size: '10', color: '#000', style: 'transform: rotate(90deg)'})
+        %span Filtrer
+      %button.btn.btn-dark#real_temp.font-weight-bold
+        %span.me-2= glyphicon('pulse', { size: '10', color: 'white'})
+        %span Temps réel     
+      %button.btn.btn-primary
+        = link_to launch_data_verif_admin_job_processing_index_path, class: 'no-style' do
+          %span.me-2= glyphicon('rss', size: 10, color: 'white')
+          %span Lancer data verificator
+
+
+  .row.box.derivationRight
+    .col-md-12            
+      = render partial: 'real_time_event', locals: { collection: @jobs }
+       
+= javascript_include_tag 'admin/job_processing'

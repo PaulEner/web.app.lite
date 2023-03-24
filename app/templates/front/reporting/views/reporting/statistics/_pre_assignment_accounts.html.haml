@@ -1,0 +1,33 @@
+.row
+  .col-md-8
+    %h4.bold= t('reporting.top_delivery_waiting_account')
+  .col-md-4.text-end
+    - if %w(IDOC).include?@report_organization.code
+      %button.btn.btn-default.export_xls#pre_assignment_accounts{ title: "Export XLS" }
+        %img{ src: '/assets/application/icon-xls.png'}
+.mb-3
+%table.table.table-striped
+  %thead.w-100
+    %th= t('reporting.pack_name')
+    %th= t('reporting.share_anomaly_account')
+    %th= t('reporting.share_waiting_account')
+    %th= t('reporting.share_default_account')
+  %tbody
+    - @reports.each do |report|
+      - result = Reporting::StatisticToXls.accounts_repartition_stat(report, @date_range)
+      - all_accounts_size     = result[:all_accounts_size]
+      - anomaly_accounts_size = result[:anomaly_accounts_size]
+      - waiting_accounts_size = result[:waiting_accounts_size]
+      - default_accounts_size = result[:default_accounts_size]
+
+      - if report.try(:pack_id).to_i == 0
+        - url = operations_details_path({ id: report.id.presence || 0, _ext: 1, k: Base64.encode64({ reinit: true }.to_json) })
+      - else
+        - url = documents_details_path({ id: report.try(:pack_id).presence || 0, _ext: 1, k: Base64.encode64({ reinit: true }.to_json) }) 
+
+      %tr
+        %td
+          = link_to report.name.presence || "", url, class: 'no-style bold black-label underlined-pointer', target: '_blank'
+        %td= ((all_accounts_size > 0)? (anomaly_accounts_size * 100) / all_accounts_size : 0).to_s + '%'
+        %td= ((all_accounts_size > 0)? (waiting_accounts_size * 100) / all_accounts_size : 0).to_s + '%'
+        %td= ((all_accounts_size > 0)? (default_accounts_size * 100) / all_accounts_size : 0).to_s + '%'

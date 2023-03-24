@@ -1,0 +1,16 @@
+#counter_error_script_mailer
+  .row.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-6      
+      %h3
+        Counter error script mailer        
+    .col-md-6.text-end
+      %button.btn.btn-warning.retriever-admin-filter
+        %span.me-2= glyphicon('transfer', { size: '10', color: '#000', style: 'transform: rotate(90deg)'})
+        %span Filtrer
+
+  .row.box.derivationRight
+    .col-md-12        
+      #error_script_table
+        = render partial: 'error_script_mailer', locals: { collection: @counter_error_script_mailers }
+
+= javascript_include_tag 'admin/counter_error_script_mailer'

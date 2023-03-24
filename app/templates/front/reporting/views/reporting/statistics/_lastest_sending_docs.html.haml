@@ -1,0 +1,18 @@
+.row
+  .col-md-8
+    %h4.bold= t('reporting.top_delay_sending_document')
+  .col-md-4.text-end
+    - if %w(IDOC).include?@report_organization.code
+      %button.btn.btn-default.export_xls#latest_sending_docs{ title: "Export XLS" }
+        %img{ src: '/assets/application/icon-xls.png'}
+.mb-3
+%table.table.table-striped
+  %thead
+    %th= t('reporting.pack_name')
+    %th= t('reporting.last_document_date')
+  %tbody
+    - @pieces.each do |piece|
+      %tr
+        %td
+          = link_to piece.user.code, documents_path({ _ext: 1, k: Base64.encode64({ view: piece.user.id, reinit: true }.to_json) }), class: 'no-style bold black-label underlined-pointer', target: '_blank'
+        %td= piece.updated_at.strftime('%d/%m/%Y')

@@ -1,0 +1,126 @@
+- idocus_params = param_encode({ url: '/external_file_storage/use', method: 'post', before_send: 'efs_init_enabling_service', events: 'click' })
+
+Configurer l’accès à vos services de stockage externe de documents vous permet de recevoir tous les documents numérisés par iDocus sur un autre support que notre plateforme (Export de documents). Nous pouvons également aller chercher les documents directement sur ces supports externes (Import de documents)
+%br
+- if external_file_storage.try(:authorized).to_i > 0
+  %br
+  - if external_file_storage.is_dropbox_basic_authorized?
+    - service_number = ExternalFileStorage::F_DROPBOX
+    - is_service_used = external_file_storage.is_used?(service_number)
+    #dropbox.box.bg-light
+      .row
+        .col-md-1
+          = check_box_tag :enable_dropbox, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service as_idocus_ajax', style: 'float:left; margin-right:5px; margin-top:0;', idocus: idocus_params
+          %div{ style: 'float:left; text-align:center; width:62px' }
+            %a.logo= image_tag 'application/dropbox_logo.png', :alt => 'logo'
+            %b DROPBOX
+        .col-md-11.text-center{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+          - if external_file_storage.dropbox_basic.is_configured?
+            %h6
+              Votre compte iDocus est connecté à votre compte Dropbox.
+              = link_to 'Paramètres.', authorize_url_dropbox_path
+          - else
+            %h6
+              Pour connecter iDocus à votre compte Dropbox,
+              = link_to ' cliquez ici.', authorize_url_dropbox_path
+              %br
+              iDocus va créer un premier dossier « Applications » puis « iDocus ».
+          #{"."}
+      .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+        .col-md-6.margin2top
+          = render file: Rails.root.join('app/templates/front/external_file_storages/views/external_file_storages/main/_storage_form.html.haml'), locals: { storage: external_file_storage.dropbox_basic }
+        .col-md-6.margin2top
+          - if @dropbox_account
+            %h4 Information de compte
+            Nom utilisateur: 
+            %strong= @dropbox_account.name.display_name
+            %br
+            Email: 
+            %strong= @dropbox_account.email
+            %hr
+          %h6 Import de documents vers iDocus
+          Importer automatiquement des documents depuis la Dropbox. iDocus créé un dossier « exportation vers iDocus » dans le dossier « iDocus ».
+          %br
+          Vous n’avez plus qu’à déposer vos documents dans la bonne période (période actuelle ou période précédente) et dans le bon journal comptable qui vous a été attribué.
+          %br
+          %br
+          La récupération de votre dossier d’import se fait automatiquement. Tous les documents récupérés par iDocus sont retirés du dossier.
+
+  - if external_file_storage.is_google_docs_authorized?
+    - service_number = ExternalFileStorage::F_GOOGLE_DOCS
+    - is_service_used = external_file_storage.is_used?(service_number)
+    #google_drive.box.bg-light
+      .row
+        .col-md-1
+          = check_box_tag :enable_google_docs, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service as_idocus_ajax', style: 'float:left; margin-right:5px; margin-top:0;', idocus: idocus_params
+          %div{ style: 'float:left; text-align:center; width:62px' }
+            %a.logo= image_tag 'application/googledrive_logo.png', alt: 'logo'
+            %b GOOGLE DRIVE (Beta)
+        .col-md-11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+          - if external_file_storage.google_doc.is_configured?
+            %h6
+              Votre compte iDocus est connecté à votre compte Google Drive.
+              = link_to 'Paramètres.', authorize_url_google_drive_path, method: :post
+          - else
+            %h6
+              Pour connecter iDocus à votre compte Google Drive,
+              = link_to ' cliquez ici.', authorize_url_google_drive_path, method: :post
+          #{"."}
+      .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+        .col-md-12
+          .margin2top
+            = render file: Rails.root.join('app/templates/front/external_file_storages/views/external_file_storages/main/_storage_form.html.haml'), locals: { storage: external_file_storage.google_doc }
+
+  - if external_file_storage.is_ftp_authorized?
+    - service_number = ExternalFileStorage::F_FTP
+    - is_service_used = external_file_storage.is_used?(service_number)
+    #ftp.box.bg-light
+      .row
+        .col-md-1
+          = check_box_tag :enable_ftp, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service as_idocus_ajax', style: 'float:left; margin-right:5px; margin-top:0;', idocus: idocus_params
+          %div{ style: 'float:left; text-align:center; width:62px' }
+            %a.logo= image_tag 'application/ftp_logo.png', alt: 'logo'
+            %b FTP
+        .col-md-11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+          - if external_file_storage.ftp.is_configured?
+            %h6
+              Votre compte iDocus est connecté à votre compte FTP.
+              = link_to 'Configurer', edit_ftps_path('ftp')
+              ou
+              = link_to 'supprimer mes paramètres.', ftp_path, method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres FTP ?' }
+          - else
+            %h6
+              Pour connecter iDocus à votre compte FTP,
+              = link_to ' cliquez ici.', edit_ftps_path('ftp')
+          \.
+      .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+        .col-md-12
+          .margin2top
+            = render file: Rails.root.join('app/templates/front/external_file_storages/views/external_file_storages/main/_storage_form.html.haml'), locals: { storage: external_file_storage.ftp }
+
+  - if 1 == 0 && external_file_storage.is_box_authorized?
+    - service_number = ExternalFileStorage::F_BOX
+    - is_service_used = external_file_storage.is_used?(service_number)
+    #box.box.bg-light
+      .row
+        .col-md-1
+          = check_box_tag :enable_box, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service as_idocus_ajax', style: 'float:left; margin-right:5px; margin-top:0;', idocus: idocus_params
+          %div{ style: 'float:left; text-align:center; width:62px' }
+            %a.logo= image_tag 'application/box_logo.png', alt: 'logo'
+            %b Box.com
+        .col-md-11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+          - if external_file_storage.box.is_configured?
+            %h6
+              Votre compte iDocus est connecté à votre compte Box.com.
+              = link_to 'Paramètres.', authorize_url_box_path
+          - else
+            %h6
+              Pour connecter iDocus à votre compte Box,
+              = link_to ' cliquez ici.', authorize_url_box_path
+          #{"."}
+      .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+        .col-md-12
+          .margin2top
+            = render file: Rails.root.join('app/templates/front/external_file_storages/views/external_file_storages/main/_storage_form.html.haml'), locals: { storage: external_file_storage.box }
+
+= javascript_include_tag 'front/external_file_storages/assets/javascripts/main'

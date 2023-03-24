@@ -1,0 +1,44 @@
+= stylesheet_link_tag 'front/collaborators/assets/stylesheets/main'
+
+#group
+  %input#organization_id{type: :hidden, value: @organization.id, name: 'organization_id'}
+  .box.derivationLeft
+    %h4.text-center.group-modal-title #{@group}
+    %hr
+
+    .group-modal-body
+      %ul#paper-set-order-tab.nav.nav-tabs.ms-3{role: "tablist"}
+        %li.nav-item.no-margin{role: "presentation"}
+          %button#information_basic_tab.nav-link.semibold.active{"aria-controls" => "information_basic", "aria-selected" => "true", "data-bs-target" => "#information_basic", "data-bs-toggle" => "tab", role: "tab", type: "button"} Informations
+        %li.nav-item.no-margin{role: "presentation"}
+          %button#collaborators_list_tab.nav-link.semibold{"aria-controls" => "collaborators_list", "aria-selected" => "false", "data-bs-target" => "#collaborators_list", "data-bs-toggle" => "tab", role: "tab", type: "button"}
+            Liste des collaborateurs 
+            %span.ms-1.badge.badge-secondary.regular= @group.collaborators.count
+        %li.nav-item.no-margin{role: "presentation"}
+          %button#clients_list_tab.nav-link.semibold{"aria-controls" => "clients_list", "aria-selected" => "false", "data-bs-target" => "#clients_list", "data-bs-toggle" => "tab", role: "tab", type: "button"}
+            Liste des clients 
+            %span.ms-1.badge.badge-secondary.regular= @group.customers.count
+      
+      #paper-set-order-tab-content.tab-content
+        #information_basic.tab-pane.box.no-margin.fade.show.active{"aria-labelledby" => "information_basic_tab", role: "tabpanel"}          
+          %table.table.table-condensed.table-bordered-inner.table-striped.margin0bottom
+            %tbody
+              %tr
+                %th= t('activerecord.models.common.attributes.created_at')
+                %td= l @group.created_at
+              %tr
+                %th= t('activerecord.models.group.attributes.name')
+                %td= @group.name
+              %tr
+                %th= t('activerecord.models.group.attributes.description')
+                %td= @group.description
+        #collaborators_list.tab-pane.box.no-margin.fade{"aria-labelledby" => "collaborators_list_tab", role: "tabpanel"}          
+          %ul
+            - @group.collaborators.order(code: :asc).each do |collaborator|
+              %li= collaborator.info
+        #clients_list.tab-pane.box.no-margin.fade{"aria-labelledby" => "clients_list_tab", role: "tabpanel"}          
+          %ul
+            - @group.customers.order(code: :asc).each do |customer|
+              %li= customer.info
+
+= javascript_include_tag 'front/collaborators/assets/javascripts/main'

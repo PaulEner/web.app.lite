@@ -1,0 +1,50 @@
+- if @user.organization.try(:code) == 'ALM'
+  - url = 'https://www.idp-axeliumconseil.fr/'
+  - team = 'Axelium'
+- elsif @user.organization.try(:code) == 'DK'
+  - url = 'https://demat.dkpartners.fr/'
+  - team = 'DK Partners'
+- elsif @user.organization.try(:code) == 'CEN'
+  - url = 'https://www.censial-online.fr/'
+  - team = 'Censial Online'
+- elsif @user.organization.try(:code) == 'OR'
+  - url = 'https://my.orial.fr/'
+  - team = 'My Orial'
+- else
+  - url = @url
+  - team = 'iDocus'
+
+!!!
+%html
+  %head
+    %title [iDocus] Mise à jour des documents
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour #{@user.name},
+    %br
+    %br
+    Le #{I18n.l(@start_at, format: '%d %B %Y')}, les documents ci-dessous ont été ajoutés ou mis à jour dans votre interface, à l'adresse #{link_to url, url} .
+    %br
+    %br
+    %ul
+      - @packs.each do |pack|
+        - _pack = UpdatedPackPresenter.new(pack, @start_at, @end_at)
+        %li
+          #{pack.name} : #{_pack.new_pages_count} nouvelle(s) page(s)
+          %ul
+            - if _pack.new_scanned_pages_count > 0
+              %li #{_pack.new_scanned_pages_count} page(s) (origine : numérisation effectuée par iDocus)
+            - if _pack.new_uploaded_pages_count > 0
+              %li #{_pack.new_uploaded_pages_count} page(s) (origine : transfert de mails ou récupération depuis la Dropbox ou téléversement dans la plateforme iDocus)
+            - if _pack.new_dematbox_scanned_pages_count > 0
+              %li #{_pack.new_dematbox_scanned_pages_count} page(s) (origine : numérisation par iDocus'Box)
+            - if _pack.new_auto_retrieved_pages_count > 0
+              %li #{_pack.new_auto_retrieved_pages_count} page(s) (origine : automates de récupération)
+    %br
+    %br
+    Cordialement,
+    %br
+    = "L'équipe #{team}"
+    - if @user.organization.try(:code).in?(%w(ALM DK CEN OR)) 
+      %br
+      = link_to 'support@idocus.com', 'mailto:support@idocus.com'

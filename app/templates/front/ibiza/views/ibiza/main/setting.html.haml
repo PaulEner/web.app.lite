@@ -1,0 +1,111 @@
+= stylesheet_link_tag 'front/ibiza/assets/stylesheets/main'
+- ibiza = ibiza rescue @ibiza
+
+%input#organization_id{ type: 'hidden', value: @organization.id }
+= simple_form_for (ibiza || Software::Ibiza.new), url: organization_ibiza_path(@organization), html: { class: 'form-horizontal', id: 'ibiza_form_edition' } do |f|
+  #ibiza_software_box.box.no-margin
+    #ibiza.edit.derivationRight
+      .row
+        .w-100.text-start
+          %h5.semibold 
+            Configuration de iBiza :
+            %span.regular Connexion à iBiza pour le transfert des écritures
+      %hr
+      .row
+        %input{ type: 'hidden', id: 'piece_name_hidden', name: 'software_ibiza[piece_name_format]', value: '{}' }
+        %input{ type: 'hidden', id: 'piece_name_separator_hidden', name: 'software_ibiza[piece_name_format_separator]', value: ibiza.try(:piece_name_separator) || '_' }
+        %input{ type: 'hidden', id: 'description_hidden', name: 'software_ibiza[description]', value: '{}' }
+        %input{ type: 'hidden', id: 'description_separator_hidden', name: 'software_ibiza[description_separator]', value: ibiza.try(:description_separator) || '_' }
+        .select-container.w-100.ps-3.pe-0.pt-0.pb-0
+          = f.input :specific_url_options, label_html: { class: 'semibold' }, placeholder: 'https://webservice.irf-cloud.com/IRFService/services/IRFService.svc', hint: "Pour connecter iBiZa à iDocus, Vous pouvez spécifier votre URL de connexion (Par défaut: https://webservice.irf-cloud.com/IRFService/services/IRFService.svc)"
+        .to_change_box
+          .select-container.no-padding.w-100
+            - if ibiza.access_token.present? && ibiza.first_configured?
+              %span.badge.bg-success.me-2.float-end.semibold Valid
+            - elsif ibiza.access_token.present?
+              %span.badge.bg-danger.me-2.float-end.semibold Invalid
+            = f.input :access_token, label_html: { class: 'semibold' }, hint: "Pour connecter iBiZa à iDocus, rendez-vous sur l'iBiZStore pour récupérer votre jeton d'accès."
+          .select-container.no-padding.w-100
+            - if ibiza.access_token_2.present? && ibiza.second_configured?
+              %span.badge.bg-success.me-2.float-end.semibold Valid
+            - elsif ibiza.access_token_2.present?
+              %span.badge.bg-danger.me-2.float-end.semibold Invalid
+            = f.input :access_token_2, label_html: { class: 'semibold' }, hint: "Pour connecter iBiZa à iDocus, rendez-vous sur l'iBiZStore pour récupérer votre jeton d'accès."
+        .form-group
+          .row
+            .col-md-11
+              = f.label :auto_deliver, :class => "semibold"
+              %br
+              = f.hint 'Cette option peut être ré-écrite au niveau de chaque dossier.'
+            .col-md-1
+              .form-check.form-switch.idocus-custom-form-check
+                = f.input :auto_deliver, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field check-software', id: 'auto_deliver' }
+                %label.semibold{class: 'form-check-label label_check_field', for: 'auto_deliver'} Non
+        .form-group
+          .row
+            .col-md-11
+              = f.label :is_analysis_activated, :class => "semibold"
+              %br
+              = f.hint 'Cette option peut être ré-écrite au niveau de chaque dossier.'
+            .col-md-1
+              .form-check.form-switch.idocus-custom-form-check
+                = f.input :is_analysis_activated, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field check-software', id: 'is_analysis_activated' }
+                %label.semibold{class: 'form-check-label label_check_field', for: 'is_analysis_activated'} Non
+        .form-group
+          .row
+            .col-md-11
+              = f.label :is_analysis_to_validate, :class => "semibold"
+              %br
+              = f.hint "Cette option suspend l'envoi en pré-affectation des pièces, en passant par une validation manuelle des analyses comptables, Les pièces téléversées via le site ou mobile ne sont pas concernées (peut être ré-écrite au niveau de chaque dossier)."
+            .col-md-1
+              .form-check.form-switch.idocus-custom-form-check
+                = f.input :is_analysis_to_validate, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field check-software', id: 'is_analysis_to_validate' }
+                %label.semibold{class: 'form-check-label label_check_field', for: 'is_analysis_to_validate'} Non
+        .form-group
+          %label.semibold Format du nom de la pièce iDocus dans iBiZa (par défaut colonne “pièce” dans iBiza)
+          .row
+            .col-md-10
+              .select-container.no-padding.w-100
+                %input.piece_name_preview
+            .col-md-2.text-center
+              %input#current_piece_name{ type: 'hidden', value: ibiza.try(:piece_name_format).to_json }
+              %button.btn.btn-light.w-100.semibold#piece-name-edit{'data-bs-target' => '#piece-name-modal', 'data-bs-toggle' => 'modal', :type => 'button'} Modifier
+        .form-group
+          %label.semibold Format de l’écriture comptable dans iBiZa
+          .row
+            .col-md-10
+              .select-container.no-padding.w-100
+                %input.description_preview
+            .col-md-2.text-center
+              %input#current_description{ type: 'hidden', value: ibiza.try(:description).to_json }
+              %button.btn.btn-light.w-100.semibold#preseizure-name-edit{'data-bs-target' => '#description-modal', 'data-bs-toggle' => 'modal', :type => 'button'} Modifier
+        .form-group
+          %label.semibold Champ utilisé dans la colonne "Ref. pièce" et "Piece" dans Ibiza
+          - piece_number_selected = ibiza.try(:voucher_ref_target) == 'piece_number' ? "selected='selected'" : ""
+          - piece_name_selected = ibiza.try(:voucher_ref_target) == 'piece_name' ? "selected='selected'" : ""
+          = select_tag "software_ibiza[voucher_ref_target]", raw("<option value='piece_number' #{piece_number_selected}>Ref. pièce = Numéro de pièce d'origine et Pièce = Nom de la pièce (iDocus)</option><option value='piece_name' #{piece_name_selected}>Ref. pièce = Nom de la pièce (iDocus) et Pièce = Numéro de pièce d'origine</option>"), multiple: false, class: 'form-select', id: 'software_ibiza_voucher_ref_target'
+
+  %hr
+  .box.no-margin
+    .row
+      .col-md-12      
+        %h5.semibold Utilisateurs
+        %hr
+        .form-group
+          .label-section
+            = label_tag 'software_account_list', "Liste des clients assignés à l'option:", class: 'select control-label'
+          .control-section
+            -list_options = @organization.customers.active.order(:code).filter_by_software('ibiza').compact
+            -list_selected = list_options.select{ |c| c.uses?(:ibiza) }
+            = select_tag 'software_account_list', options_for_select(list_options, list_selected), include_blank: false, multiple: true, class: 'searchable-option-list', id: nil
+
+%hr
+
+.form-group.no-margin
+  .w-100.text-center
+    - idocus_params = param_encode({ url: "/organizations/#{@organization.id}/ibiza", method: 'put', form:{ id: 'ibiza_form_edition' }, redirect_to: { url: softwares_list_path(@organization, tab: 'ibiza'), method: 'get', html: { target: '.to_change_box' } } })
+    %button.btn.btn-primary.as_idocus_ajax.w-25{ type: 'button', idocus: idocus_params } Valider
+
+  = render file: Rails.root.join('app/templates/front/ibiza/views/ibiza/main/_dialogs.html.haml'), locals: { ibiza: ibiza }
+
+= javascript_include_tag 'front/ibiza/assets/javascripts/main'

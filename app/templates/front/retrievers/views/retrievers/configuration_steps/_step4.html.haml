@@ -1,0 +1,25 @@
+.box
+  .form-group
+    .row         
+      .col-md-12
+        %label.semibold Séléctionnez vos comptes bancaires parmis la liste suivante:
+    %hr
+
+  .bank_accounts
+    %form#account-selection
+      %table.table.table-striped.table_integration
+        %thead            
+          %th.text-center
+            .form-check
+              %input.form-check-input.pointer.float-none.check-all-bank-account{ type: :checkbox, value: "" }
+          %th Nom du compte
+          %th Numéro de compte
+        %tbody
+          - remote_accounts.each do |account|
+            %tr
+              %td.text-center
+                .form-check
+                  = check_box_tag 'bank_accounts[]', account['id'], local_accounts.include?(account['id']), id: "bank_accounts_#{account['id']}", class: 'form-check-input pointer float-none check-bank-account'
+              %td= account['name']
+              %td= account['number']
+    

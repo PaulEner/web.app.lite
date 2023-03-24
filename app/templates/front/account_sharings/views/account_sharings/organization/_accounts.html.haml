@@ -1,0 +1,40 @@
+#account_sharings.derivationRight
+  .text-end
+    = link_to 'Partager un dossier', '#', class: 'btn btn-primary semibold share_account_btn'
+
+  .mb-4
+  %table.table.table-striped#tbl_accounts
+    %thead
+      %tr
+        %th= sortable :created_at, 'Date'
+        %th Dossier
+        %th Client ou contact
+        %th= sortable :is_approved, 'Etat'
+        %th.text-end Actions
+    %tbody
+      - if @account_sharings.any?
+        - @account_sharings.each do |account_sharing|
+          %tr
+            %td.date= account_sharing.created_at.strftime('%d/%m/%Y %H:%M')
+            %td= link_to account_sharing.account.info, '#'
+            %td
+              - if account_sharing.collaborator.is_guest
+                = account_sharing.collaborator.info
+              - else
+                = link_to account_sharing.collaborator.info, '#'
+            %td= account_sharing.is_approved? ? 'Partagé' : 'En attente de validation'
+            %td.text-end.pointer
+              .action.sub_edit_delete
+                %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+              .sub_menu.text-start.hide
+                %ul.no-margin.no-padding.regular
+                  - unless account_sharing.is_approved?
+                    %li
+                      = link_to glyphicon('share', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Partager', account_sharings_organization_accept_path(@organization, account_sharing), method: :post, data: { confirm: "Êtes-vous sûr de vouloir partager le dossier \"#{account_sharing.account.info}\" au contact \"#{account_sharing.collaborator.info}\" ?" }
+                  %li
+                    = link_to glyphicon('action-undo', { size: '15', color: "#FF4848" }) + ' Annuler', account_sharings_organization_destroy_account_path(@organization, account_sharing), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir annuler le partage du dossier \"#{account_sharing.account.info}\" au contact \"#{account_sharing.collaborator.info}\" ?" }, class: 'red-label semibold'
+      - else
+        %tr
+          %td{colspan: 5, class: 'text-center'} Aucun resultat
+
+  = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { name: 'sharing_accounts', total_pages: @account_sharings.total_pages }

@@ -1,0 +1,17 @@
+.header-connexion.bg-white.derivationTop.readonly-trigger
+  .row
+    .col-md-9.user-name
+      %h1.semibold
+        = current_user.name
+    .col-md-3.text-end
+      %nav.navbar-expand-lg.navbar-light.ps-5
+        %ul.nav.navbar-nav.w-100.pt-2.ps-5
+          %li.nav-item.me-4.no-padding.no-hover
+            %span.badge.rounded-pill.bg-secondary.regular.mt-2= current_user.email
+          %li.nav-item.no-padding.no-hover
+            = link_to glyphicon('fork', { size: 15, color:'rgba(26, 26, 26, 0.7)'} ), root_path, title: "Revenir à la page d'acceuil", class: 'nav-link', target: '_blank'    
+          %li.nav-item.no-padding.no-hover
+            = link_to glyphicon('power-standby', {size: 15, color: "red"}), destroy_user_session_path, method: :delete, class: 'nav-link', title: 'Déconnexion'
+
+= javascript_declare_var 'is_super_admin', current_user.is_admin
+= javascript_declare_var 'full_access', current_user.full_access

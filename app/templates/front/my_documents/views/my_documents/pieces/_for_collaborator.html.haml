@@ -1,0 +1,224 @@
+= stylesheet_link_tag 'front/my_documents/assets/stylesheets/main'
+
+.container-fluid.main-content
+  .row
+    .col-md-9.derivationLeft
+      %h3.bold
+        %span.me-2 Mes Documents
+        - if @filters.present?
+          %span.filter-info.badge.bg-info.regular.datas_size.blink Filtre actif
+    .col-md-1
+      %button.btn.btn-light.more-filter.w-100.semibold
+        %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+        %span Filtrer
+    - if @user.still_active?
+      .col-md-2.derivationRight
+        %button.btn.btn-primary.add-document.w-100.semibold
+          %span.me-3= glyphicon('plus', { size: '12', color: '#FFFF'})
+          %span Ajouter des documents
+  .mb-4
+
+  .row
+    .hide.result-sol
+    .col-md-2
+      .mt-2.w-100.text-center
+        = link_to documents_path, class: 'no-style btn btn-light' do
+          %span.me-2= glyphicon('grid-two-up', {size: 13, color: '#72AA42'})
+          %span.semibold Interface classique
+      .lefter.mt-5
+        %ul.principal.p-0
+          %li.direct_links{ data: { href: 'my_documents' } }
+            %a{href: my_documents_path }
+              %span.float-end.badge.bg-light.black-label.mt-1.me-1.semibold= @pieces.total_count
+              %span.link_principal{class: (controller_name == 'pieces') ? 'active' : ''} Tous les documents
+          - if @user.collaborator?
+            %li.direct_links{ data: { href: 'pieces_errors' } }
+              %a{href: pieces_errors_path }
+                %span.link_principal{class: (controller_name == 'pieces_errors') ? 'active' : ''} Pièces en erreur
+          %hr
+            %li.direct_links{ data: { href: 'documents_processing' } }
+              %span.link_principal.show-list-document.pointer{class: (controller_name == 'documents_processing') ? 'active' : ''} 
+                %span.float-end.badge.bg-dark.semibold= @temp_documents.count.to_s || 0
+                Pièces en cours de traitement
+                - if @temp_documents.count > 0
+                  .temp-document-view.ms-5.hide
+                    - _index = 0
+                    .temp-document-content
+                      - @temp_documents.each do |document|
+                        - _index += 1
+                        .temp-document-content-lists
+                          .image_piece.text-center.animated-pointer{ id: "each_"+_index.to_s, "data-content" => html_piece_view(document, true), "data-each-class" => ".temp-document-view .image_piece", "data-index" => _index}
+                            = image_tag document_thumb_url(document)
+                          .white-label.p-2= truncate(document.original_file_name, length: 25)
+                      .clearfix
+
+
+          - if @pieces_deleted.count > 0
+            %li.direct_links.mt-1
+              %span.link_principal.deleted-piece-count.pointer{class: (controller_name == 'documents_deleted') ? 'active' : '', style: 'font-size: 12px; color:red'}
+                %span.float-end.badge.bg-danger.semibold= @pieces_deleted.count.to_s
+                Pièce(s) supprimée(s)
+                .content-list-pieces-deleted.text-start.ms-5.regular.hide
+                  %ul
+                    - @pieces_deleted.reverse.each do |piece_deleted|
+                      %li.get-pieces-deleted.pointer{ "data-content" => html_piece_view(piece_deleted), "data-content-url" => piece_deleted.get_access_url, id: piece_deleted.id}
+                        .row
+                          .col-md-10
+                            .deleted-piece-name #{piece_deleted.name}
+                            .deleted-by-text supprimée le #{piece_deleted.delete_at.try(:to_date)} par #{piece_deleted.delete_by}
+                          .col-md-2
+                            %span.text-start.restore{ data: {"piece-id": piece_deleted.id}} Restaurer
+          %hr
+
+    .col-md-10
+      %form#piece_filter_form.form-horizontal
+        .row
+          .col-md-3
+            .row
+              .col-md-2.pt-2
+                .semibold Dossier
+              .col-md-10
+                .form-group.no-margin.hide_on_load.hide
+                  - __accounts = accounts_options
+                  - if __accounts.size == (@options.try(:[], :owner_ids).try(:size) rescue 0)
+                    = select_tag 'collaborator_document_filter', options_for_select(__accounts), id: 'collaborator_document_filter', multiple: true
+                  - else
+                    = select_tag 'collaborator_document_filter', options_for_select(__accounts, @options.try(:[], :owner_ids)), id: 'collaborator_document_filter', multiple: true
+            .result-sol-customer.result-sol-container
+          .col-md-2
+            .row
+              .col-md-3.pt-2
+                .semibold Journal
+              .col-md-9
+                .form-group.no-margin.hide_on_load.hide
+                  %input.user_and_journals{ type: 'hidden', value: user_and_journal_list }
+                  = select_tag 'collaborator_journal_document_filter', options_for_select(accounts_journaux, @options.try(:[], :journal)), id: 'collaborator_journal_document_filter', multiple: true
+            .result-sol-journal.result-sol-container
+          .col-md-2
+            .row
+              .col-md-4.pt-2
+                .semibold Periode
+              .col-md-8
+                .form-group.no-margin.hide_on_load.hide
+                  = select_tag 'collaborator_period_document_filter', options_for_select(period_list, @options.try(:[], :period)), id: 'collaborator_period_document_filter', multiple: true
+            .result-sol-period.result-sol-container
+          .col-md-3
+            .form-group.no-margin.hide_on_load.hide
+              .search-content
+                .row.no-margin
+                  .col-md-1.no-padding.text-center.glass
+                    = glyphicon('magnifying-glass', { size: '16', color: 'background: rgba(26, 26, 26, 0.7)' })
+                  .col-md-11.no-padding.no-margin
+                    %input#search_input{ name:'piece_name', placeholder: 'Recherche (contenu, dossier)', value: @options.try(:[], :text) }
+          .col-md-1
+            %button.btn.btn-dark.w-100.semibold#document-filter{ :type => 'button' }
+              %span.semibold Valider
+          .col-md-1
+            %button.btn.btn-default.semibold.btn-reinit{:type => 'button', id: 'launch-reinit'} Réinitialiser
+      .box.derivationLeft
+        .row#table_pieces
+          .col-md-12
+            %table.table.table-striped.table-hover.list_customers#tbl_pieces
+              %thead.verif-fixed-action.action-fixed.table-header-fixed-to-top
+                %tr
+                  - if @user.has_collaborator_action?
+                    %th.table-header{scope: 'col'}
+                      .row
+                        .icon-actions
+                          %span.pointer.form-check.d-inline.ms-2      
+                            %input.form-check-input.pointer.float-none.select-all{ type: :checkbox, value: "", title: 'Sélectionner toutes les pièces' }
+                            %span.pointer.ms-2.action-selected.deliver_preseizures.hide{title: 'Livraison écriture comptable', data: { id:"@pieces.first.pack.id", type: 'special_piece', multi: 'true'}}= glyphicon('loop-circular', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+                            %span.pointer.ms-2.action-selected.delete_piece.hide{title: 'Supprimer le(s) pièce(s) sélectionnée(s)', multi: 'true'}= glyphicon('trash', { size: '14',  color:'#FF4848'})
+                  %th.table-header{scope: 'col'}= sortable 'pack_pieces.name', "Ref pièce"
+                  %th.table-header{scope: 'col'}= sortable 'pack_report_preseizures.date', "Date"
+                  %th.table-header{scope: 'col'}= sortable 'pack_report_preseizures.third_party', "Tiers - Numéro de pièce"
+                  %th.table-header{scope: 'col'}= sortable 'pack_report_preseizures.cached_amount', "Montant TTC"
+                  %th.table-header{scope: 'col'} Etat
+                  - if @user.has_collaborator_action?
+                    %th.table-header.text-end{scope: 'col'}Action
+              %tbody
+                - @pieces.each do |piece|
+                  - preseizure   = piece.preseizures.first
+                  - preseizure ||= FakeObject.new
+                  - ajx_params = param_encode({ url: show_piece_detail_path(piece.id), method: 'GET', events: 'click', html: { target: '.preseizures_box', target_dest: ".detail-piece-#{piece.id}" }, before_send: 'my_documents.toggle_piece_detail' })
+                  %tr.box.list
+                    - if @user.has_collaborator_action?
+                      %td
+                        %span.form-check          
+                          %input.form-check-input.pointer.float-none.select-document{ data: { id: piece.id, preseizure_ids: piece.preseizures.collect(&:id) }, type: :checkbox, value: "" }
+                    %td.pointer.as_idocus_ajax{ title: 'Voir détail', idocus: ajx_params, datas: { piece_id: piece.id } }
+                      .name.text-table-green= piece.name
+                    %td.pointer.as_idocus_ajax{ title: 'Voir détail', idocus: ajx_params, datas: { piece_id: piece.id } }
+                      %span.info= (preseizure.date.presence || piece.created_at).strftime('%d/%m/%Y')
+                    %td.pointer.as_idocus_ajax{ title: 'Voir détail', idocus: ajx_params, datas: { piece_id: piece.id } }
+                      = preseizure.try(:third_party).to_s + ' - ' + preseizure.try(:piece_number).to_s
+                    %td.pointer.as_idocus_ajax{ title: 'Voir détail', idocus: ajx_params, datas: { piece_id: piece.id } }
+                      = preseizure.try(:amount_ttc).to_s + ' €'
+                    %td.pointer.as_idocus_ajax{ title: 'Voir détail', idocus: ajx_params, datas: { piece_id: piece.id } }
+                      - delivery_state = 'none'
+                      - if !preseizure.is_exported?
+                        - delivery_state = piece.get_state_to('text')
+                        - if preseizure.id.to_i > 0 && preseizure.pre_assignment_deliveries.where(state: ['pending', 'data_built']).size > 0
+                          %span.badge.bg-warning.semibold Ecriture en cours de livraison
+                        - elsif ['delivery_failed', 'duplication', 'piece_ignored'].include?(delivery_state)
+                          %span.badge.badge-danger.semibold= t("pieces.delivery_state.#{delivery_state}")
+                        - elsif ['awaiting_analytics', 'awaiting_pre_assignment', 'delivery_pending'].include?(delivery_state)
+                          %span.badge.badge-warning.semibold= t("pieces.delivery_state.#{delivery_state}")
+                        - elsif delivery_state != 'none'
+                          %span.badge.badge-success.semibold= t("pieces.delivery_state.#{delivery_state}")
+                      - if delivery_state == 'none'
+                        - if preseizure.is_exported?
+                          %span.badge.badge-success.semibold Téléchargé
+                        - elsif preseizure.id.to_i > 0
+                          %span.badge.badge-warning.semibold Non récupéré
+                    - if @user.has_collaborator_action?
+                      %td.text-end.pointer.align-middle
+                        .action.sub_edit_delete.list-collaborators
+                          %span.glyph= glyphicon('ellipses', { size: '15', color: 'gba(26, 26, 26, 0.7)', style: 'transform: rotate(90deg)'})
+                        .row.sub_menu.text-center.hide{style: 'min-height:35px;'}
+                          %ul.no-margin.no-padding.regular.align-self-center
+                            %li.align-self-center
+                              %span.ms-2.delete_piece{title: 'Supprimer la pièce', data: {id: piece.id}}=glyphicon('trash', { size: '15', color: '#FF4848;'}) + ' Supprimer'
+                  %tr.box.hide.piece-detail-container{ class: "tr_piece_#{piece.id}" }
+                    %td{ colspan: 7 }
+                      .detail{ class: "detail-piece-#{piece.id}" }
+                        .text-center
+                          %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}
+
+            = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: my_documents_path, target: '#table_pieces', total_pages: @pieces.total_pages }
+
+#edit_preseizures.modal.fade.in{'aria-hidden' => 'true', :role => 'dialog', :tabindex => '-1'}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Édition écriture comptable 
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+      .modal-footer
+        %button.btn.btn-primary.semibold#preseizures_edit{:type => 'button'} Valider
+
+#DeletedPiece.modal.fade.in{'aria-hidden' => 'true', :role => 'dialog', :tabindex => '-1'}
+  .modal-dialog{ style: 'min-width: 1180px;' }
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Visionner les pieces supprimées
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        .action-pieces-deleted
+          .piece_deleted_selection_content
+            %button.btn.btn-light.previous{"data-content" => "", id: ""}
+              %span.me-2= glyphicon('arrow-thick-left', size: 12, color: "#72AA42")
+              %span Préc
+            %button.btn.btn-light.next{"data-content" => "", id: ""}
+              %span.me-2 Suiv
+              %span= glyphicon('arrow-thick-right', size: 12, color: "#72AA42")
+            %button.btn.btn-dark.float-end.restore{ "data-piece-id": "" }
+              %span.me-2= glyphicon('share', size: 12, color: "white")
+              %span.text-white Restaurer
+        .mb-4
+        .view-content
+      .modal-footer
+
+= render partial: 'upload_dialog' if @render_upload
+
+= javascript_include_tag 'front/my_documents/assets/javascripts/pieces'

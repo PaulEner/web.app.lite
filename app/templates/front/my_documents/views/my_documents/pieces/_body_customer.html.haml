@@ -1,0 +1,168 @@
+= hidden_field_tag :customer_code, @user_selected.code
+.row#table_pieces
+  .col-md-2
+    - if @user_selected.still_active? && @user_selected.authorized_upload?
+      %button.btn.btn-dark.add-document.w-100.semibold.mb-3
+        %span.me-2= glyphicon('plus', { size: '40', color: '#fff', style: "background-color:#C0E133; border-radius:50%; padding: 10px;"})
+        %span Ajouter des documents
+
+    - if @user_selected.still_active? && @user_selected.authorized_upload?
+      .mb-4.bg-white.text-center.text-muted.p-1{ title: "Pour transférer vos documents via email, envoyez simplement un email à cette adresse en mettant en objet le nom du dossier choisi", data: { toggle: 'tooltip', placement: 'right' }} 
+        %i
+          ou envoyer vos documents par mail à : 
+          %a.mailto.text-muted.semibold{:href=>"mailto:#{@user_selected.email_code}@fw.idocus.com", style:"text-decoration:none;"} "#{@user_selected.email_code}@fw.idocus.com"
+
+    %label.semibold Dossier client
+    = select_tag 'customers', options_for_select(@users.reverse.map{ |e| [e.short_info, e.id] }, @user_selected.id), id: 'customers', class: 'chosen-list w-100', include_blank: false
+
+    %hr
+    .processing-piece.mb-2.show-list-document.pointer
+      .list-document
+        %label.ms-3.pointer Document(s) en cours de traitement.
+        %span.badge.bg-dark.float-end.me-3.pointer= @temp_documents.count || 0
+      - if @temp_documents.count > 0
+        .temp-document-view.text-start.ms-5.regular.hide{style: 'max-width: 500px;'}
+          %ul
+            - _index = 0
+            .temp-document-content
+              - @temp_documents.reverse.each do |document|
+                - _index += 1
+                %li.pointer
+                  .row
+                    .col-md-9
+                      .white-label.p-1.pb-0.document-file-name{ id: "each_"+_index.to_s, "data-content" => html_piece_view(document, true), "data-each-class" => ".temp-document-view .image_piece", "data-index" => _index}
+                        = document.content_file_name
+                      .original-file-name.ps-2
+                        = truncate(document.original_file_name, length: 50)
+                    .col-md-3
+                      %span.text-start.animated-pointer.image_piece.visualise.mr-1{ id: "each_"+_index.to_s, "data-content" => html_piece_view(document, true), "data-each-class" => ".temp-document-view .image_piece", "data-index" => _index, style:'color: #C1D837;'} 
+                        Visualiser
+              .clearfix
+
+    %hr.mt-0
+    %button.btn.btn-outline-dark.black-label.w-100.semibold.btn-all-documents{ :type => 'button' } 
+      %span.float-start Mes documents
+      %span.float-end.badge.bg-dark.mt-1= @total_pieces
+    %hr
+    .lefter
+      %ul.principal.p-0
+        - @journals.each_with_index do |journal, index|
+          %li.direct_links
+            %a.rubric{ href: "#", class: "#{@result_per_journal[journal.try(:name).to_sym].to_i > 0 ? 'trigge' : ''}" , data: { id: journal.id } }
+              %span.badge.bg-secondary.float-end.count_journal{ data: { jl_name: journal.try(:name) }}= @result_per_journal[journal.try(:name).to_sym].presence || 0
+              %span.link_principal{ class: (journal.id.to_i == params[:journal_id].to_i) ? 'active' : ''}= journal.full_name
+
+        %li.input-add-rubric.hide
+          %hr
+          = render file: Rails.root.join('app/templates/front/journals/views/journals/main/_rubric_form.html.haml'), locals: { organization_id: @user.organization_id }
+          - ajx_params = param_encode({ url: '#url', form: { id: 'edit-rubric-form', dump_action: true, validate: true }, before_send: 'journal.before_rubric_addition', after_send: 'refresh_customer_view' })
+          .row
+            .col-md-5
+            .col-md-7
+              %button.btn.btn-light.btn-sm.cancel-add-rubric{ idocus: ajx_params } Annuler
+              %button.btn.btn-dark.btn-sm.as_idocus_ajax{ idocus: ajx_params } Valider
+
+    %h6.semibold.text-center Recherche
+    %hr
+    %form#customer_filter_form.simple_form.form-horizontal
+      %input#hidden-journal-id{ type: :hidden, name: "journal_id", value: params[:journal_id].presence }
+      %input{ type: :hidden, name: "uid", value: params[:uid].presence }
+
+      .form-group
+        %label.semibold Mot(s) clé(s)
+        .select-container.no-padding
+          %input#text{ name: 'text', value: (params[:text] rescue '' ) }
+
+      .form-group
+        %label.semibold Nom du tiers
+        .select-container.no-padding
+          %input#third_party{ name: 'third_party', value: (params[:third_party] rescue '' ) }
+
+      .form-group
+        %label Date
+        .input-group.mb-3
+          %span.show-calendar.input-group-text.calendar-field-customer.p-2{ data: { ref: 'date-val' }}= glyphicon('calendar', { size: '14', color: 'background: rgba(26, 26, 26, 0.7)' })
+          %input.form-control.value-content.date.daterange.calendar-field-customer#date-val{ type: :text, name: 'date', value: (params[:date] rescue '')}
+          %span.show-calendar.input-group-text-right.calendar-field-customer.p-2{ data: { ref: 'date-val' } }= glyphicon('chevron-bottom', { size: '12', color: 'background: rgba(26, 26, 26, 0.7)' })
+
+      .form-group
+        %label.semibold N° de facture
+        .select-container.no-padding
+          %input#piece_number{ name: 'piece_number', value: (params[:piece_number] rescue '' ) }
+
+      .form-group.amount_search
+        %label.semibold Montant TTC
+        .row.me-0
+          .w-50
+            = select_tag 'amount_operation', options_for_select([['=', 0], ['>=', 1], ['<=', 2]], (@options[:amount_operation] rescue 0)), include_blank: false, class: 'form-select operator'
+          .w-50.select-container.no-padding
+            %input#amount.p-1{ name: 'amount', value: (@options[:amount] rescue '' ) }
+
+      .form-group
+        %label.semibold Tags
+        .select-container.no-padding
+          %input#tags{ name: 'tags', value: (params[:tags] rescue '' ) }
+
+      .my-4
+      .row.w-100.text-center
+        .col-md-6
+          %a.btn.btn-light.btn-sm.no-border-radius.w-100.semibold.btn-reinit{ href: '#main-customer', id: 'launch-reinit2' } &Eacute;ffacer
+        .col-md-6
+          %a.btn.btn-dark.btn-sm.no-border-radius.w-100.semibold.btn-search{ href: '#main-customer', id: 'launch-filter'} Lancer
+
+  .col-md-10
+    #customer-result.box.derivationRight{ style: 'margin-top: 0' }
+      .row
+        .col-md-12
+          %table.table.table-striped.list_customers#tbl_pieces
+            %thead.action-fixed.table-header-fixed-to-top
+              %th.text-center
+                .icon-actions
+                  %span.pointer.form-check.d-inline
+                    %input.form-check-input.pointer.float-none.select-all{ type: :checkbox, value: "", title: 'Sélectionner toutes les pièces' }
+                    %span.pointer.ms-3.action-selected.download_piece_zip.hide{title: 'Télécharger une archive zip'}= glyphicon('data-transfer-download', { size: '20', color:'rgba(26, 26, 26, 0.75);'})
+              %th= sortable 'pack_report_preseizures.third_party', "Nom du tiers"
+              %th= sortable 'pack_report_preseizures.date', "Date"
+              %th= sortable 'pack_report_preseizures.piece_number', "N° de facture"
+              %th= sortable 'pack_report_preseizures.cached_amount', "Montant TTC"
+              %th.text-center.w-25
+                %span.popup-info-tag= glyphicon('info', { color: 'black', size: 10 })
+                %span Tags
+                .info-tag-content.hide
+                  Ajouter des tags pour retrouver facilement vos documents
+                  %br
+                  Appuyez sur "Entrée" pour valider chaque enregistrement
+            %tbody
+              - @pieces.each do |piece|
+                - preseizure             = piece.preseizures.first
+                - awaiting_preassignment = piece.created_at.strftime('%Y%m%d') >= 3.month.ago.strftime('%Y%m%d') && (%w(waiting force_processing).include?(piece.pre_assignment_state) || (piece.pre_assignment_state == 'supplier_recognition' && detected_third_party_id > 0))
+                %tr.box.list
+                  %td.text-center
+                    %span.form-check
+                      %input.form-check-input.pointer.float-none.select-document{ data: { id: piece.id, preseizure_ids: [piece.id] }, type: :checkbox, value: "" }
+                  %td.pointer.show-detail{ title: 'Voir détail', data: { content_url: piece.get_access_url, piece_id: piece.id }}
+                    - if preseizure
+                      .name.text-table-green= preseizure.try(:third_party)
+                    - else
+                      %span.badge.bg-warning.text-dark= (awaiting_preassignment ? "En cours de traitement . . ." : '') 
+                  %td.pointer.show-detail{ title: 'Voir détail', data: { content_url: piece.get_access_url, piece_id: piece.id }}
+                    %span.info= preseizure.try(:date).try(:strftime, '%d/%m/%Y') || piece.try(:created_at).try(:strftime, '%d/%m/%Y')
+                  %td.pointer.show-detail{ title: 'Voir détail', data: { content_url: piece.get_access_url, piece_id: piece.id }}
+                    = preseizure.try(:piece_number)
+                  %td.pointer.show-detail{ title: 'Voir détail', data: { content_url: piece.get_access_url, piece_id: piece.id }}
+                    = [preseizure.try(:amount_ttc).to_s, ''].uniq.join(' €').presence || ""
+                  %td.w-25
+                    %input.form-control.input-tag{ value: piece.get_tags.split(' - ').join(','), data: { id: "#{piece.id}", role: "tagsinput"},  "aria-describedby" => "basic-addon1"}
+
+          = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: my_documents_path, target: '#table_pieces', total_pages: @pieces.total_pages, filter: 'customer_filter_form' }
+
+#alert-info.modal.fade.in{'aria-hidden' => 'true', :role => 'dialog', :tabindex => '-1'}
+  .modal-dialog.modal-dialog-centered
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Information
+      .modal-body
+        .alert.alert-warning.semibold
+          Votre séléction est au-delà de 20 pièces, veuiller contacter le support si vous voulez télécharger plus de 20 pièces svp !
+      .modal-footer
+        %button.btn.btn-dark.btn-sm{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'} Fermer

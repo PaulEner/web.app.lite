@@ -1,0 +1,37 @@
+#customer.edit.sage_gec.derivationRight
+  %input{ type: :hidden, id: "organization_id", value: "#{@organization.id}"}
+  %input{ type: :hidden, id: "customer_id", value: "#{@customer.id}"}
+  %h6.semibold Liaison avec Sage GEC
+  .mb-4
+  = simple_form_for @customer, url: update_sage_gec_organization_customer_path(@organization, @customer), html: { class:  'form-horizontal label-medium', id: 'sage-gec-form' } do |f|
+    .accept_sage_gec{ class: ('hide' unless @customer.try(:sage_gec).try(:used?)) }  
+    = f.simple_fields_for :sage_gec do |m|
+      .select-container.no-padding.w-100
+        .form-group
+          .label-section
+            = label_tag 'user[sage_gec_attributes][sage_private_api_uuid]', 'Veuillez choisir le dossier GEC correspondant'
+          .control-section
+            = select_tag 'user[sage_gec_attributes][sage_private_api_uuid]', options_for_select(sage_gec_companies_list_options_for_select(@organization), @customer.sage_gec&.sage_private_api_uuid), include_blank: true, class: 'chosen-list w-100'
+      .form-group.mt-2
+        - auto_deliver = @customer.try(:sage_gec).try(:auto_deliver)
+        .row
+          .col-md-8
+            = label_tag 'user[sage_gec_attributes][auto_deliver]', t('activerecord.models.software_sage_gec.attributes.auto_deliver'), class: 'semibold'
+          / .col-md-4
+          /   .form-check.form-check-inline
+          /     = radio_button_tag 'user[sage_gec_attributes][auto_deliver]', auto_deliver_options[0][1], auto_deliver == -1, class: 'form-check-input'
+          /     %label.form-check-label Paramètres du cabinet
+          .col-md-2
+            .form-check.form-check-inline
+              = radio_button_tag 'user[sage_gec_attributes][auto_deliver]', auto_deliver_options[1][1], !auto_deliver, class: 'form-check-input compta-user-options'
+              %label.form-check-label Non
+          .col-md-2
+            .form-check.form-check-inline
+              = radio_button_tag 'user[sage_gec_attributes][auto_deliver]', auto_deliver_options[2][1], auto_deliver, class: 'form-check-input compta-user-options'
+              %label.form-check-label Oui
+      %input#auto_deliver_customer{ type: :hidden, name: "auto_deliver_customer", value: "#{@customer.try(:sage_gec).try(:auto_deliver?)}"}
+
+  .idocus_modal_buttons
+    - if @customer.configured?
+      - idocus_params = param_encode({ url: update_sage_gec_organization_customer_path(@organization, @customer), method: 'post', form:{ id: 'sage-gec-form', dump_action: true }, modal: { id: '#' }, redirect_to: { url: organization_customer_path(@organization, @customer, tab: 'sage_gec'), html: { target: '.sage_gec_configuration' } } })
+      %button.btn.btn-primary.sage_gec_validation.as_idocus_ajax{ type: :button, idocus: idocus_params } Valider

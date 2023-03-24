@@ -1,0 +1,10 @@
+.row
+  .col-md-12
+    %form#shared_accounts_form
+      %input#form_type{ type: 'hidden', name: 'form_type', value: 'share_account' }
+      .form-group
+        %label Contact ou client        
+        = select_tag 'account_sharing[collaborator_id]', options_for_select(@users_options), include_blank: false, class: 'chosen-list w-100' 
+      .form-group
+        %label Dossier client        
+        = select_tag 'account_sharing[account_id]', options_for_select(@customers_options), include_blank: false,  class: 'chosen-list w-100' 

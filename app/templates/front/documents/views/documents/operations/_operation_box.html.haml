@@ -1,0 +1,5 @@
+.w-50.dynamic_box.animatedChild.animated-pointer{ class: animation, data: { preseizure_id: preseizure.id, type: 'operation' }}
+  .box.content-operation.select-box-operation.list
+    %span.form-check.float-end
+      %input.form-check-input.pointer.float-none.select-operation{ data: { id: preseizure.id }, type: :checkbox, value: "" }
+    = render_async preseizures_infos_path, { id: preseizure.id }

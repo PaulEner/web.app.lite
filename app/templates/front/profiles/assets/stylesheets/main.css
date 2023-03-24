@@ -1,0 +1,11 @@
+.notification-profile .form-group{
+  margin-bottom: 1% !important;
+}
+
+hr{
+  height: 0px !important;
+}
+
+#external-file-storage.modal .modal-body{
+  font-size: 13px;
+}

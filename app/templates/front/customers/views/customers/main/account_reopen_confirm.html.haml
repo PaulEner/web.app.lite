@@ -1,0 +1,10 @@
+.account_reopen_confirm.close_or_reopen{link: reopen_account_organization_customer_path(@organization, @customer), text: 'Réouvrir le dossier'}
+	.modal-body
+		%p.p-1
+			Voulez-vous réellement réouvrir le dossier
+			%br
+			%span.semibold= @customer.info
+			%span ?
+	.modal-footer
+		%button.btn.btn-light.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' } Annuler
+		%button.btn.btn-primary.bold.close.close_or_reopen_confirm{ type: :button } Réouvrir le dossier

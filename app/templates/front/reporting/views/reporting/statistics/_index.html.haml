@@ -1,0 +1,35 @@
+.row.mt-5.text-center.derivationLeft
+  .col-md-4.box
+    %h4.bold= t('reporting.reporting_flow')
+    .row
+      .col-md-12.mt-4
+        %canvas#chart_flux_document
+  .col-md-3.box
+    %h4.bold= t('reporting.reporting_delivery_account')
+    .row.chart-deliver
+      .col-md-11
+        %canvas#chart_sending
+  .col-md-4.box
+    %h4.bold= t('reporting.reporting_retrievers')
+    .row.mt-5
+      .col-md-6.no-margin.no-padding
+        %label.text-canvas-reporting.semibold.actif_retrievers_percentage.hide 0%
+        %canvas#chart_retriever_active          
+        %h5.text-center.mt-3.semibold= t('reporting.active_retrievers')
+      .col-md-6.no-margin.no-padding
+        %label.text-canvas-reporting.semibold.failed_retrievers_percentage.hide 0%
+        %canvas#chart_retriever_inactive          
+        %h5.text-center.mt-3.semibold= t('reporting.failed_retrievers')
+%hr
+.mb-4
+.row.derivationRight
+  .col-md-6.p-2
+    #pre_assignment_accounts.box
+  .col-md-6.p-2
+    #lastest_sending_docs.box
+
+.row.derivationLeft
+  .col-md-12.p-2
+    #failed_retrievers.box
+
+  .mb-4

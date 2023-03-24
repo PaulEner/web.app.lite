@@ -1,0 +1,227 @@
+= stylesheet_link_tag 'back/dashboard/assets/stylesheets/main'
+
+- if current_user.is_developer
+  .box.derivationTop
+    %h3 Mes tickets
+    %hr
+    .row
+      .col-md-2       
+        %label.semibold 
+          En cours :
+      .col-md-1.text-start
+        %span.ms-5.badge.bg-info= current_user.tickets.where(state: 'processing').size
+      .col-md-9.text-wrap
+        = current_user.tickets.where(state: 'processing').collect(&:title).join(', ')
+    .row
+      .col-md-2       
+        %label.semibold 
+          En attente :
+      .col-md-1.text-start
+        %span.ms-5.badge.bg-warning= current_user.tickets.where(state: 'waiting').size
+      .col-md-9.text-wrap
+        = current_user.tickets.where(state: 'waiting').collect(&:title).join(', ')
+    .row
+      .col-md-2       
+        %label.semibold 
+          Assigné :
+      .col-md-1.text-start
+        %span.ms-5.badge.bg-primary= current_user.tickets.where(state: 'ready').size
+      .col-md-9.text-wrap
+        = current_user.tickets.where(state: 'ready').collect(&:title).join(', ')
+.my-3
+#dashboard
+  .row.derivationTop.box.small-shadow.clearfix.header
+    .col-md-12      
+      %h3 Flux de traitement        
+
+  .row.animatedGroups
+    .col-sm-6
+      .row.mb-4.animatedChild.toBottom
+        .col-sm-4
+          .badge-content.back-magenta.for-badge= glyphicon('justify-center', size: 14, color: "white")
+          .my-3
+          .box.mb-2.bundle_needed_temp_packs.flux.animated-pointer.active{ data: { ref: 'bundle_needed_temp_packs' }}
+            .my-3
+            %label.ms-3.semibold.no-padding Regroupement en cours
+            .text-end
+              %label.count.bundle_needed_temp_packs.me-2
+                %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}
+            .hide.content#bundle_needed_temp_packs
+        .col-sm-4
+          .badge-content.back-grey.for-badge= glyphicon('magnifying-glass', size: 14, color: "white")
+          .my-3
+          .box.mb-2.ocr_needed_temp_packs.flux.animated-pointer{ data: { ref: 'ocr_needed_temp_packs' }}
+            .my-3      
+            %label.ms-3.semibold.no-padding OCR
+            .text-end
+              %label.count.ocr_needed_temp_packs.me-2
+                %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}
+            .hide.content#ocr_needed_temp_packs  
+        .col-sm-4
+          .badge-content.back-yellow.for-badge= glyphicon('transfer', size: 14, color: "white")
+          .my-3
+          .box.mb-2.processing_temp_packs.flux.animated-pointer{ data: { ref: 'processing_temp_packs' }}
+            .my-3
+            %label.ms-3.semibold.no-padding Conversion en pièces
+            .text-end
+              %label.count.processing_temp_packs.me-2
+                %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}
+            .hide.content#processing_temp_packs
+      .row.mb-4.animatedChild.toBottom
+        .col-sm-4
+          .badge-content.back-blue-sky.for-badge= glyphicon('list-rich', size: 14, color: "white")
+          .my-3
+          .box.mb-2.awaiting_supplier_recognition.flux.animated-pointer{ data: { ref: 'awaiting_supplier_recognition' }}
+            .my-3
+            %label.ms-3.semibold.no-padding Reconaissance Fournisseur
+            .text-end
+              %label.count.awaiting_supplier_recognition.me-2
+                %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}            
+            .hide.content#awaiting_supplier_recognition
+        .col-sm-4
+          .badge-content.back-blue.for-badge= glyphicon('paperclip', size: 14, color: "white")
+          .my-3
+          .box.mb-2.awaiting_adr.flux.animated-pointer{ data: { ref: 'awaiting_adr' }}
+            .my-3
+            %label.ms-3.semibold.no-padding LAD
+            .text-end
+              %label.count.awaiting_adr.me-2
+                %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}            
+            .hide.content#awaiting_adr
+        .col-sm-4
+          .badge-content.back-green.for-badge= glyphicon('media-pause', size: 14, color: "white")
+          .my-3
+          .box.mb-2.blocked_pre_assignments.flux.animated-pointer{ data: { ref: 'blocked_pre_assignments' }}
+            .my-3
+            %label.ms-3.semibold.no-padding Pré-aff - Ignorées
+            .text-end
+              %label.count.blocked_pre_assignments.me-2
+                %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}            
+            .hide.content#blocked_pre_assignments
+      .row.mb-4.animatedChild.toBottom
+        .col-sm-4
+          .badge-content.back-green.for-badge= glyphicon('media-play', size: 14, color: "white")
+          .my-3
+          .box.mb-2.awaiting_pre_assignments.flux.animated-pointer{ data: { ref: 'awaiting_pre_assignments' }}
+            .my-3
+            %label.ms-3.semibold.no-padding Pré-aff - En cours
+            .text-end
+              %label.count.awaiting_pre_assignments.me-2
+                %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}            
+            .hide.content#awaiting_pre_assignments
+        .col-sm-4
+          .badge-content.back-blue-sky.for-badge= glyphicon('media-play', size: 14, color: "white")
+          .my-3
+          .box.mb-2.reports_delivery.flux.animated-pointer{ data: { ref: 'reports_delivery' }}
+            .my-3
+            %label.ms-3.semibold.no-padding Livraison Pré-aff - En cours
+            .text-end
+              %label.count.reports_delivery
+                %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}            
+            .hide.content#reports_delivery
+        .col-sm-4
+          .badge-content.back-blue-sky.for-badge= glyphicon('media-pause', size: 14, color: "white")
+          .my-3
+          .box.mb-2.failed_reports_delivery.flux.animated-pointer{ data: { ref: 'failed_reports_delivery' }}
+            .my-3
+            %label.ms-3.semibold.no-padding Livraison Pré-aff - En erreur
+            .text-end
+              %label.count.failed_reports_delivery.me-2
+                %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}            
+            .hide.content#failed_reports_delivery
+      .row.animatedChild.toBottom
+        .col-sm-4
+          .badge-content.back-grey.for-badge= glyphicon('media-play', size: 14, color: "white")
+          .my-3
+          .box.mb-2.currently_being_delivered_packs.flux.animated-pointer{ data: { ref: 'currently_being_delivered_packs' }}
+            .my-3
+            %label.ms-3.semibold.no-padding Livraison GED client - En cours
+            .text-end
+              %label.count.currently_being_delivered_packs.me-2
+                %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}            
+            .hide.content#currently_being_delivered_packs
+        .col-sm-4
+          .badge-content.back-grey.for-badge= glyphicon('media-pause', size: 14, color: "white")
+          .my-3
+          .box.mb-2.failed_packs_delivery.flux.animated-pointer{ data: { ref: 'failed_packs_delivery' }}
+            .my-3
+            %label.ms-3.semibold.no-padding Liv. GED client - Echecs ( 8 mois )
+            .text-end
+              %label.count.failed_packs_delivery.me-2
+                %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}            
+            .hide.content#failed_packs_delivery
+        .col-sm-4
+          .badge-content.back-yellow.for-badge= glyphicon('script', size: 14, color: "white")
+          .my-3
+          .box.mb-2.cedricom_orphans.flux.animated-pointer{ data: { ref: 'cedricom_orphans' }}
+            .my-3
+            %label.ms-3.semibold.no-padding Cédricom - Orphelina
+            .text-end
+              %label.count.cedricom_orphans.me-2
+                %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}            
+            .hide.content#cedricom_orphans
+
+    .col-sm-6.result-flux.animatedChild.toRight
+      .box.back-grey
+        %table.table.table-condensed.table-striped
+          %thead.text-white
+            %tr
+              %th.text-center Date
+              %th.text-center Lots
+              %th.text-center Compte
+              %th.text-center Message
+          %tbody.text-white
+  .mb-5
+  .row.derivationBottom.box.small-shadow.clearfix.header
+    .col-md-12      
+      %h3
+        Information dépuis le 
+        %span.badge.bg-dark= I18n.l(30.days.ago)
+        jusqu'à Aujourd'hui
+
+  .animatedGroups
+    .row
+      .col-md-6.animatedChild.toLeft
+        .box.p-3
+          .text-center.mb-2
+            %label.semibold Traitement des documents
+          #chart_flux_document
+            %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}
+      .col-md-6.animatedChild.toRight
+        .box.p-3
+          .text-center.mb-2
+            %label.semibold Livraison des documents
+          #document_delivery
+            %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}
+    .row.animatedChild.toBottom
+      .col-md-12
+        .box.p-3
+          .text-center.mb-2
+            %label.semibold Documents téléversés par api        
+          #document_api
+            %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}
+    .row.animatedChild.toBottom
+      .col-md-6
+        .box.p-3
+          .text-center.mb-2
+            %label.semibold Opérations bancaires
+          #bank_operation
+            %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}
+      .col-md-6
+        .box.p-3
+          .text-center.mb-2
+            %label.semibold Répartition des organisations et clients par logiciel comptable
+          #software_customers
+            %img{ src: '/assets/application/spinner_gray_alpha.gif', alt: 'spin gif'}
+
+.modal#see-more-info
+  .modal-dialog{style: 'min-width: 800px'}
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Détail
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        
+      .modal-footer
+ 
+= javascript_include_tag 'back/dashboard/assets/javascripts/main'

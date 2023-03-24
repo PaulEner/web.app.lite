@@ -1,0 +1,118 @@
+%form#importFecAfterConfiguration{ action: import_fec_processing_organization_customer_accounting_plan_path(organization, customer), method: "GET" }
+  %input.file{ type: :hidden, value: "#{params_fec[:file]}", name: "file_path"}
+  %input.file{ type: :hidden, value: "#{params_fec[:journal_ido]}", name: "journal_ido"}
+  %input.file{ type: :hidden, value: "#{params_fec[:file]}", name: "file_path"}
+  %input.file{ type: :hidden, value: "#{params_fec[:dir]}", name: "dir_tmp"}
+  %input.file{ type: :hidden, value: "#{params_fec[:separator]}", name: "separator"}
+  %input.count_books{ type: :hidden, value: "#{params_fec[:journal_on_fec].size}"}
+  %input.new_create_book_type{ type: :hidden, value: "#{params_fec[:new_create_book_type]}", name: "new_create_book_type"}
+  .modal-body
+    .row
+      .col-md-6
+        .journal_fec.row.m-0
+          .select_section.col-md-8.p-0
+            Veuillez choisir les journaux à injecter :
+          .checked_section.col-md-4.text-right.p-0
+          %br
+          %table.table.table-striped
+            %thead.text-center
+              %th Journal
+              %th Injecter
+            %tbody.text-center
+              - params_fec[:journal_on_fec].each do |journal|
+                %tr
+                  %td= journal
+                  %td
+                    %input{ class: "check_journal #{journal} form-check-input", checked: (params_fec[:journal_ido].include?(journal)), type: :checkbox, name: "journal[#{journal}]" }
+        .journal_idocus
+          %label.semibold
+            Journaux idocus disponibles:
+            %span.list_on_grey.p-2
+              - if params_fec.present?
+                - params_fec[:journal_ido].each do |journal|
+                  %span.badge.bg-dark.semibold= journal
+      .col-md-6
+        .form-group.piece_reference_choise
+          %label Sélectionner la colonne pour la référence des pièces          
+          %select.piece.form-select{name: "piece_ref"}
+            %option{ value: '' } -----------------
+            - params_fec[:head_list_fec].each_with_index do |head, indexation|
+              %option{ value: "#{indexation}", selected: ('selected' if indexation == 2)}= head
+        %hr
+        .form-group.piece_reference_choise
+          %label Sélectionner la colonne pour le compte générale
+          %select.piece.form-select{name: "general_account"}
+            %option{ value: '' } -----------------
+            - params_fec[:head_list_fec].each_with_index do |head, indexation|
+              %option{ value: "#{indexation}", selected: ('selected' if indexation == 4)}= head
+        .form-group.piece_reference_choise
+          %label Sélectionner la colonne pour le libellé du compte générale
+          %select.piece.form-select{name: "general_name"}
+            %option{ value: '' } -----------------
+            - params_fec[:head_list_fec].each_with_index do |head, indexation|
+              %option{ value: "#{indexation}", selected: ('selected' if indexation == 5)}= head
+        %hr
+        .form-group.piece_reference_choise
+          %label Sélectionner la colonne pour le compte de tiers
+          %select.piece.form-select{name: "third_party_account"}
+            %option{ value: '' } -----------------
+            - params_fec[:head_list_fec].each_with_index do |head, indexation|
+              %option{ value: "#{indexation}", selected: ('selected' if indexation == 6)}= head
+        .form-group.piece_reference_choise
+          %label Sélectionner la colonne pour le libellé du compte de tiers
+          %select.piece.form-select{name: "third_party_name"}
+            %option{ value: '' } -----------------
+            - params_fec[:head_list_fec].each_with_index do |head, indexation|
+              %option{ value: "#{indexation}", selected: ('selected' if indexation == 7)}= head
+        %hr
+        .form-group
+          %label Votre compte client générale débute par : ( 411 par défaut )
+          .select-container.no-padding.w-100
+            %input.mask_verif_account{ class: "account_customer", name: "account_customer", value: "411" }
+        .form-group
+          %label Votre compte fournisseur générale débute par ( 401 par défaut )
+          .select-container.no-padding.w-100
+            %input.mask_verif_account{ class: "account_provider", name: "account_provider", value: "401" }
+        %hr
+        .form-group
+          %label Vos comptes de contreparties débutent par : ( 6 et 7 par défaut )
+          .part_account
+            .select-container.no-padding.w-75.row
+              .col-md-10
+                %input{ class: "part_account ", name: "part_account[]", maxlength: 1, value: "6" }
+        .counter_part_account
+          .form-group.part-account
+            .part_account
+              %br
+              .select-container.no-padding.w-75.row
+                .col-md-10
+                  %input{ class: "part_account ", name: "part_account[]", maxlength: 1, value: "7" }
+                .col-md-2.text-center.p-1
+                  %span.delete_part_account.pointer
+                    = glyphicon('x', size: '12', color: 'red')
+
+        .form-group
+          .text-end
+            %button.small-shadow.text-bold.btn.btn-default#add_part_account
+              %span.me-2= glyphicon('plus', size: '12', color: '#72AA42')
+              %span Ajouter un compte contrepartie
+
+  .modal-footer
+    #informations.me-5
+    .row
+      .col-md-5.close_modal_fec{ style: "cursor: context-menu" }
+        = link_to 'Fermer', organization_customer_accounting_plan_path(organization, customer, {dir: params_fec[:dir], new_create_book_type: "#{params_fec[:new_create_book_type]}"} ), :class=>"modal-close btn btn-dark"
+      .col-md-7
+        %input#import_button.btn.btn-primary.small-shadow.text-bold{ :type => "submit", :value => "Valider" }
+
+
+.add_part_account.hide
+  .form-group.part-account
+    .part_account
+      %br
+      .select-container.no-padding.w-75.row
+        .col-md-10
+          %input{ class: "part_account ", name: "part_account[]", maxlength: 1, placeholder: "7" }
+        .col-md-2.text-center
+          %span.delete_part_account.pointer.p-1
+            = glyphicon('x', size: '12', color: 'red')

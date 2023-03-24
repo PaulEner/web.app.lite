@@ -1,0 +1,77 @@
+- if request.env["SERVER_NAME"].include?("axelium")
+  = stylesheet_link_tag 'front/dashboard/assets/stylesheets/main_axelium'
+- elsif request.env["SERVER_NAME"].include?("dkpartners")
+  = stylesheet_link_tag 'front/dashboard/assets/stylesheets/main_dk_partners'
+- elsif request.env["SERVER_NAME"].include?("censial")
+  = stylesheet_link_tag 'front/dashboard/assets/stylesheets/main_censial'
+- elsif request.env["SERVER_NAME"].include?("orial")
+  = stylesheet_link_tag 'front/dashboard/assets/stylesheets/main_orial'
+- else
+  = stylesheet_link_tag 'front/dashboard/assets/stylesheets/main'
+
+.container-fluid
+  .row.derivationLeft
+    %h1
+      = t('dashboard.welcome_to')
+      %span.label_idocus=brand_name_from_request(request)
+      %span.label_user= current_user.name
+      %span.ms-1 !
+  .row.direct_access.derivationLeft
+    %p= t('dashboard.folder_text_info')
+          
+  %br
+  .row.derivationLeft
+    .col-md-4.view-documents.no-padding.semibold
+      %a.btn.btn-primary.view-documents-btn{href: documents_path}= t('dashboard.view_my_documents')
+  #container-box.derivationRight
+    .row
+      .col-md-6.no-padding
+        %h3.favorite_label
+          = t('dashboard.my_favorite_folders')
+          %span.badge.badge-secondary.regular#my-favorite-customers-count= @favorites.size
+      .col-md-6.text-end.semibold
+        %button.btn.btn-default.add-to-favorite.float-end{'data-bs-target' => '#add-to-favorite', 'data-bs-toggle' => 'modal', 'data-bs-original-value' => '455', :type => 'button'}
+          - if request.env["SERVER_NAME"].include?("axelium")
+            %span.me-2= glyphicon('plus', {size: '12', color: '#fa8e2e'})
+          - elsif request.env["SERVER_NAME"].include?("dkpartners")
+            %span.me-2= glyphicon('plus', {size: '12', color: '#051077'})
+          - elsif request.env["SERVER_NAME"].include?("orial")
+            %span.me-2= glyphicon('plus', {size: '12', color: '#BC183A'})
+          - else
+            %span.me-2= glyphicon('plus', {size: '12', color: '#72AA42'})
+          %span= t('dashboard.add_folder_to_favorite')    
+    
+    .row.my-favorite-customers
+      - if @favorites.size > 0
+        - count       = @favorites.size
+        - count_right = (count/2)
+        - count_left  = count - count_right
+        .w-50.animatedGroups
+          = render partial: 'my_favorite_customers', locals: { favorites: @favorites.first(count_left), animation: 'toLeft' }
+        .w-50.animatedGroups
+          = render partial: 'my_favorite_customers', locals: { favorites: @favorites.last(count_right), animation: 'toRight' }
+      - else
+        .no-favorite-customer= t('dashboard.no_favorite_customer')
+
+    = javascript_include_tag 'front/dashboard/assets/javascripts/main'
+
+
+
+- validation_param = param_encode({ url: "/dashboard/add_customer_to_favorite", method: 'post', form:{ id: 'send_customer_to_favorite' }, redirect_to: { url: dashboard_index_path, html: { target: '#container-box' } }, modal: { id: 'add-to-favorite' } })
+
+#add-to-favorite.modal.fade.in{'aria-hidden' => 'true', 'aria-labelledby' => 'myFavoriteModalLabel', :role => 'dialog', :tabindex => '-1'}
+  .modal-dialog{:role => 'document'}
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold= t('dashboard.add_folder_to_favorite')
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        = form_tag('dashboard/add_customer_to_favorite/', method: :post, id: 'send_customer_to_favorite', multipart: true) do |f|
+          .form-group
+            .label-section
+              = label_tag 'my_favorite_customers_list', t('dashboard.search_folder'), class: 'select control-label'
+            .control-section
+              = select_tag 'favorite_customers', options_for_select(favorite_options, @favorites), class: 'select-customer searchable-option-list', id: 'select-customer-to-favorite', include_blank: false, multiple: true
+      .modal-footer
+        %button.btn.btn-light.semibold{'data-bs-dismiss' => 'modal', :type => 'button'}= t('dashboard.cancel_action')
+        %button.btn.btn-primary.semibold.as_idocus_ajax{ :type => 'button', id: 'add-customer-to-favorite', idocus: validation_param}= t('dashboard.validate')

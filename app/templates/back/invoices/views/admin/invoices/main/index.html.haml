@@ -1,0 +1,145 @@
+#invoices
+  .row.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-6  
+      %h3
+        Liste des factures
+        %span.badge.bg-dark= @invoices_count
+    .col-md-6.text-end
+      %button.btn.btn-warning.filter-news
+        %span.me-2= glyphicon('transfer', { size: '10', color: '#000', style: 'transform: rotate(90deg)'})
+        %span Filtrer
+      %button.btn.btn-dark.sepa-order.ms-3
+        %span.me-2= glyphicon('plus', size: 10, color: 'white')
+        %span Ordre de prélèvement
+
+  .row.derivationRight
+    .col-12
+      .box#table_invoices
+        = form_tag admin_invoices_download_path do |f|
+          %table.table.table-condensed.table-striped.readonly-link-container
+            %thead
+              %tr
+                %th= check_box_tag 'check_all', '', false, class: 'form-check-input pointer float-none'
+                %th= sortable :number, t('activerecord.models.invoice.attributes.number')
+                %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+                %th= sortable :organization_id, t('activerecord.models.organization.name') + ' / ' + t('activerecord.models.user.name')
+                %th.price= sortable :amount_in_cents_w_vat, t('activerecord.models.invoice.attributes.amount_w_vat')
+                %th.text-end.actions= t('actions.name')
+            %tbody
+              - @invoices.each do |invoice|
+                %tr
+                  %td= check_box_tag "invoice_ids[]", invoice.id, false, class: 'invoices form-check-input pointer float-none' 
+                  %td= invoice.number
+                  %td= l(invoice.created_at, format: '%d %b %Y %H:%M')
+                  %td
+                    - if invoice.organization
+                      = link_to invoice.organization.name, organization_path(invoice.organization)
+                    - if invoice.user && !invoice.organization
+                      - if invoice.user.organization
+                        = link_to invoice.user.code, organization_customer_path(invoice.user.organization, invoice.user)
+                      - else
+                        = invoice.user.code
+                  %td.price
+                    - if invoice.amount_in_cents_w_vat
+                      = format_price_00(invoice.amount_in_cents_w_vat) + ' €'
+                  %td.text-end.pointer                  
+                    .action.sub_edit_delete.readonly-container
+                      %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+                    .sub_menu.text-start.hide
+                      %ul.no-margin.no-padding.regular
+                        %li.edit                                
+                          = link_to admin_invoices_show_path(invoice), class: 'do-showInvoice', title: "#{invoice.number}.pdf" do
+                            %span.me-2= glyphicon('eye', size: 12)
+                            %span Voir                        
+                        %li
+                          = link_to admin_invoices_show_path(invoice), target: '_blank' do
+                            %span.me-2= glyphicon('data-transfer-download', size: 12)
+                            %span Télécharger
+          %br
+          .row
+            .col-md-9
+              .text-start
+                = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: admin_invoices_index_path, target: '#table_invoices', total_pages: @invoices.total_pages, filter: 'form-filter' }
+            .col-md-3
+              .text-end.readonly-container
+                = submit_tag 'Télécharger les fichiers sélectionnés', class: 'btn btn-primary'
+
+    / # = render partial: '/admin/invoices/main/sidebar'
+
+  .modal#showInvoice
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %h3.modal-title.bold
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        .modal-body
+          %iframe.w-100{ src: '', style: 'height: 750px' }
+
+  .modal#filter-invoices
+    .modal-dialog
+      .modal-content
+        .modal-header.clearfix
+          %h5.modal-title.bold Filtrer
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        = form_tag admin_invoices_index_path, method: :get, class: 'form-filter' do
+          .modal-body
+            = hidden_field_tag :direction, sort_direction
+            = hidden_field_tag :sort, sort_column
+            = hidden_field_tag :per_page, per_page
+            .form-group
+              .label-section
+                = label_tag 'invoice_contains[number]', t('activerecord.models.invoice.attributes.number')
+              .control-section
+                = text_field_tag 'invoice_contains[number]', (params[:invoice_contains][:number] rescue ''), class: 'form-control'
+            .form-group
+              .label-section
+                = label_tag 'invoice_contains[amount_in_cents_w_vat]', t('activerecord.models.invoice.attributes.amount_in_cents_w_vat')
+              .control-section
+                .row
+                  .col-4
+                    = select_tag 'invoice_contains[amount_in_cents_w_vat_comparison_operator]', options_for_select([['=', '='], ['>', '>='], ['<', '<=']], (params[:invoice_contains][:amount_in_cents_w_vat_comparison_operator] rescue '')), class: 'form-control'
+                  .col-8
+                    = text_field_tag 'invoice_contains[amount_in_cents_w_vat]', (params[:invoice_contains][:amount_in_cents_w_vat] rescue ''), class: 'form-control'
+            .form-group
+              .label-section
+                = label_tag 'invoice_contains[organization_contains][name]', t('activerecord.models.organization.name')
+              .control-section
+                = text_field_tag 'invoice_contains[organization_contains][name]', (params[:invoice_contains][:organization_contains][:name] rescue ''), class: 'form-control'
+            .form-group
+              .label-section
+                = label_tag 'invoice_contains[user_contains][code]', t('activerecord.models.user.name')
+              .control-section
+                = text_field_tag 'invoice_contains[user_contains][code]', (params[:invoice_contains][:user_contains][:code] rescue ''), class: 'form-control'
+            .form-group
+              .label-section
+                = label_tag 'invoice_contains[created_at]', t('activerecord.models.common.attributes.created_at')
+              .control-section
+                = text_field_tag 'invoice_contains[created_at]', (params[:invoice_contains][:created_at] rescue ''), class: 'form-control daterange'
+            .modal-footer
+              .form-action
+                = link_to t('filters.reset'), admin_invoices_index_path, class: 'btn btn-outline-secondary'
+                = submit_tag t('filters.action'), class: 'btn btn-primary'
+
+  .modal#sepa-order
+    .modal-dialog
+      .modal-content
+        .modal-header.clearfix
+          %h5.modal-title.bold Ordre de prélèvement
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        = form_tag admin_invoices_debit_order_path do
+          .modal-body
+            .form-group
+              .label-section
+                = label_tag 'date', 'Date'
+              .control-section
+                = text_field_tag :invoice_date, '', class: 'form-control singledate'
+            .form-group
+              .label-section
+                = label_tag 'prel', 'Date de prélv.'
+              .control-section
+                = text_field_tag :debit_date, '', class: 'form-control singledate'
+          .modal-footer
+            .form-action
+              = submit_tag 'Générer le fichier CSV', class: 'btn btn-primary'
+
+= javascript_include_tag 'back/invoices/assets/javascripts/main'

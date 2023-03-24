@@ -1,0 +1,121 @@
+[=== APP LISTENER ===]
+Class mère AppListener
+  > AppEmit('trigger_test', { id: 1234 });
+    //Javascript fait une emission d'appel de l'évènement "trigger_test" et envoi comme paramètre "{ id: 1234}"
+
+  > AppListenTo('trigger_test', (param)=>{ /*instruction*/ });
+    //Javascript est en attente d'écoute de l'appel à l'évènement "trigger_test" et execute la fonction passé en paramètre
+    // params => représente un objet retourné par CustomEvent de javascript, les paramètres perso sont stocké dans : param.detail ( ex :  param.detail.id )
+
+
+  > AppEmit('trigger_test', { id: 1234 }).then((c_param)=>{ /*instruction*/ });
+    //Après exécution de l'évènement par AppListenTo un callback est renvoyé à l'émetteur via " .then( (c)=>{ } ) "
+    > le paramètre "param" de AppListenTo peut assigné une valeur au sortie "c_param" de l'AppEmit grace à la fonction: param.set_key(key, value);
+    ( ex: param.set_key("response", "789"); .... c_param.response; )
+  
+
+  class cible .as_idocus_emit
+  "Les paramètres doivent passés obligatoirement par un helper de cryptage : param_encode(hash)"
+
+  idocus
+    name   => Nom de l'event listener
+    events => Event authorisé (triggered event), séparés par espace si plusieurs (ex: 'click change keyup')
+    datas  => Donnée de l'évenement
+
+    AppListenTo : reçoit automatiquement un variable "e.detail.obj" qui est l'element déclancheur
+
+
+[=== Idocus Ajax ==]
+
+"class" cible: as_idocus_ajax
+"Les paramètres doivent passés obligatoirement par un helper de cryptage : param_encode(hash)"
+
+
+Attribut:
+  idocus
+    url           => Url de base
+    content_type  => Content type de la requete (default: application/x-www-form-urlencoded; charset=UTF-8)
+    method        => Methode de la requete (defaut: GET)
+    confirm       => Message de confirmation
+    events        => Event authorisé (triggered event), séparés par espace si plusieurs (ex: 'click change keyup')
+    before_send   => Appel (AppEmit) sur le nom de l'évènement avant lancement ajax ( paramètre: { element: $(this), idocus_params: idocus_params } )
+    after_send    => Appel (AppEmit) sur le nom de l'évènement après success ( paramètre: { element: $(this), response: e } )
+    skip_ajax     => Saute l'appel ajax de la requete (Defaut: false)
+    form => form associé à la requete   
+      id          => ID (html) d'une formulaire (form) à serialisé (ex: 'quelquechose')
+      dump_action => (default false), récupère l'url (action) et methode du formulaire (form) et ecrase l'url et methode en paramètre
+      linear      => (defaut: false) force la sérialisation d'une formulaire en url encoded data (et non en objet)
+      validate    => (default: true) Validation du formulaire sur les champs "required"
+    datas         => Datas à envoyé (avec form sérialisé si existe) au format JSON STRING [ datas ecrase form s'il existe une même clé ]
+
+    html => le data-type de la requete devient 'HTML' (si par défaut JSON)
+      target => Découpage de la cible (source) vers la dom (destination)
+                (ex: target: '.container .child1')
+                Le parseur recherche l'element jquery '.container .child1' du résultat (source) et remplace le contenu principale (destination) de '.container .child1'
+      target_dest => Emplacement (destination) du découpage "target" si défini au lieu de "target (destination)", [target est obligatoire si target_dest est défini]
+      mode   => Mode de remplissage ['append', 'prepend', 'erase', 'replace'] (defaut: 'replace')
+
+    redirect_to => Redirection vers l'url en paramètre après lancement (toujours en mode ajax) [ Ajax recursive ]
+      tous les sous paramètre du paramètre idocus sont acceptable dans cette option: #SAUF BEFORE_SEND ET CONFIRM POUR LE MOMENT
+      exemple
+        redirect_to: { url: 'xxx', method: 'get', datas: '{}', html: { target: 'yyyy' } }
+
+    modal => Gestion de modal
+      id                  => HTML id du modal à gérer (ex: 'quelquechose') [ si valeur = '#', le modal par défaut 'general_idocus_main_modal' est utilisé ]
+      close_after_success => valeur (true, false) default(true) 
+      close_after_error   => valeur (true, false) default(false)
+
+
+[=== Idocus Modal ===]
+ex: = 
+  "class" cible: as_idocus_modal
+  "Les paramètres doivent passés obligatoirement par un helper de cryptage : param_encode(hash)"
+  "IMPORTANT : NE PAS UTILISER SUR UN MULTI-MODAL (MODAL SUR MODAL)"
+
+  idocus
+    id          => ID du modal (optionnel, id du modal cible à utilisé) par défaut: 'general_idocus_main_modal'
+    title       => Titre du modal sur modal-title h5
+    style       => CSS style ex: (style: 'min-width: 1024px')
+    refresh     => Always replace the current modal-body (defaut: true)
+    url         => Récupère le contenue du modal selon l'url, peut être un tag html ou url ex: "/organization/show" ou "#quelquechose"
+    target      => spécifie le contenue cible depuis la requete "URL" sinon prendre tout le contenu
+    method      => Méthode utilisé pour la requete url (defaut: GET)
+    datas       => Datas a envoyé en ajax sur URL
+    static      => Le modal ne peut être fermer que par le bouton "close" (defaut: false)
+    with_cancel => Ajouter un bouton par défaut "Annuler" qui ferme le modal de type .btn.btn-light (defaut: true)
+    buttons     => Tableaux des boutons d'actions primaire (SANS le bouton "Annuler" de préférence)
+      [ { label: 'Valider', class: '', id: '', action: idocus_params } ]
+        label   => Libelé du bouton (defaut: 'Valider')
+        id      => Id du bouton (defaut vide)
+        class   => classe à appliquer les classes suivantes sont automatique ('.btn.btn-primary') (btn-primary peut être écrasé par un autre type) ex: ('titi tutu toto')
+        action  => Accepte as_idocus_ajax comme paramètre (parmètre déja crypté de préférence) ou AppEmit si de format = [event_listener]
+      ---------------------------- Alternative --------------------
+      Les boutons peuvents également être ajouter directement (html) dans le contenue html de l"url avec dom parent .idocus_modal_buttons (l'element sera cacher de la dom après parsing)
+
+    before_show => AppEmit avant ourverture du modal
+    after_show  => AppEmit après ouverture du modal
+    after_hide  => AppEmit après fermeture du modal 
+
+    AppListenTo : reçoit automatiquement un variable "e.detail.obj" qui est l'element déclancheur
+
+[=== Idocus pagination ===]
+
+ex: = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { name: 'xxxx', mark: 'yyy', total_pages: objet.total_pages }
+  url         => url de base de la pagination
+  target      => Dom html cible de la requete ajax
+  filter      => attr 'id' d'une formulaire de filtre
+  total_pages => Nombre total de page (généralement: quelquechose.total_pages)
+  name        => Nom cible de la pagination (equivalent à name dans une formulaire), non obligatoire
+  mark        => Par défaut égale à [nom], evènement cible dans un appel JS, non obligatoire
+  no_per_page => (default: false), pas d'affichage par page si true
+
+  Fonction JS
+    Des listener JS sont disponible pour la pagination
+      AppListenTo('window.change-per-page.[name]')
+      AppListenTo('window.change-per-page.[mark]') si mark != name
+        Les paramètres suivantes sont disponible: { name: 'name', mark: 'mark', page: 'page courante', per_page: 'per_page courante' }
+
+
+      AppListenTo('window.change-page.[name]')
+      AppListenTo('window.change-page.[mark]') si mark != name
+        Les paramètres suivantes sont disponible: { name: 'name', mark: 'mark', page: 'page courante', per_page: 'per_page courante', trigger: 'previous OU next' }

@@ -1,0 +1,13 @@
+.modal.fade.in#account_close_confirm
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Clôturer le dossier
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .close_reopen_confirm_content
+        .modal-body
+          Chargement ...
+        .modal-footer
+          %button.btn.btn-light.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => '
+          button' } Annuler
+          %button.btn.btn-primary.bold.close.close_or_reopen_confirm{ type: :button } Clôturer le dossier

@@ -1,0 +1,45 @@
+!!!
+%html
+  %head
+    %title [iDocus][#{@deliver_to}] Import d'écriture
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    %table{ border: '1', style: 'margin-bottom:20px;' }
+      %tr
+        %th Total :
+        %td= @deliveries.count
+      %tr
+        %th Réussi :
+        %td= @deliveries.select { |e| e.state == 'sent' }.size
+      %tr
+        %th Echoué :
+        %td= @deliveries.select { |e| e.state == 'error' }.size
+
+    %table{ border: '1' }
+      %thead
+        %tr
+          %th N°
+          %th Date
+          %th Cabinet
+          %th Client
+          %th Id. (#{@deliver_to})
+          %th Token
+          %th Lot
+          %th Total
+          %th Mode
+          %th Etat
+          %th Message de retour
+      %tbody
+        - @deliveries.each do |delivery|
+          %tr
+            %td= link_to delivery.id, admin_pre_assignment_delivery_url(delivery)
+            %td= I18n.l(delivery.updated_at)
+            %td= delivery.organization.name
+            %td= delivery.user.company
+            %td= delivery.deliver_to == 'ibiza' ? delivery.user.try(:ibiza).try(:ibiza_id) : delivery.user.try(:exact_online).try(:client_id)
+            %td= delivery.deliver_to == 'ibiza' ? delivery.ibiza_access_token : '-'
+            %td= delivery.pack_name
+            %td= delivery.preseizures.count
+            %td= delivery.is_auto ? 'Auto.' : 'Manuel'
+            %td= PreAssignmentDelivery.state_machine.states[delivery.state].human_name
+            %td= delivery.error_message

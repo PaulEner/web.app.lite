@@ -1,0 +1,2 @@
+- addresses = OpenStruct.new({ paper_return_address: @customer.paper_return_address, paper_set_shipping_address: @customer.paper_set_shipping_address, dematbox_shipping_address: @customer.dematbox_shipping_address })
+= render file: Rails.root.join('app/templates/front/addresses/views/addresses/_show.html.haml'), locals: { addresses: addresses, addr_for: 'user', id: @customer.id }

@@ -1,0 +1,89 @@
+- software_name = Interfaces::Software::Configuration::SOFTWARES_HUMAN_NAME[software.to_sym]
+
+
+= simple_form_for @organization, url: update_software_path(@organization.id, software), method: :post, html: { id: "#{software}_form", class: 'form form-horizontal margin0'  } do |f|
+  = f.simple_fields_for "#{software}_attributes".to_sym do |sf|
+    .box.no-margin.derivationRight
+      %h5.modal-title.bold= "Configuration #{ software_name }"
+      %hr
+      .form-group
+        .row
+          .col-md-11
+            = sf.label :is_used, t("activerecord.models.software_#{software}.attributes.is_used"), class: 'semibold'
+            %br
+            = sf.hint "Cette option permet de selectionner/utiliser #{software_name} dans le paramétrage dossier client"
+          .col-md-1
+            .form-check.form-switch.idocus-custom-form-check
+              = sf.input :is_used, as: :boolean, label: false, label_html: { class: 'form-check-label' }, input_html: { checked: @organization.send(software.to_sym).try(:used?), id: nil, class: 'form-check-input input_switch input_check_field'}
+              %label.semibold{class: 'form-check-label label_check_field', for: 'is_used_software'} Non
+      .form-group{ class: (['exact_online', 'my_unisoft', 'acd'].include? software)? '' : 'hide' }
+        .row
+          .col-md-11
+            = sf.label :auto_deliver, t("activerecord.models.software_#{software}.attributes.auto_deliver"), class: 'semibold'
+            %br
+            = sf.hint 'Cette option peut être écrasée dans le paramétrage dossier client'
+          .col-md-1
+            .form-check.form-switch.idocus-custom-form-check
+              = sf.input :auto_deliver, as: :boolean, label: false, label_html: { class: 'form-check-label'}, input_html: { checked: @organization.send(software.to_sym).try(:auto_deliver?), id: nil, class: 'form-check-input input_switch input_check_field check-software'}
+              %label.semibold{class: 'form-check-label label_check_field', for: 'auto_deliver_software'} Non
+      - if software == 'sage_gec'
+        .form-group{ class: (['sage_gec'].include? software)? '' : 'hide' }
+          .to_change_box
+            .select-container.no-padding.w-100
+              = sf.input :sage_private_api_uuid, input_html: { value: @organization.sage_gec&.sage_private_api_uuid }, label_html: { class: 'semibold' }, hint: "Pour connecter Sage GEC à iDocus, veuillez indiquer votre identifiant API."
+
+      - if software == 'my_unisoft'
+        .form-group{ class: (['my_unisoft'].include? software)? '' : 'hide' }
+          .to_change_box
+            .select-container.no-padding.w-100
+              = sf.input :firm_id, input_html: { value: @organization.my_unisoft&.firm_id }, label_html: { class: 'semibold' }, hint: "Pour connecter MyUnisoft à iDocus, vous devez renseigner ici votre identifiant de schema MyUnisoft. Enfin vous devez demander au support MyUnisoft d'autoriser developpeurs@idocus.com à accéder à votre cabiner sur MyUnisoft."
+
+      - if software == 'acd'
+        .form-group{ class: (['acd'].include? software)? '' : 'hide' }
+          .to_change_box
+            .select-container.no-padding.w-100
+              = sf.label :url, t("activerecord.models.software_#{software}.attributes.url"), class: 'semibold'
+              = sf.input :url, input_html: { value: @organization.acd&.url }, label: false, hint: "Pour connecter ACD à iDocus, veuillez indiquer votre adresse URL iSuiteExpert"
+            .select-container.no-padding.w-100
+              = sf.label :username, t("activerecord.models.software_#{software}.attributes.username"), class: 'semibold'
+              = sf.input :username, input_html: { value: @organization.acd&.username }, label: false, hint: "Pour connecter ACD à iDocus, veuillez indiquer votre identifiant de connexion iSuiteExpert"
+            .select-container.no-padding.w-100
+              = sf.label :password, t("activerecord.models.software_#{software}.attributes.password"), class: 'semibold'
+              = sf.input :password, label_html: { class: 'semibold' }, label: false, hint: "Pour connecter ACD à iDocus, veuillez indiquer votre mot de passe iSuiteExpert"
+
+
+
+    %hr
+    .row.box.no-margin.derivationLeft
+      .col-md-12        
+        %h3 Utilisateurs
+        %hr          
+        .form-group
+          .label-section
+            = label_tag 'software_account_list', "Liste des clients assignés à l'option:", class: 'select control-label'
+          .control-section
+            -list_options = @organization.customers.includes(software.to_sym).active.order(:code).filter_by_software(software).compact
+            -list_selected = list_options.select{ |c| c.uses?(software.to_sym) }
+            = select_tag 'software_account_list', options_for_select(list_options, list_selected), include_blank: false, multiple: true, class: 'searchable-option-list', id: nil
+
+    - if @user.leader?
+      %hr
+      .w-100.text-center
+        - if software == 'csv_descriptor'
+          %a.btn.btn-light#csv-descriptor-format{ href: '#', data: { organization_id: @organization.id } } Modifier le format
+        = f.submit t('actions.submit'), class: 'btn btn-primary w-25'
+
+
+- if software == 'csv_descriptor'
+  .modal.fade.in#csv_descriptor_modal 
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %h5.modal-title.bold Format CSV personnalisable
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        .modal-body
+          #edit_csv_descriptor_format
+        .modal-footer
+          .w-100.text-end
+            - idocus_params = param_encode({ url: "/organizations/#{@organization.id}/csv_descriptor/update", method: 'patch', form: { id: 'edit_format_csv_descriptor' }, before_send: 'csv_descriptor_update_format', modal: { id: 'csv_descriptor_modal' } })
+            %button.btn.btn-primary.valid.as_idocus_ajax{ idocus: idocus_params } Valider

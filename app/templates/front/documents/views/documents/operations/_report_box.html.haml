@@ -1,0 +1,35 @@
+- reports.each do |report|
+  - detail_path = (@user.pre_assignement_displayed?)? operations_details_path(id: report.id) : '#'
+  .box.animatedChild.animated-pointer{ class: animation }
+    .row
+      .col-md-5
+        %h6.pack.semibold= link_to report.name.gsub('all', '').strip, detail_path, class: 'no-style bold black-label'
+        %label.under_pack.regular= report.user.try(:organization).try(:name)
+      .col-md-4.no-padding
+        .created-date
+          %label.semibold Premier ajout le :
+          %label= report.preseizures.first.try(:created_at).try(:strftime, '%d/%m/%Y')
+        .updated-date
+          %label Modifié le :
+          %label= report.preseizures.last.try(:created_at).try(:strftime, '%d/%m/%Y')
+      .col-md-2.no-padding
+        .operation-count.text-end.p-1
+          - rp_size = report.preseizures.where('operation_id > 0').size
+          %span{ class: ( rp_size >= 100 )? 'bg-yellow text-white' : '' }= rp_size
+      .col-md-1
+        = link_to glyphicon('caret-right', { size: '18', color: '#CCC' }), detail_path
+    %hr    
+    .row
+      .col-md-8
+        - if report.created_at >= 1.days.ago
+          %span.badge.badge-success.semibold Nouveau
+        - if @user.pre_assignement_displayed? && report.has_no_delivered_preseizures?
+          %span.badge.badge-danger.semibold Ecritures non livrées
+        - if report.expenses.size > 0
+          %span.badge.bg-dark.semibold Notes de frais
+      .col-md-4.icon-actions.text-end
+        / %span.ms-2= glyphicon('flag', { size: '18', color:'rgba(26, 26, 26, 0.32);'})
+        - if @user.pre_assignement_displayed? && @user.has_collaborator_action?
+          %span.ms-2.preseizures_export{title: 'Export écriture comptable', data:{ id: report.id, type: 'special_operation', multi: 'true' }}= glyphicon('external-link', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+          - if report.user.uses_api_softwares?
+            %span.ms-2.deliver_preseizures{title: 'Livraison écriture comptable', data: {id: report.id, type: 'special_operation', multi: 'true'}}= glyphicon('loop-circular', { size: '14', color:'rgba(26, 26, 26, 0.32);'})

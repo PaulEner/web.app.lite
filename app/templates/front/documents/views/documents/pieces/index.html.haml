@@ -1,0 +1,77 @@
+= stylesheet_link_tag 'front/documents/assets/stylesheets/main'
+
+.container-fluid.main-content
+  .row
+    .col-md-6.derivationLeft
+      %h3.bold
+        %span.me-2 Lots pièces et écritures
+        %span.badge.badge-secondary.regular.datas_size= @packs.total_count
+        - if @filters.present?
+          %span.filter-info.badge.bg-info.regular.datas_size.blink Filtre actif
+    .col-md-3.derivationRight
+      .search-content
+        .row.no-margin
+          .col-md-1.no-padding.text-center.glass
+            = glyphicon('magnifying-glass', { size: '16', color: 'background: rgba(26, 26, 26, 0.7)' })
+          .col-md-11.no-padding.no-margin
+            %input#search_input{ name:'pack_name', placeholder: 'Recherche (contenu, nom du lot, dossier)', value: @options.try(:[], :text) }
+    .col-md-1.no-padding.text-center.derivationRight
+      %button.btn.btn-light.more-filter.w-100.semibold
+        %span.me-2 Filtrer
+        %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+    - if @user.still_active?
+      .col-md-2.derivationRight
+        %button.btn.btn-primary.add-document.w-100.semibold
+          %span.me-2= glyphicon('plus', { size: '16', color: '#FFFF'})
+          %span Ajouter des documents
+  .mb-4
+
+  %input#badge-filter{ type: :hidden }
+  .row.box.p-2.fadein
+    .col-md-4
+      .hide.result-sol
+    .col-md-8
+      .row.pt-1
+        .col-md-5
+          .form-group.no-margin.hide_on_load.hide
+            %input.user_and_journals{ type: 'hidden', value: user_and_journal_list }
+            - if accounts_options.size == (@options.try(:[], :owner_ids).try(:size) rescue 0)
+              = select_tag 'customer_document_filter', options_for_select(accounts_options), id: 'customer_document_filter', multiple: true
+            - else
+              = select_tag 'customer_document_filter', options_for_select(accounts_options, @options.try(:[], :owner_ids)), id: 'customer_document_filter', multiple: true
+        .col-md-3
+          .form-group.no-margin.hide_on_load.hide
+            = select_tag 'journal_document_filter', options_for_select(accounts_journaux, @options.try(:[], :journal)), id: 'journal_document_filter', multiple: true
+        .col-md-2.text-center.pt-1
+          %button.btn.btn-dark.w-100.filter-customer-journal Valider
+        .col-md-2.text-center.pt-1
+          %button.btn.btn-default.semibold.btn-reinit{:type => 'button', id: 'launch-reinit'} Réinitialiser
+
+  .result-sol
+
+  .all-results
+    .row
+      = javascript_declare_var 'has_next_page', (@packs.size > 0 && @packs.total_count > @packs.size).to_s
+      = javascript_declare_var 'is_from_operation_page', @is_operations? true : false
+      - if @packs.size > 0
+        - count       = @packs.size
+        - packs_left  = []
+        - packs_right = []
+        - @packs.each_with_index do |pack, index|
+          - ((index % 2) == 0)? packs_left << pack : packs_right << pack
+        .w-50.animatedGroups
+          = render partial: 'pack_box', locals: { packs_with_failed_delivery_ids: @packs_with_failed_delivery_ids,
+                                                  packs: packs_left,
+                                                  animation: 'toLeft' }
+        .w-50.animatedGroups
+          = render partial: 'pack_box', locals: { packs_with_failed_delivery_ids: @packs_with_failed_delivery_ids,
+                                                  packs: packs_right,
+                                                  animation: 'toRight' }
+      - else
+        .no-data-found.box= t('global.no-data-found')
+
+= render partial: 'document_dialog'
+= render partial: 'upload_dialog' if @render_upload
+
+= javascript_include_tag 'front/documents/assets/javascripts/pieces'
+

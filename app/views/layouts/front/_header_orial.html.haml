@@ -1,0 +1,90 @@
+= javascript_declare_var 'controller_path', controller_path
+
+%nav.navbar.navbar-expand-lg.fixed-top.main_menu
+  .row.w-100.no-margin
+    .col-md-1.text-center.content-logo
+      = link_to image_tag('logo/tiny_logo_orial.png', alt: 'logo Orial'), '/', class: 'navbar-brand no-margin', data:{ href: '/' }
+    .col-md-9.menu
+      %ul.navbar-nav
+        %li.nav-item{ class: (controller_path == 'dashboard/main')? 'active' : '' }
+          =link_to t('layouts.home'), '/', class: 'nav-link goto_button bold', data:{ href: '/' }
+        - unless organizations_suspended? && @user.active? 
+          - is_document_active = controller_path == 'documents/pieces' || controller_path == 'pieces_errors/main'
+          %li.nav-item.dropdown{ class: (is_document_active)? 'active' : '' }
+            =link_to t('layouts.my_documents'), '', class: 'nav-link dropdown-toggle bold', id: 'navbardropdownmenudocuments', 'aria-expanded' => 'false', 'aria-haspopup' => 'true', 'data-bs-toggle' => "dropdown", 'role' => "button"
+            .dropdown-menu.semibold{"aria-labelledby" => "navbardropdownmenudocuments"}
+              =link_to t('layouts.pieces_and_pre_assignment'), documents_path, class: (controller_path == 'documents/pieces')? 'dropdown-item active' : 'dropdown-item'
+              =link_to t('layouts.pieces_errors'), pieces_errors_path, class: (controller_path == 'pieces_errors/main')? 'dropdown-item active' : 'dropdown-item'
+          %li.nav-item{ class: (controller_path == 'documents/operations')? 'active' : '' }
+            =link_to t('layouts.bank_operations'), operations_path, class: 'nav-link bold'
+
+        - if @user.collaborator?
+          - if @user.has_one_organization?
+            - if @user.inactive? || @user.organizations_not_suspended? || @user.can_unsuspend?
+              - path = (organizations_suspended? && @user.active?) ? edit_payment_organization_path(@user.organization) : organization_path(@user.organization)
+              %li.nav-item{ class: (controller_path == 'organizations/main')? 'active' : '' }
+                =link_to t('layouts.my_company'), path, class: 'nav-link bold'
+            - if @user.active? && @user.organization.is_active
+              %li.nav-item{ class: (controller_path == 'reporting/main')? 'active' : '' }
+                =link_to t('layouts.reporting'), "/reporting/#{@user.organization.try(:id)}", class: 'nav-link bold'
+          - elsif @user.organizations_not_suspended? || @user.can_unsuspend?
+            %li.nav-item.dropdown{ class: (controller_path == 'organizations/main')? 'active' : '' }
+              =link_to t('layouts.my_company'), '', class: 'nav-link dropdown-toggle bold', id: 'navbardropdownmenucompany', 'aria-expanded' => 'false', 'aria-haspopup' => 'true', 'data-bs-toggle' => "dropdown", 'role' => "button"
+              .dropdown-menu.semibold{"aria-labelledby" => "navbardropdownmenucompany"}
+                - @user.organizations.each do |organization|
+                  - if organization.is_suspended
+                    = link_to edit_payment_organization_path(organization), class: (organization.id == @organization.try(:id))? 'dropdown-item active' : 'dropdown-item' do
+                      = organization.name
+                      %i (Suspendu)
+                  - else
+                    = link_to organization.name, organization_path(organization), class: (organization.id == @organization.try(:id))? 'dropdown-item active' : 'dropdown-item'
+            %li.nav-item.dropdown{ class: (controller_path == 'reporting/main')? 'active' : '' }
+              =link_to t('layouts.reporting'), '', class: 'nav-link dropdown-toggle bold', id: 'navbardropdownmenureporting', 'aria-expanded' => 'false', 'aria-haspopup' => 'true', 'data-bs-toggle' => "dropdown", 'role' => "button"
+              .dropdown-menu.semibold{"aria-labelledby" => "navbardropdownmenureporting"}
+                - @user.organizations.each do |organization|
+                  - if organization.is_suspended
+                    = link_to reporting_statistics_index_path(organization_id: organization.id), class: (organization.id == @organization.try(:id))? 'dropdown-item active' : 'dropdown-item' do
+                      = organization.name
+                      %i (Suspendu)
+                  - else
+                    = link_to organization.name, reporting_statistics_index_path(organization_id: organization.id), class: (organization.id == @organization.try(:id))? 'dropdown-item active' : 'dropdown-item'
+        - if accounts.detect { |e| e.my_package.try(:bank_active) } || @user.organization.specific_mission
+          - is_retriever_active = controller_path == 'retrievers/main' || controller_path == 'retrieved_datas/main' || controller_path == 'retriever_parameters/main'
+          %li.nav-item.dropdown{ class: (is_retriever_active)? 'active' : '' }
+            =link_to t('layouts.my_retrievers'), '', class: 'nav-link dropdown-toggle bold', id: 'navbardropdownmenuretriever', 'aria-expanded' => 'false', 'aria-haspopup' => 'true', 'data-bs-toggle' => "dropdown", 'role' => "button"
+            .dropdown-menu.semibold{"aria-labelledby" => "navbardropdownmenuretriever"}
+              =link_to t('layouts.retriever.automates'), retrievers_path, class: (controller_path == 'retrievers/main')? 'dropdown-item active' : 'dropdown-item'
+              =link_to t('layouts.retriever.historic'), retrievers_historics_path, class: (controller_path == 'retrieved_datas/main')? 'dropdown-item active' : 'dropdown-item'
+              =link_to t('layouts.retriever.parameters'), retriever_parameters_path, class: (controller_path == 'retriever_parameters/main')? 'dropdown-item active' : 'dropdown-item'
+
+    .col-md-2.user-menu
+      %ul.navbar-nav.float-end
+        - if Rails.env != 'production'
+          %li.nav-item.me-4
+            %span.badge.rounded-pill.bg-light.text-dark.regular.mt-2=  Rails.env
+        - if current_user.try(:is_admin)
+          %li.nav-item
+            =link_to glyphicon('fork', color: "rgba(26, 26, 26, 0.7);", size: '22'), '/admin', class: 'nav-link bold'
+          - if session[:user_code].presence
+            %li.nav-item
+              %span.badge.rounded-pill.badge-warning.semibold.mt-2= current_user_info        
+          %li.nav-item
+            =link_to glyphicon('people', color: "rgba(26, 26, 26, 0.7);", size: '22'), '#', class: 'nav-link bold me-1 as_user position-relative'
+
+        %li.nav-item.dropdown
+          %span#notification_count.badge.badge-alert.fs-origin.float-end.notif-badge.semibold
+          = link_to glyphicon('bell', color: "rgba(26, 26, 26, 0.7);", size: '22'), '#notification', class: 'nav-link dropdown-toggle', id: 'notification-content', 'aria-expanded' => 'false', 'aria-haspopup' => 'true', 'data-bs-toggle' => 'dropdown'
+          .dropdown-menu.dropdown-menu-end.notification-content-list.no-padding.box{"aria-labelledby" => "notification-content"}
+            = render file: Rails.root.join('app/templates/front/notifications/views/notifications/_notifier.html.haml')
+
+        %li.nav-item.dropdown
+          = link_to glyphicon('cog', color: "rgba(26, 26, 26, 0.7);", size: '22'), '#configure-profile', class: 'nav-link dropdown-toggle bold', id: 'navbardropdownmenusetting', 'aria-expanded' => 'false', 'aria-haspopup' => 'true', 'data-bs-toggle' => 'dropdown'
+          .dropdown-menu.dropdown-menu-end.semibold.box.parameters_notifications{"aria-labelledby" => "navbardropdownmenusetting"}
+            = link_to glyphicon('person', {size: '13', color: '#212529'}) + ' Mon compte', '/profiles', class: 'dropdown-item', target: '_blank'
+
+            - if @user.pre_assignement_displayed?
+              = link_to glyphicon('comment-square', {size: '13', color: '#212529'}) + " Centre d'aide", 'https://idocus.zendesk.com/hc/fr', class: 'dropdown-item', target: '_blank'
+            -else
+              = link_to glyphicon('document', {size: '13', color: '#212529'}) + " Documentation", download_document_path(name: 'doc_final_users_orial.pdf'), class: 'dropdown-item', target: '_blank'
+
+            = link_to glyphicon('power-standby', {size: '13', color: '#FF4848'}) + ' Se déconnecter', destroy_user_session_path, method: 'delete', class: 'dropdown-item red-label account-log-out'

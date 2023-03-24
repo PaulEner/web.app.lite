@@ -1,0 +1,32 @@
+= stylesheet_link_tag 'front/addresses/assets/stylesheets/main'
+
+- addresses = addresses rescue nil
+
+#addresses_management.row
+  %input#addr_for{ type: 'hidden', value: (addr_for rescue 'user') }
+  %input#addr_id{ type: 'hidden', value: (id rescue 0) }
+
+  .mb-5
+
+  .row.row_container
+    .col-md-4
+      .box.p-4.box_child.derivationLeft
+        = render file: Rails.root.join('app/templates/front/addresses/views/addresses/main/_address.html.haml'), locals: { address: addresses.try(:paper_return_address), type: 'paper_return' }
+    .col-md-4
+      .box.p-4.box_child.scalein
+        = render file: Rails.root.join('app/templates/front/addresses/views/addresses/main/_address.html.haml'), locals: { address: addresses.try(:paper_set_shipping_address), type: 'paper_set_shipping' }
+    - if addresses.try(:for) == 'organization'
+      .col-md-4
+        .box.p-4.box_child.derivationRight
+          = render file: Rails.root.join('app/templates/front/addresses/views/addresses/main/_address.html.haml'), locals: { address: addresses.try(:billing_address), type: 'billing' }
+    - else
+      .col-md-4
+        .box.p-4.box_child.derivationRight
+          = render file: Rails.root.join('app/templates/front/addresses/views/addresses/main/_address.html.haml'), locals: { address: addresses.try(:dematbox_shipping_address), type: 'dematbox_shipping' }
+  .mb-4
+  %hr
+  .row
+    .col-md-12.text-center
+      = link_to 'Mettre à jour', '#', class: 'btn btn-primary semibold w-25 update_addresses'
+
+= javascript_include_tag 'front/addresses/assets/javascripts/main'

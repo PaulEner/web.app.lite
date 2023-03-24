@@ -1,0 +1,34 @@
+#dematboxes
+  .row.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-12
+      %h3
+        Dematboxes
+        %span.badge.bg-dark= @dematboxes.count
+
+  .row.box.derivationRight
+    .col-md-112#table-dematboxes
+      %table.table.table-striped.table-condensed
+        %thead
+          %tr
+            %th Client
+            %th Nombre de service
+            %th.text-end Action
+        %tbody
+          - @dematboxes.each do |dematbox|
+            %tr
+              %td= link_to dematbox.user.code, admin_user_path(dematbox.user)
+              %td= link_to dematbox.services.count, admin_dematbox_path(dematbox)              
+              %td.text-end.pointer.align-middle.readonly-container
+                .action.sub_edit_delete
+                  %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+                .sub_menu.text-start.hide
+                  %ul.no-margin.no-padding.regular
+                    %li
+                      = link_to subscribe_admin_dematbox_path(dematbox), data: { method: 'post', confirm: t('actions.confirm') }, class: 'no-style black-label' do
+                        %span.me-2= glyphicon('loop-circular', size: 12)
+                        %span Réassigner les services
+                    %li                               
+                      = link_to admin_dematbox_path(dematbox), data: { method: 'delete', confirm: t('actions.confirm') }, class: 'no-style black-label' do
+                        %span.me-2= glyphicon('trash', size: 12)
+                        %span Supprimer
+      = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: admin_dematboxes_path, target: '#table-dematboxes', total_pages: @dematboxes.total_pages, filter: 'form-filter' }

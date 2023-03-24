@@ -1,0 +1,48 @@
+.modal.fade.in#add_edit_group
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Création d'un nouveau groupe
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        Chargement ...
+      .modal-footer
+        %button.btn.btn-light{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'} Annuler
+        - idocus_params = param_encode({ url: '#url', form: { id: 'groups_edition_form', dump_action: true, validate: false }, modal: { id: 'add_edit_group' }, redirect_to: { url: organization_groups_path(@organization), html: { target: '.box-group-content' } } })
+        %button.btn.btn-primary.bold.as_idocus_ajax{ type: :button, idocus: idocus_params } Valider
+
+
+.modal.fade.in#show_group_details
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold.text-center Détail du groupe
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.back-grey
+        Chargement ...
+      .modal-footer
+        %button.btn.btn-default{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'} Fermer
+
+.modal.fade.in#search_group_filter
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Filtrer les groupes
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        = form_tag organization_groups_path(@organization), method: :get, class: 'form-filter group_f search_contains_filter', id: 'form-groups-filter' do
+          .form-group
+            .label-section
+              = label_tag 'group_contains[name]', t('activerecord.models.group.attributes.name')
+            .control-section
+              .select-container.no-padding.w-100
+                = text_field_tag 'group_contains[name]', (params[:group_contains][:name] rescue '')
+          .form-group
+            .label-section
+              = label_tag 'group_contains[description]', t('activerecord.models.group.attributes.description')
+            .control-section
+              .select-container.no-padding.w-100
+                = text_field_tag 'group_contains[description]', (params[:group_contains][:description] rescue '')
+      .modal-footer
+        %button.btn.btn-light.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' } Annuler
+        %button.btn.btn-primary.bold.search_filter.group_f{ type: :button } Filter

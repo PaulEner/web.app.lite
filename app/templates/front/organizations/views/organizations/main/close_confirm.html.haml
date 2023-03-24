@@ -1,0 +1,10 @@
+#organizations.close_confirm
+  .row.derivationRight
+    .col-md-12
+      .box.warning.clearfix
+        .my-md-2
+          %h4 Voulez-vous réellement clôturer l'organisation "#{@organization.name}" ?
+        = form_tag deactivate_organization_path(@organization), method: 'patch'  do
+          - label = "Clôturer l'organization"
+          = submit_tag label, class: 'btn btn-danger', data: { confirm: t('actions.confirm') }
+          = link_to t('actions.cancel'), organization_path(@organization), class: 'btn btn-light'

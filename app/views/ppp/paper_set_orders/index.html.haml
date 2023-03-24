@@ -1,0 +1,80 @@
+#paper_set_orders.container-fluid
+  .row.derivationLeft
+    .col-md-10.text-start
+      %h3.bold
+        Liste des commandes de Kit Courriers
+        %span.badge.badge-secondary.regular= @orders_count
+    .col-md-2.text-center
+      %button.btn.btn-light.semibold.ppp-filter.w-100
+        %span.me-2 Filtrer
+        %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+
+  .mb-4
+
+  .box.paper-set-orders-lst.derivationRight
+    %table#paper-set-orders-tbl.table.table-condensed.table-striped.table-detachable-head.table-bordered-inner
+      %thead
+        %tr.text-grey
+          %th= sortable :created_at, t('activerecord.models.common.attributes.created_at').downcase
+          %th= sortable :id, 'n° cmde'
+          %th= sortable :user_code, 'code'
+          %th format
+          %th période
+          %th= sortable :state, t('activerecord.models.order.attributes.state').downcase
+          %th= t('activerecord.models.paper_process.attributes.tracking_number').downcase
+      %tbody
+        - @orders.each do |order|
+          %tr
+            %td= l order.created_at, format: :standard
+            %td= order.id
+            %td= link_to "#{order.user_code}", organization_url(order.user.organization, tab: 'file_sending_kit')
+            %td= order.paper_set_casing_size.to_s + 'g' + ' - ' + order.paper_set_folder_count.to_s + ' chemises'
+            %td
+              = paper_set_date_to_name(order.period_duration, order.paper_set_start_date)
+              à
+              = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
+              \-
+              = case order.period_duration
+                - when 1 then 'Mensuel'
+                - when 3 then 'Trimestriel'
+                - when 12 then 'Annuel'
+            %td= Order.state_machine.states[order.state].human_name
+            %td= link_to_paper_tracking(order.kit) if order.kit.try(:tracking_number)
+
+    = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: paper_set_orders_path, filter: 'filter-documents-selection-form', target: '.paper-set-orders-lst', name: 'ppp-list-documents', mark: 'paper_set_orders', total_pages: @orders_count  }
+
+.modal.fade.in#ppp-filter
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Filtre
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        %form#filter-documents-selection-form
+          .form-group
+            %label.semibold Date de création
+            .select-container.no-padding.w-100
+              %input.date.daterange{name: 'order_contains[created_at]', type: :text, value: params[:order_contains].try(:[], :created_at) }
+
+          .form-group
+            %label.semibold Code du dossier
+            .select-container.no-padding.w-100
+              %input#select-document{name: 'order_contains[user_code]', type: :text, value: params[:order_contains].try(:[], :user_code) }
+
+          .form-group
+            %label.semibold N° du suivi
+            .select-container.no-padding.w-100.date
+              %input{name: 'order_contains[tracking_number]', type: :text, value: params[:order_contains].try(:[], :tracking_number) }
+
+          .form-group
+            %label.semibold Statut :
+            %select.form-select#state{name: 'order_contains[state]', value: params[:order_contains].try(:[], :state) }
+              %option{value: ''}
+              %option{value: 'confirmed'} Confirmé
+              %option{value: 'processed' } Traitée
+
+      .modal-footer
+        - idocus_params = param_encode({ url: paper_set_orders_path, method: 'get', html: { target: '#paper_set_orders' }, modal: { id: 'ppp-filter' }, before_send: 'paper_set_order_reset_filter' })
+        %button.btn.btn-light.semibold.as_idocus_ajax{ type: :button, idocus: idocus_params } Annuler
+        - idocus_params = param_encode({ url: paper_set_orders_path, method: 'get', form: { id: 'filter-documents-selection-form' }, html: { target: '#paper_set_orders' }, modal: { id: 'ppp-filter' } })
+        %button.btn.btn-primary.semibold.as_idocus_ajax{ type: :button, idocus: idocus_params } Valider

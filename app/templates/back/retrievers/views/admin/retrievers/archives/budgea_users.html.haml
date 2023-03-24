@@ -1,0 +1,77 @@
+#archive_budgea_users
+  = render partial: 'tab_menu'
+
+  .row.derivationRight
+    .col-md-12#budgea_user_table
+      .box
+        .row
+          .col-md-12
+            %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+              %thead
+                %tr.bg-brown.text-white
+                  %th= sortable :signin, 'Date de connexion'
+                  %th= sortable :identifier,  'Identifiant'
+                  %th Token d'accès
+                  %th= sortable :exist, 'Existe ?'
+                  %th= sortable :is_updated, 'Mis à jour ?'
+                  %th= sortable :is_deleted, 'Supprimé ?'
+                  %th= sortable :deleted_date, 'Date de suppression'
+              %tbody.retractable.slidedown.archive_budgea_users_content
+                - @budgea_users.each do |budgea_user|
+                  %tr{id: "row-#{budgea_user.id}", class: 'row-budgea-users'}
+                    %td= l(budgea_user.signin, format: '%d %b %Y', default: '-')
+                    %td= link_to budgea_user.identifier, archives_budgea_retrievers_admin_retrievers_path(tab: 'budgea_retrievers', archive_budgea_retrievers_contains: { owner_id: budgea_user.id }), target: "_blank"
+                    %td.show_tooltip{title: budgea_user.access_token, data: { toggle: 'tooltip', placement: 'right' }}= truncate(sanitize(budgea_user.access_token[0..50]))
+                    %td= budgea_user.exist ? t('yes_value') : t('no_value')
+                    %td= budgea_user.is_updated ? t('yes_value') : t('no_value')
+                    %td= budgea_user.is_deleted ? t('yes_value') : t('no_value')
+                    %td= l(budgea_user.deleted_date, format: '%d %b %Y %H:%M', default: '-')
+            = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: archives_budgea_users_admin_retrievers_path, target: '#budgea_user_table', total_pages: @budgea_users.total_pages, filter: 'form-filter' }
+
+.modal#filter-retriever
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h5.modal-title.bold Filtrer
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      = form_tag archives_budgea_users_admin_retrievers_path(tab: 'budgea_users'), method: :get, class: 'form-filter' do
+        .modal-body
+          = hidden_field_tag :direction, sort_direction
+          = hidden_field_tag :sort, sort_column
+          = hidden_field_tag :per_page, per_page
+          = hidden_field_tag :tab, 'budgea_users'
+          .dainle
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_users_contains[signin]', 'Date de connexion'
+              .control-section
+                = text_field_tag 'archive_budgea_users_contains[signin]', (params[:archive_budgea_users_contains][:signin] rescue ''), class: 'form-control daterange'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_users_contains[deleted_date]', 'Date de suppression'
+              .control-section
+                = text_field_tag 'archive_budgea_users_contains[deleted_date]', (params[:archive_budgea_users_contains][:deleted_date] rescue ''), class: 'form-control daterange'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_users_contains[identifier]', 'Identifiant'
+              .control-section
+                = text_field_tag 'archive_budgea_users_contains[identifier]', (params[:archive_budgea_users_contains][:identifier] rescue ''), class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_users_contains[exist]', 'Existe ?'
+              .control-section
+                = select_tag 'archive_budgea_users_contains[exist]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_users_contains][:exist] rescue '')), include_blank: true, class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_users_contains[is_updated]', 'Mis à jour ?'
+              .control-section
+                = select_tag 'archive_budgea_users_contains[is_updated]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_users_contains][:is_updated] rescue '')), include_blank: true, class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_users_contains[is_deleted]', 'Supprimé ?'
+              .control-section
+                = select_tag 'archive_budgea_users_contains[is_deleted]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_users_contains][:is_deleted] rescue '')), include_blank: true, class: 'input-small'
+        .modal-footer
+          .form-actions
+            = link_to "Réinitialiser", archives_budgea_users_admin_retrievers_path(tab: 'budgea_users'), class: 'btn btn-light', title: t('filters.reset')
+            = submit_tag t('filters.action'), class: 'btn btn-primary'

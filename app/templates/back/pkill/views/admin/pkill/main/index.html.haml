@@ -1,0 +1,19 @@
+.container-fluid
+  .row.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-6      
+      %h3 Killer page
+
+  .mb-3
+  .box.derivationRight
+    %label.semibold Ajouter le text :
+    .mb-2
+    %textarea.w-100#content{ style: "min-height: 255px;"}
+    .mb-3
+    .w-100.text-center
+      %button.btn.btn-dark.convert.w-25 Générer
+
+  .mb-4
+  .box.result.derivationLeft
+
+
+= javascript_include_tag 'back/pkill/assets/javascripts/main'

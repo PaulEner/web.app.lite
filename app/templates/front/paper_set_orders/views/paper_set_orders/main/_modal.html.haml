@@ -1,0 +1,86 @@
+.modal.fade.in#select_for_orders
+  .modal-dialog{:role => 'document'}
+    .modal-content
+      .modal-header
+        - if manual_paper_set_order
+          %h5.modal-title.bold Sélection des options du kit d'envoi de numérisation
+        - else
+          %h5.modal-title.bold Sélection des options du kit d'envoi de documents
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.back-grey
+        Chargement ...
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', type: :button } Annuler
+        = link_to t('actions.edit'), '#', link: edit_organization_file_sending_kit_path(@organization), class: 'btn btn-dark bold edit-file-sending-kits' if current_user.is_developer
+        - if manual_paper_set_order 
+          %input.btn.btn-primary.bold.generate-manual-paper-set-order{:type => 'submit', name: 'commit', value: 'Générer', id: 'generate-manual-paper-set-order', 'data-disable-with' => 'Générer'}
+        - else
+          %input.btn.btn-primary.valid-paper-set-order{:type => 'submit', name: 'commit', value: 'Commander', id: 'valid-paper-set-order', 'data-disable-with' => 'Commander'}
+
+.modal.fade.in#create_order_multiple
+  .modal-dialog{:role => 'document', style: 'min-width: 1024px'}
+    .modal-content
+      .modal-header
+        Commande multiple de Kit Courriers
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        Chargement ...
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', type: :button } Annuler
+        %input.btn.btn-primary.create-paper-set-order-multiple{:type => 'submit', name: 'commit', value: 'Commander', id: 'create-paper-set-order-multiple', 'data-disable-with' => 'Commander', class: "btn btn-primary#{' valid-manual-paper-set-order' if manual_paper_set_order}"}
+
+.modal.fade.in#add-new-paper-set-order
+  .modal-dialog{:role => 'document'}
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Commande de Kit envoi courrier
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.back-grey
+        Chargement ...
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', type: :button } Annuler
+        %input.btn.btn-primary.add-paper-set-order{:type => 'submit', name: 'commit', value: 'Commander', id: 'add-paper-set-order', 'data-disable-with' => 'Commander'}
+
+.modal.fade.in#file_sending_kits_edit
+  .modal-dialog{:role => 'document'}
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Edition du kit d'envoi de documents
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.back-grey#file_sending_kits_edit_body
+        Chargement ...
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', type: :button } Annuler
+        %button.btn.btn-primary.bold.validate_file_sending_kits_edit{ type: :button} Valider les modifications
+
+.modal.fade.in#paper_set_order_filter
+  .modal-dialog{:role => 'document', style: 'min-width: 1024px'}
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Filtrer Kit courrier
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        = form_tag organization_paper_set_orders_path(@organization), method: :get, class: 'form-filter paper_set_order_form', id: 'paper_set_order_form_filter' do
+          = hidden_field_tag :direction, sort_direction
+          = hidden_field_tag :sort, sort_column
+          = hidden_field_tag :per_page, per_page
+          .form-group
+            = label_tag 'order_contains[created_at]', t('activerecord.models.common.attributes.created_at'), class: 'semibold'
+            .select-container.no-padding.w-100.date
+              = text_field_tag 'order_contains[created_at]', (params[:order_contains][:created_at] rescue ''), class: 'daterange'
+          .form-group
+            = label_tag 'order_contains[user_code]', t('activerecord.models.user.attributes.code'), class: 'semibold'
+            .select-container.no-padding.w-100
+              = text_field_tag 'order_contains[user_code]', (params[:order_contains][:user_code] rescue '')
+          .form-group
+            = label_tag 'order_contains[company]', t('activerecord.models.user.attributes.company'), class: 'semibold'
+            .select-container.no-padding.w-100
+              = text_field_tag 'order_contains[company]', (params[:order_contains][:company] rescue '')
+          .form-group
+            = label_tag 'order_contains[state]', t('activerecord.models.order.attributes.state'), class: 'semibold'
+            .select-container.no-padding.w-100
+              = select_tag 'order_contains[state]', options_for_select([["En attente", 'pending'],['Confirmé', 'confirmed'], ['Traitée', 'processed'], ['Annulée', 'cancelled']], (params[:order_contains][:state] rescue '')), include_blank: true, class: 'form-select'
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', type: :button } Annuler
+        - idocus_params = param_encode({ url: '#url', form:{ id: 'paper_set_order_form_filter', dump_action: true }, modal: { id: 'paper_set_order_filter' }, html: { target: '.kits.paper-set-order-view'} })
+        %button.btn.btn-primary.add.as_idocus_ajax{ type: :button, idocus: idocus_params }= t('filters.action')

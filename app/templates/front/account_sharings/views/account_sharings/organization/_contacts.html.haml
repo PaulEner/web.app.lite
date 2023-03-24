@@ -1,0 +1,37 @@
+#guest_collaborators.derivationLeft
+  .text-end
+    = link_to 'Ajouter un contact', '#', class: 'btn btn-primary semibold edit_contact', data: { id: 0 }    
+
+  .mb-4
+  %table.table.table-striped#tbl_contacts
+    %thead
+      %tr
+        %th= sortable :created_at, 'Date de création'
+        %th= sortable :email, 'Email'
+        %th= sortable :company, 'Société'
+        %th Nom
+        %th Nb. de dossiers
+        %th.text-end Actions
+    %tbody
+      - if @guest_collaborators.any?
+        - @guest_collaborators.each do |guest_collaborator|
+          %tr
+            %td.date= guest_collaborator.created_at.strftime('%d/%m/%Y %H:%M')
+            %td= guest_collaborator.email
+            %td= guest_collaborator.company
+            %td= guest_collaborator.name
+            %td= guest_collaborator.accounts.size
+            %td.text-end.pointer
+              .action.sub_edit_delete
+                %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+              .sub_menu.text-start.hide
+                %ul.no-margin.no-padding.regular
+                  %li.edit_contact{ data: { id: guest_collaborator.id } }
+                    = link_to glyphicon('pencil', { size: '15', color: "rgba(26, 26, 26, 0.7)" }) + ' Éditer', '#'
+                  %li
+                    = link_to glyphicon('trash', { size: '15', color: "#FF4848" }) + ' Supprimer', account_sharings_organization_destroy_contact_path(@organization, guest_collaborator), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir supprimer le contact \"#{guest_collaborator.info}\" ?" }, class: 'red-label semibold'
+      - else
+        %tr
+          %td{colspan: 6, class: 'text-center'} Aucun resultat
+
+  = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { name: 'sharing_contacts', total_pages: @guest_collaborators.total_pages }

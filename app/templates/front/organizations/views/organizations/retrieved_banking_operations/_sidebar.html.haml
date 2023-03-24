@@ -1,0 +1,33 @@
+= form_tag organization_customer_retrieved_banking_operations_path(@organization, @customer), method: :get, class: 'form form-horizontal filter margin0bottom' do
+  = label_tag 'banking_operation_contains[date][>=]', 'Date de début'
+  .input-prepend.date.datepicker
+    %span.add-on
+      %i.icon-th
+    = text_field_tag 'banking_operation_contains[date][>=]', (params[:banking_operation_contains][:date]['>='] rescue '')
+
+  = label_tag 'banking_operation_contains[date][<=]', 'Date de fin'
+  .input-prepend.date.datepicker
+    %span.add-on
+      %i.icon-th
+    = text_field_tag 'banking_operation_contains[date][<=]', (params[:banking_operation_contains][:date]['<='] rescue '')
+
+  = label_tag 'banking_operation_contains[bank_account][bank_name]', 'Service'
+  = text_field_tag 'banking_operation_contains[bank_account][bank_name]', (params[:banking_operation_contains][:bank_account][:bank_name] rescue ''), class: 'span12'
+
+  = label_tag 'banking_operation_contains[bank_account][number]', 'Compte'
+  = text_field_tag 'banking_operation_contains[bank_account][number]', (params[:banking_operation_contains][:bank_account][:number] rescue ''), class: 'span12'
+
+  = label_tag 'banking_operation_contains[category]', 'Catégorie'
+  = text_field_tag 'banking_operation_contains[category]', (params[:banking_operation_contains][:category] rescue ''), class: 'span12'
+
+  = label_tag 'banking_operation_contains[label]', 'Libellé'
+  = text_field_tag 'banking_operation_contains[label]', (params[:banking_operation_contains][:label] rescue ''), class: 'span12'
+
+  = label_tag 'banking_operation_contains[pre_assigned]', 'Pré-affecté'
+  = select_tag 'banking_operation_contains[pre_assigned]', options_for_select({"" => "", "Oui" => "pre_assigned", "Non" => "not_pre_assigned", "En attente" => "is_waiting"}, (params[:banking_operation_contains][:pre_assigned] rescue nil)), class: 'span12'
+
+  .margin2top
+  = submit_tag t('filters.action'), class: 'btn btn-primary'
+  = link_to t('filters.reset'), organization_customer_retrieved_banking_operations_path(@organization, @customer), class: 'btn'
+  - if @user.is_admin && params[:banking_operation_contains].present?
+    = link_to 'Débloquer les opérations', unlock_operations_organization_customer_retrieved_banking_operations_path(@organization, @customer, banking_operation_contains: params[:banking_operation_contains]), method: :post, class: 'btn btn-danger', data: { confirm: "Êtes-vous sûr de vouloir débloquer ces opérations? "}

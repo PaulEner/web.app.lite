@@ -1,0 +1,77 @@
+#dematboxes
+  .row.derivationLeft.box.small-shadow.clearfix
+    .col-md-10     
+      %h3
+        Fichiers scannés
+        %span.badge.bg-dark= @dematbox_files_count
+    .col-md-2.text-end
+      %button.btn.btn-warning.filter-dematbox
+        %span.me-2= glyphicon('transfer', { size: '10', color: '#000', style: 'transform: rotate(90deg)'})
+        %span Filtrer
+
+  .row.derivationRight.box  
+    .col-md-12#demat_file_table
+      %table.table.table-condensed.table-striped
+        %thead
+          %tr
+            %th= t('activerecord.models.common.attributes.created_at')
+            %th= t('activerecord.models.temp_document.attributes.dematbox_doc_id')
+            %th= t('activerecord.models.temp_document.attributes.delivered_by')
+            %th= t('activerecord.models.temp_document.attributes.content_file_name')
+            %th= t('activerecord.models.temp_document.attributes.content_file_size')
+            %th= t('activerecord.models.temp_document.attributes.dematbox_notified_at')
+            %th.text-end= t('activerecord.models.temp_document.attributes.state')
+        %tbody
+          - @dematbox_files.each do |file|
+            %tr
+              %td= l file.created_at
+              %td= file.dematbox_doc_id
+              %td= file.delivered_by
+              %td= file.cloud_content_object.filename
+              %td= file_size file.cloud_content_object.size
+              %td= I18n.l(file.dematbox_notified_at) rescue nil
+              %td.text-end
+                %span.badge.bg-dark= TempDocument.state_machine.states[file.state].try(:human_name)
+
+      = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: admin_dematbox_files_path, target: '#demat_file_table', total_pages: @dematbox_files.total_pages, filter: 'form-filter' }
+        
+.modal#filter-demat-file
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h5.modal-title.bold Filtrer
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      = form_tag admin_dematbox_files_path, method: :get, class: 'form-filter' do
+        .modal-body
+          = hidden_field_tag :per_page, per_page
+          .form-group
+            .label-section
+              = label_tag 'dematbox_file_contains[created_at]', t('activerecord.models.common.attributes.created_at')
+            .select-container.w-100.no-padding
+              = text_field_tag 'dematbox_file_contains[created_at]', (params['dematbox_file_contains']['created_at'] rescue ''), class: 'form-control date daterange'            
+          .form-group
+            %label.semibold
+              = label_tag 'dematbox_file_contains[dematbox_doc_id]', t('activerecord.models.temp_document.attributes.dematbox_doc_id')
+            .select-container.w-100.no-padding  
+              = text_field_tag 'dematbox_file_contains[dematbox_doc_id]', (params[:dematbox_file_contains][:dematbox_doc_id] rescue ''), class: 'form-control'
+          .form-group
+            %label.semibold
+              = label_tag 'dematbox_file_contains[delivered_by]', t('activerecord.models.temp_document.attributes.delivered_by')
+            .select-container.w-100.no-padding  
+              = text_field_tag 'dematbox_file_contains[delivered_by]', (params[:dematbox_file_contains][:delivered_by] rescue ''), class: 'form-control'
+          .form-group
+            %label.semibold
+              = label_tag 'dematbox_file_contains[content_file_name]', t('activerecord.models.temp_document.attributes.content_file_name')
+            .select-container.w-100.no-padding  
+              = text_field_tag 'dematbox_file_contains[content_file_name]', (params[:dematbox_file_contains][:content_file_name] rescue ''), class: 'form-control'
+          .form-group
+            .label-section
+              %label.semibold
+                = label_tag 'dematbox_file_contains[dematbox_is_notified]', t('activerecord.models.temp_document.attributes.dematbox_is_notified')
+            .control-section
+              = select_tag 'dematbox_file_contains[dematbox_is_notified]', options_for_select([[t('yes_value'), 1],[t('no_value'), 0]], (params[:dematbox_file_contains][:dematbox_is_notified] rescue '')), include_blank: true, class: 'form-select'
+        .modal-footer        
+          = link_to 'Réinitialiser', admin_dematbox_files_path, class: 'btn btn-light', title: t('filters.reset')
+          = submit_tag t('filters.action'), class: 'btn btn-primary'
+
+= javascript_include_tag 'back/dematboxes/assets/javascripts/main'

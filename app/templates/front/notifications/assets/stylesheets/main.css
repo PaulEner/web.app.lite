@@ -1,0 +1,17 @@
+#unread_notification_count{
+  font-size: 13px;
+}
+
+#unread_notification_count a{ 
+  color: #72AA42 !important;
+  text-decoration: none;
+}
+
+#unread_notification_count a:hover{
+  font-family: Raleway-semiBold;
+}
+
+#unread_notification_count{
+  max-height: 360px;
+  overflow: auto;
+}

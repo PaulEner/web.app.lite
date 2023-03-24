@@ -1,0 +1,3 @@
+#file-storages.box.derivationLeft
+  - if @user.is_admin && @customer.active?
+    = render partial: 'efs_user', locals: { user: @customer }

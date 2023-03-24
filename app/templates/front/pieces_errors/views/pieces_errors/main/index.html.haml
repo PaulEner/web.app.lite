@@ -1,0 +1,40 @@
+= stylesheet_link_tag 'front/documents/assets/stylesheets/main'
+
+.container-fluid
+  .row.derivationLeft
+    .col-md-4.text-start
+      %h3.bold Mes pièces
+    .col-md-7.p-2
+      = select_tag 'account_id', options_for_select(customers_active.unshift(['Tous', 'all']), params[:account_id]), include_blank: false, class: 'chosen-list float-end w-25'
+    .col-md-1.text-start.p-1.filter_button
+      %button.btn.btn-light.semibold.piece-errors-filter.w-100{ disabled: false }
+        %span.me-2 Filtrer
+        %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+
+  .mb-4
+
+  .derivationRight    
+    %ul.nav.nav-tabs.ms-3{ "role" => "tablist" }
+      %li.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link#ignored-pre-assignment-tab{ class: ((params[:tab] == 'ignored-pre-assignment' || params[:tab].nil?) ? 'active' : ''), "data-bs-toggle" => "tab", "data-bs-target" => "#ignored-pre-assignment", type: :button, "role" => "tab", "aria-controls" => "ignored-pre-assignment", "aria-selected" => "true" } 
+          Ignorées à la pré-affectation   
+          %span.ms-1.badge.badge-secondary.regular#total-ignored-pre-assignment 0
+      %li.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link#duplicated-pre-assignment-tab{ class: ((params[:tab] == 'duplicated-pre-assignment' ) ? 'active' : ''), "data-bs-toggle" => "tab", "data-bs-target" => "#duplicated-pre-assignment", type: :button, "role" => "tab", "aria-controls" => "duplicated-pre-assignment", "aria-selected" => "false"} 
+          Ecritures comptables en doublon
+          %span.ms-1.badge.badge-secondary.regular#total-duplicated-pre-assignment 0
+      %li.nav-item.no-margin.no-filter{ "role" => "presentation" }
+        %button.semibold.nav-link#failed-delivery-tab{ class: ((params[:tab] == 'failed-delivery' ) ? 'active' : ''), "data-bs-toggle" => "tab", "data-bs-target" => "#failed-delivery", type: :button, "role" => "tab", "aria-controls" => "failed-delivery", "aria-selected" => "false"} 
+          Erreur livraison d'écritures comptables
+          %span.ms-1.badge.badge-secondary.regular#total-failed-delivery 0
+
+    .tab-content
+      .tab-pane.box.no-margin#ignored-pre-assignment{ class: ((params[:tab] == 'ignored-pre-assignment' || params[:tab].nil?) ? 'active' : ''), "role" => "tabpanel", "aria-labelledby" => "ignored-pre-assignment-tab" }
+                  
+      .tab-pane.box.no-margin#duplicated-pre-assignment{ class: ((params[:tab] == 'duplicated-pre-assignment' ) ? 'active' : ''), "role" => "tabpanel", "aria-labelledby" => "duplicated-pre-assignment-tab" }
+                  
+      .tab-pane.box.no-margin#failed-delivery{ class: ((params[:tab] == 'failed-delivery' ) ? 'active' : ''), "role" => "tabpanel", "aria-labelledby" => "failed-delivery-tab" }
+
+= render partial: 'dialogs'
+
+= javascript_include_tag 'front/pieces_errors/assets/javascripts/main'

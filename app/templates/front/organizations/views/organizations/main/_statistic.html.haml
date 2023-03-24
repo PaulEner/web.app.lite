@@ -1,0 +1,30 @@
+%h4= t('organizations.distribution_of_subscriptions')
+%canvas#chart_abonnement
+%input#organization_options{ type: :hidden, value: @organization_statistic.to_json }
+%table.table.borderless
+  %tbody
+    %tr
+      %td.glyph= glyphicon('media-record', { color: '#72AA42' })
+      %td.left= t('subscription_options.ido_micro')
+      %td.right= @organization_statistic[:micro_package].to_i
+    %tr
+      %td.glyph= glyphicon('media-record', { color: '#C1E637' })
+      %td.left= t('subscription_options.ido_nano')
+      %td.right= @organization_statistic[:nano_package].to_i
+    %tr
+      %td.glyph= glyphicon('media-record', { color: '#C1D837' })
+      %td.left= t('subscription_options.ido_x')
+      %td.right= @organization_statistic[:idox_package].to_i
+    %tr
+      %td.glyph= glyphicon('media-record', { color: '#445E2B' })
+      %td.left= t('subscription_options.ido_classic')
+      %td.right= @organization_statistic[:basic_package].to_i
+    %tr
+      %td.glyph= glyphicon('media-record', { color: '#555B35' })
+      %td.left= t('subscription_options.retriever')
+      %td.right= @organization_statistic[:retriever_package].to_i
+    - if CustomUtils.is_manual_paper_set_order?(@organization)
+      %tr
+        %td.glyph= glyphicon('media-record', { color: '#1A1A1A' })
+        %td.left= t('subscription_options.digitize')
+        %td.right= @organization_statistic.try(:options).try(:[], :digitize_package).to_i

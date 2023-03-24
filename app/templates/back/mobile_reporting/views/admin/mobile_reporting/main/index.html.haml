@@ -1,0 +1,96 @@
+#mobile_reporting  
+  .box.derivationLeft
+    .row    
+      .col-md-8.pt-4        
+        %h3.semibold Statistiques d'utilisation de l'application mobile
+      .col-md-4
+        .filter
+          = form_tag admin_mobile_reporting_index_path, method: :get, class: 'form form-vertical margin0bottom' do
+            %table.table.table-condensed.table-striped
+              %thead
+                %tr.text-center
+                  %th Mois
+                  %th Année
+                  %th
+              %tbody
+                %tr
+                  %td
+                    = select_tag "month", options_for_select(get_options_months, params[:month] || Date.today.strftime("%m").to_s), class: 'form-control'
+                  %td
+                    = select_tag "year", options_for_select(get_options_years, params[:year] || Date.today.strftime("%Y").to_s), class: 'form-control'
+                  %td.text-center
+                    = submit_tag t('actions.submit'), class: 'btn btn-primary w-100'
+    
+  .box.derivationRight
+    .row
+      .col-12.center
+        %br
+        %h5.semibold
+          - month = get_options_months.map{ |m| m.first if(m.last == @month_params) }.compact
+          Statistique du mois de :
+          %span.green-label= month.first.to_s + ' ' + @year_params.to_s
+      .row
+        .col-8
+          .panel
+            %h6.semibold.text-center UTILISATEURS APPLICATION MOBILE
+            .row
+              .col-md-6
+                %label#usersLoading.blink Chargement en cours...
+                %canvas.chartContainer#chartUsersContainer
+                .legends
+                  %ul.list-group
+                    %li.list-group-item.liFloat
+                      %span.badge.bg-secondary.with-idocus
+                        Utilisateurs iDocus (actifs) : 
+                        %strong#usersCount 0
+                  .clearfix
+                  %ul.list-group.list-inline.list-group-horizontal
+                    %li.liFloat.text-center.list-group-item
+                      %span.badge.bg-warning.with-mobile
+                        Utilisateurs mobile total : 
+                        %strong#usersMobileCount 0
+                    %li.liFloat.text-center.list-group-item
+                      %span.badge.bg-danger.with-ios
+                        iOS : 
+                        %strong#iOSUsersCount 0
+                    %li.liFloat.text-center.list-group-item
+                      %span.badge.bg-success.with-android
+                        Android : 
+                        %strong#androidUsersCount 0
+              .col-md-6
+                %label#uploaderLoading.blink Chargement en cours...
+                %canvas.chartContainer#chartUploaderContainer
+                .legends
+                  .row
+                    .col-md-6
+                      %ul.list-group
+                        %li.text-center.list-group-item
+                          .badge.bg-primary.with-default
+                            Simple consultation : 
+                            %strong#viewerUsersCount 0
+                        %li.text-center.list-group-item
+                          .badge.bg-success.with-custom 
+                            Avec téléversement : 
+                            %strong#uploaderUsersCount 0
+                    .col-md-6{ style: 'text-align:right;' }= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_users_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"
+        .col-4
+          .panel
+            %h6.semibold.text-center TELEVERSEMENT DE DOCUMENTS
+            #documentsLoading.blink Chargement en cours...
+            %canvas.chartContainer#chartDocumentsContainer
+            .legends
+              .row
+                .col-6
+                  %ul.list-group
+                    %li.text-center.list-group-item
+                      .badge.bg-info.with-default
+                        Upload via iDocus : 
+                        %strong#uploadedFrameworkDocumentsCount 0
+                    %li.text-center.list-group-item
+                      .badge.bg-danger.with-custom 
+                        Upload via App Mobile : 
+                        %strong#uploadedMobileDocumentsCount 0
+                .col-6{ style: 'text-align:right;' }= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_documents_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"
+
+
+= javascript_include_tag 'admin/mobile_reporting'

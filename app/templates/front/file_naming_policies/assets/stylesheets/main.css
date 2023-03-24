@@ -1,0 +1,75 @@
+.form-group .ui-sortable li {
+  width: 20%;
+  float: left;
+  margin-right: 2%;
+  margin-bottom: 1%;
+  text-align: center;
+  padding: 1%;
+  cursor: pointer;
+}
+
+#sortable-software li, #sortable-software-preseizures li{
+  width: auto;
+  font-size: 0.8rem;
+}
+
+.form-group .ui-sortable li.btn-light:hover {
+  border: 1px solid #72AA42;
+  border-radius: 8px;
+  color: #72AA42;
+  font-weight: bold;
+}
+
+.form-group .ui-sortable li.btn-light.active{
+  background: #EEF8B8;
+  border: 1px solid #72AA42;
+  border-radius: 8px;
+  color: #72AA42;
+}
+
+.form-group .ui-sortable li.btn-light span{
+  float: right;
+}
+
+img {
+  max-width:100%;
+  height:auto;
+  margin: auto;
+}
+
+.box-software{
+  display: flex;
+  background: #FFFFFF;
+  border: 1px solid rgba(26, 26, 26, 0.1);
+  box-sizing: border-box;
+  border-radius: 8px;
+  width: 25%;
+  margin: 3%;
+  height: 10em;
+}
+
+#csv span{
+  font-size: 5rem;
+  margin: auto;
+}
+
+label{
+  font-size: 13px;
+}
+
+.form-group{
+  margin-bottom: 1%;
+}
+
+.select-container input{
+  padding: 0.5%;
+  font-size: 17px;
+}
+
+
+@media (max-width: 1280px) {
+  .ui-sortable .sortable_child{
+    font-size: 0.8rem !important;
+    width: 22% !important;
+  }
+}

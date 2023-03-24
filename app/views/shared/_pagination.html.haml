@@ -1,0 +1,26 @@
+- url         = url rescue ''
+- target      = target rescue ''
+- name        = name rescue Time.now.strftime('%Y%m%d%s')
+- filter      = filter rescue ''
+- mark        = mark rescue name
+- no_per_page = no_per_page rescue false
+
+.row.pagination
+  - if total_pages.to_i > 0
+    .col-md-6
+      .row{ class: (no_per_page == true)? 'hide' : '' }
+        .col-md-3.text-end
+          %label Afficher par
+        .col-md-2
+          = select_tag "per-page-#{name}", options_for_select([[20, 20], [50, 50], [100, 100]], params[:per_page].presence || 20), class: "per-page #{name} form-select form-select-sm", data: { url: url, target: target, filter: filter, name: name, current_page: (params[:page] || 1), mark: mark }, "aria-label" => ".form-select-sm"
+
+    .col-md-6.text-end
+      .row
+        .col-md-10
+          %label= "#{(params[:page].presence || 1).to_s} - #{total_pages} de #{(params[:per_page].presence || 20).to_s} éléments"
+        .col-md-1
+          - if(params[:page].to_i > 1)
+            %span.pointer.previous-page{id: "previous-page-#{name}", data: { url: url, target: target, filter: filter, name: name, per_page: (params[:per_page].presence || 20), mark: mark, current_page: (params[:page] || total_pages), total_pages: total_pages }}= glyphicon('chevron-left', { size: '15', color: "#1A1A1A" })
+        .col-md-1
+          - if(params[:page].to_i < total_pages && total_pages > 1)
+            %span.pointer.next-page{id: "next-page-#{name}", data: { url: url, target: target, filter: filter, name: name, per_page: (params[:per_page].presence || 20), mark: mark, current_page: (params[:page] || 1), total_pages: total_pages }}= glyphicon('chevron-right', { size: '15', color: "#1A1A1A" })

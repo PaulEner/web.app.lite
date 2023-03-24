@@ -1,0 +1,227 @@
+- if @user.organization&.code == 'ALM'
+  !!!
+  %html
+    %head
+      %title [Axelium] Création de compte Axelium
+      %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+    %body
+      Bonjour #{@user.name},
+      %br
+      %br
+      Le cabinet
+      %b #{@user.organization.name.capitalize}
+      , vous propose désormais un service de numérisation de toutes les pièces nécessaires à la tenue de votre comptabilité.
+      %br
+      %br
+      Nous venons de vous créer un compte pour y accéder.
+      %br
+      %br
+      Merci de bien vouloir cliquer sur ce lien afin de générer votre mot de passe : #{link_to edit_user_password_url(reset_password_token: @token,  host: 'https://www.idp-axeliumconseil.fr/'), edit_user_password_url(reset_password_token: @token,  host: 'https://www.idp-axeliumconseil.fr/') }
+      %br
+      Par mesure de sécurité, ce lien est actif pendant 7 jours.
+      %br
+      Si vous avez dépassé ce délai, vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant ici : #{link_to new_user_password_url(host: 'https://www.idp-axeliumconseil.fr/'), new_user_password_url(host: 'https://www.idp-axeliumconseil.fr/') }
+      %br
+      %br
+      Tous les mois, vous y retrouverez les fichiers issus de la numérisation de vos documents papiers (fichiers PDF avec reconnaissance de caractères)
+      %br
+      Vous pourrez également paramétrer votre compte pour que les documents générés soient directement versés dans votre service de stockage habituel (Dropbox, Google Drive, Box, ftp…)
+      %br
+      Vos documents qui sont déjà sous format électronique sont à intégrer dans #{@user.organization.name.capitalize} grâce à la fonctionnalité « Téléverser » accessible dans votre espace personnel.
+      %br
+      Le respect des consignes et des dates préconisées par votre cabinet ainsi que la bonne utilisation des chemises et enveloppes contenus dans votre kit d'envoi garantiront l’efficacité de cette organisation.
+      %br
+      %br
+      Votre identifiant est : #{@user.email}
+      %br
+      %br
+      Nous vous souhaitons une bonne utilisation de notre service.
+      %br
+      %br
+      Cordialement,
+      %br
+      L’équipe Axelium
+      %br
+
+- elsif @user.organization&.code == 'DK'
+  !!!
+  %html
+    %head
+      %title [DK Partners] Création de compte DK Partners
+      %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+    %body
+      Bonjour #{@user.name},
+      %br
+      %br
+      Le cabinet
+      %b #{@user.organization.name.capitalize}
+      , vous propose désormais un service de numérisation de toutes les pièces nécessaires à la tenue de votre comptabilité.
+      %br
+      %br
+      Nous venons de vous créer un compte pour y accéder.
+      %br
+      %br
+      Merci de bien vouloir cliquer sur ce lien afin de générer votre mot de passe : #{link_to edit_user_password_url(reset_password_token: @token,  host: 'https://demat.dkpartners.fr/'), edit_user_password_url(reset_password_token: @token,  host: 'https://demat.dkpartners.fr/') }
+      %br
+      Par mesure de sécurité, ce lien est actif pendant 7 jours.
+      %br
+      Si vous avez dépassé ce délai, vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant ici : #{link_to new_user_password_url(host: 'https://demat.dkpartners.fr/'), new_user_password_url(host: 'https://demat.dkpartners.fr/') }
+      %br
+      %br
+      Tous les mois, vous y retrouverez les fichiers issus de la numérisation de vos documents papiers (fichiers PDF avec reconnaissance de caractères)
+      %br
+      Vous pourrez également paramétrer votre compte pour que les documents générés soient directement versés dans votre service de stockage habituel (Dropbox, Google Drive, Box, ftp…)
+      %br
+      Vos documents qui sont déjà sous format électronique sont à intégrer dans #{@user.organization.name.capitalize} grâce à la fonctionnalité « Téléverser » accessible dans votre espace personnel.
+      %br
+      Le respect des consignes et des dates préconisées par votre cabinet ainsi que la bonne utilisation des chemises et enveloppes contenus dans votre kit d'envoi garantiront l’efficacité de cette organisation.
+      %br
+      %br
+      Votre identifiant est : #{@user.email}
+      %br
+      %br
+      Nous vous souhaitons une bonne utilisation de notre service.
+      %br
+      %br
+      Cordialement,
+      %br
+      L’équipe DK Partners
+      %br
+
+- elsif @user.organization&.code == 'CEN'
+  !!!
+  %html
+    %head
+      %title [Censial] Création de compte Censial Online
+      %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+    %body
+      Bonjour #{@user.name},
+      %br
+      %br
+      Le cabinet
+      %b #{@user.organization.name.capitalize}
+      , vous propose désormais un service de numérisation de toutes les pièces nécessaires à la tenue de votre comptabilité.
+      %br
+      %br
+      Nous venons de vous créer un compte pour y accéder.
+      %br
+      %br
+      Merci de bien vouloir cliquer sur ce lien afin de générer votre mot de passe : #{link_to edit_user_password_url(reset_password_token: @token,  host: 'https://www.censial-online.fr/'), edit_user_password_url(reset_password_token: @token,  host: 'https://www.censial-online.fr/') }
+      %br
+      Par mesure de sécurité, ce lien est actif pendant 7 jours.
+      %br
+      Si vous avez dépassé ce délai, vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant ici : #{link_to new_user_password_url(host: 'https://www.censial-online.fr/'), new_user_password_url(host: 'https://www.censial-online.fr/') }
+      %br
+      %br
+      Tous les mois, vous y retrouverez les fichiers issus de la numérisation de vos documents papiers (fichiers PDF avec reconnaissance de caractères)
+      %br
+      Vous pourrez également paramétrer votre compte pour que les documents générés soient directement versés dans votre service de stockage habituel (Dropbox, Google Drive, Box, ftp…)
+      %br
+      Vos documents qui sont déjà sous format électronique sont à intégrer dans #{@user.organization.name.capitalize} grâce à la fonctionnalité « Téléverser » accessible dans votre espace personnel.
+      %br
+      Le respect des consignes et des dates préconisées par votre cabinet ainsi que la bonne utilisation des chemises et enveloppes contenus dans votre kit d'envoi garantiront l’efficacité de cette organisation.
+      %br
+      %br
+      Votre identifiant est : #{@user.email}
+      %br
+      %br
+      Nous vous souhaitons une bonne utilisation de notre service.
+      %br
+      %br
+      Cordialement,
+      %br
+      L’équipe Censial Online
+      %br
+
+- elsif @user.organization&.code == 'OR'
+  !!!
+  %html
+    %head
+      %title [My Orial] Création de compte My Orial
+      %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+    %body
+      Bonjour #{@user.name},
+      %br
+      %br
+      Le cabinet
+      %b #{@user.organization.name.capitalize}
+      , vous propose désormais un service de numérisation de toutes les pièces nécessaires à la tenue de votre comptabilité.
+      %br
+      %br
+      Nous venons de vous créer un compte pour y accéder.
+      %br
+      %br
+      Merci de bien vouloir cliquer sur ce lien afin de générer votre mot de passe : #{link_to edit_user_password_url(reset_password_token: @token,  host: 'https://my.orial.fr/'), edit_user_password_url(reset_password_token: @token,  host: 'https://my.orial.fr/') }
+      %br
+      Par mesure de sécurité, ce lien est actif pendant 7 jours.
+      %br
+      Si vous avez dépassé ce délai, vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant ici : #{link_to new_user_password_url(host: 'https://my.orial.fr/'), new_user_password_url(host: 'https://my.orial.fr/') }
+      %br
+      %br
+      Tous les mois, vous y retrouverez les fichiers issus de la numérisation de vos documents papiers (fichiers PDF avec reconnaissance de caractères)
+      %br
+      Vous pourrez également paramétrer votre compte pour que les documents générés soient directement versés dans votre service de stockage habituel (Dropbox, Google Drive, Box, ftp…)
+      %br
+      Vos documents qui sont déjà sous format électronique sont à intégrer dans #{@user.organization.name.capitalize} grâce à la fonctionnalité « Téléverser » accessible dans votre espace personnel.
+      %br
+      Le respect des consignes et des dates préconisées par votre cabinet ainsi que la bonne utilisation des chemises et enveloppes contenus dans votre kit d'envoi garantiront l’efficacité de cette organisation.
+      %br
+      %br
+      Votre identifiant est : #{@user.email}
+      %br
+      %br
+      Nous vous souhaitons une bonne utilisation de notre service.
+      %br
+      %br
+      Cordialement,
+      %br
+      L’équipe My Orial
+      %br
+
+- else
+  !!!
+  %html
+    %head
+      %title [iDocus] Création de compte iDocus
+      %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+    %body
+      Bonjour #{@user.name},
+      %br
+      %br
+      Le cabinet
+      %b #{@user.organization.name.capitalize}
+      , vous propose désormais un service de numérisation de toutes les pièces nécessaires à la tenue de votre comptabilité.
+      %br
+      %br
+      Cette prestation, assurée par iDocus, va vous permettre un accès rapide et pratique à vos documents qui seront disponibles dans votre espace personnel.
+      %br
+      Nous venons de vous créer un compte pour y accéder.
+      %br
+      %br
+      Merci de bien vouloir cliquer sur ce lien afin de générer votre mot de passe : #{link_to edit_user_password_url(reset_password_token: @token), edit_user_password_url(reset_password_token: @token) }
+      %br
+      Par mesure de sécurité, ce lien est actif pendant 7 jours.
+      %br
+      Si vous avez dépassé ce délai, vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant ici : #{link_to new_user_password_url, new_user_password_url }
+      %br
+      %br
+      Tous les mois, vous y retrouverez les fichiers issus de la numérisation de vos documents papiers (fichiers PDF avec reconnaissance de caractères)
+      %br
+      Vous pourrez également paramétrer votre compte pour que les documents générés soient directement versés dans votre service de stockage habituel (Dropbox, Google Drive, Box, ftp…)
+      %br
+      Vos documents qui sont déjà sous format électronique sont à intégrer dans iDocus grâce à la fonctionnalité « Téléverser » accessible dans votre espace personnel.
+      %br
+      Le respect des consignes et des dates préconisées par votre cabinet ainsi que la bonne utilisation des chemises et enveloppes contenus dans votre kit d'envoi garantiront l’efficacité de cette organisation.
+      %br
+      %br
+      Votre identifiant est : #{@user.email}
+      %br
+      %br
+      Nous vous souhaitons une bonne utilisation de notre service.
+      %br
+      %br
+      Cordialement,
+      %br
+      L’équipe iDocus
+      %br
+      = link_to 'support@idocus.com', 'mailto:support@idocus.com'

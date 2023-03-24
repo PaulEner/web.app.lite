@@ -1,0 +1,11 @@
+.row
+  .col-md-12
+    = simple_form_for @guest_collaborator, url: '#', html: { id: 'shared_contacts_form', class: 'form-group' } do |f|
+      .select-container.no-padding.w-100
+        = f.input :email, placeholder: 'idocus@example.com', hint: 'Si le contact existe déjà, les champs ci-dessous seront ignorés'
+      .select-container.no-padding.w-100
+        = f.input :company
+      .select-container.no-padding.w-100
+        = f.input :first_name
+      .select-container.no-padding.w-100
+        = f.input :last_name

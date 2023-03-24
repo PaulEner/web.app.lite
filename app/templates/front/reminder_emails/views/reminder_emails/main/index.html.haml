@@ -1,0 +1,56 @@
+= stylesheet_link_tag 'front/reminder_emails/assets/stylesheets/main'
+
+.general
+  .row.derivationRight
+    .col-md-8
+      %h3.bold Paramètres : Emails de rappel
+    .col-md-4.text-end
+      - modal_params = param_encode({ url: new_organization_reminder_email_path(@organization), title: 'Configuration email' })
+      %button.btn.btn-primary.new-reminder-email.semibold.as_idocus_modal{ idocus: modal_params }
+        %span.me-2= glyphicon('plus', { color: "#FFF", size: '16'})   
+        %span Nouvel email
+
+  - redirection = { url: organization_reminder_emails_path(@organization.id), method: 'GET', html: { target: '.reminder-email-content' } }
+  .reminder-email-content.derivationLeft
+    .box.mt-4
+      %table.table.table-striped.table_integration#reminder-email-table
+        %thead
+          %th Nom de l'email
+          %th Date de création
+          / %th Destinataire(s)
+          %th Jour d'envoi
+          %th Statut        
+          %th.text-end Action
+        %tbody
+          - @reminder_emails.each do |reminder_email|
+            %tr
+              %td.semibold= reminder_email.name
+              %td= reminder_email.created_at.strftime('%Y/%m/%d')
+              / %td TODO
+              %td= reminder_email.delivery_day
+              %td
+                .badge.badge-success.semibold Actif
+              %td.text-end.pointer
+                .action.sub-menu-mail-reminder
+                  %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+                  .sub_menu.text-start.hide
+                    %ul.no-margin.no-padding.regular
+                      %li.reminder-email-action.view
+                        - modal_params = param_encode({ url: organization_reminder_email_path(@organization, reminder_email), title: 'Email', target: '.reminder-content', with_cancel: false })
+                        = link_to glyphicon('eye', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Voir', '#', class: 'as_idocus_modal', idocus: modal_params
+                      %li.reminder-email-action.edit
+                        - modal_params = param_encode({ url: edit_organization_reminder_email_path(@organization, reminder_email), title: 'Configuration email' })
+                        = link_to glyphicon('pencil', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Éditer', '#', class: 'as_idocus_modal', idocus: modal_params
+                      / %li.reminder-email-action.de-activate
+                      /   - idocus_params = param_encode({ url: deactivate_organization_reminder_email_path(@organization, reminder_email), method: 'delete', confirm: t('actions.confirm'), redirect_to: redirection })
+                      /   = link_to glyphicon('ban', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Désactiver', organization_reminder_email_path(@organization, reminder_email)
+                      %li.reminder-email-action.delete.red-label
+                        - idocus_params = param_encode({ url: organization_reminder_email_path(@organization, reminder_email), method: 'delete', confirm: t('actions.confirm'), redirect_to: redirection })
+                        = link_to glyphicon('trash', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Supprimer', '#', class: 'as_idocus_ajax', idocus: idocus_params
+                      %li.reminder-email-action.deliver
+                        - idocus_params = param_encode({ url: deliver_organization_reminder_email_path(@organization, reminder_email), method: 'post', confirm: t('activerecord.models.reminder_email.actions.send_confirmation'), redirect_to: redirection })
+                        = link_to glyphicon('envelope-open', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Envoyer', '#', class: 'as_idocus_ajax', idocus: idocus_params
+
+      = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: organization_reminder_emails_path(@organization.id), target: '#reminder-email-table', total_pages: @reminder_emails.total_pages }
+
+= javascript_include_tag 'front/reminder_emails/assets/javascripts/main'

@@ -1,0 +1,80 @@
+= stylesheet_link_tag 'front/organizations/assets/stylesheets/show'
+
+- if @customer.uses?(:ibiza)
+  - if @organization.ibiza.first_configured?
+    .ibizabox_content
+      #ibizabox_folders_list.box.derivationLeft
+        .row
+          .col-md-10
+            %h5.semibold
+              Liste des répertoires accessibles
+              %span.badge.bg-secondary= @customer.ibizabox_folders.count
+          .col-md-2.text-center.no-padding
+            - idocus_params = param_encode({ url: refresh_organization_customer_ibizabox_folders_path(@organization, @customer), method: 'patch', confirm: 'Etes vous sûr?', redirect_to: { url: organization_customer_ibizabox_documents_path, method: 'get', html: { target: '#ibizabox_folders_list' } }})
+            = link_to 'Rafraîchir', '#', class: 'btn btn-primary w-75 as_idocus_ajax', idocus: idocus_params
+
+        %table.table.table-striped.table-condensed.margin1bottom.table-bordered-inner.table-detachable-head
+          %thead
+            %tr
+              %th Code journal idocus
+              %th Répertoire Ibiza
+              %th Périodes accessibles
+              %th Statut
+              %th Actions
+          %tbody
+            - ibiza_journals = FileImport::Ibizabox.get_accessible_journals(@customer)
+            - @customer.ibizabox_folders.includes(:journal).each do |folder|
+              - journal = folder.journal
+              %tr
+                %td
+                  = journal.name
+                  - unless ibiza_journal_accessible?(folder, ibiza_journals)
+                    %i
+                      %strong (Journal inexistant ou inaccessible depuis la ged ibiza)
+                %td= journal.use_pseudonym_for_import ? journal.pseudonym : journal.name
+                %td= FileImport::Ibizabox.new(folder).accessible_ibiza_periods.join(" - ")
+                %td= ibizabox_folder_state(folder)
+                %td
+                  - if ibiza_journal_accessible?(folder, ibiza_journals)
+                    - idocus_params = param_encode({ url: organization_customer_ibizabox_folder_path(@organization, @customer, folder), method: 'patch', confirm: 'Etes vous sûr?', redirect_to: { url: organization_customer_ibizabox_documents_path, method: 'get', html: { target: '#ibizabox_folders_list' } }})
+                    = link_to "#{folder.active? ? 'Désactiver' : 'Activer'}", '#' , class: "btn btn-light btn-#{folder.active? ? 'danger' : 'primary'} as_idocus_ajax", idocus: idocus_params
+                  - else
+                    %span.badge.bg-warning.bold.p-2 Journal ibiza inaccessible
+
+      #ibizabox_documents_historic.box.derivationRight
+        .row
+          .col-md-10
+            %h5.semibold
+              Historique des documents récupérés depuis la box iBiza du client
+              %span.badge.bg-secondary= @documents_count
+          .col-md-2.text-center.no-padding
+            %button.btn.btn-light.w-75.open_ibizabox_documents_filter.semibold{ 'data-bs-toggle'=>'modal', 'data-bs-target'=>"#filter_#{action_name}" }
+              %span.me-2 Filtrer
+              %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+        %hr
+        %div{ id: "ibizabox_#{action_name}" }
+          %table.table.table-striped
+            %thead
+              %tr
+                %th Date de la récupération
+                %th Journal
+                %th Nom original
+                %th Nom iDocus
+                %th.pages Nb. pages
+            %tbody
+              - @documents.each do |document|
+                %tr
+                  %td= l(document.created_at)
+                  %td= document.journal
+                  %td= link_to document.original_file_name, organization_customer_ibizabox_document_path(@organization, @customer, document), target: '_blank'
+                  %td= link_to document.piece.cloud_content_object.filename, piece_organization_customer_ibizabox_document_path(@organization, @customer, document), target: '_blank' if document.piece
+                  %td.pages= document.pages_number
+          = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: organization_customer_ibizabox_documents_path(@organization, @customer), target: '#ibizabox_documents_historic', total_pages: @documents.total_pages }
+        = render 'dialogs'
+
+      #select_ibizabox_documents.box.derivationLeft{ link: select_organization_customer_ibizabox_documents_path(@organization, @customer) }
+  - else
+    = render 'shared/ibiza_not_configured_warning'
+
+= javascript_include_tag 'front/ibiza/assets/javascripts/box_document'
+

@@ -1,0 +1,218 @@
+.container-fluid
+  .row.m-2.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-12
+      %h3 Support-Tech 
+
+  .mb-4
+  .box.m-2.derivationRight
+    %h5.semibold Banque
+    %hr 
+    .row
+      .col-md-3
+        .select-container.w-100.no-padding
+          %input.user_code{ type: :text, placeholder: "CODE DOSSIER"}
+      .col-md-1
+        %button.btn.btn-dark.w-100#get_retriever Automates
+      .col-md-2
+        %button.btn.btn-warning.semibold.add-rule.w-100
+          %span.me-2 Switch
+          %span.chevron-add-rule= glyphicon('chevron-bottom', { size: '15', color: '#000'})
+          %hr.no-margin
+          .sub_rule_menu.text-start.hide
+            %ul.no-margin.no-padding.regular
+              %li.p-2.switch{ data: { action: "budgea_to_bridge"} }                
+                %span.semibold Budgea to Bridge
+              %li.p-2.switch{ data: { action: "bridge_to_budgea"} }
+                %span.semibold Bridge to Budgea
+
+    .row
+      %div
+        .m-0.px-2.btn-default.float-end.toggle{ data: { action: "get_retriever"} }= glyphicon('chevron-right', { size: 14, color: "#72AA42" })
+      .result.get_retriever.hide
+        .alert.alert-warning.semibold Chargement . . .
+
+  .mb-4
+
+  .box.m-2.derivationLeft
+    %h5.semibold Opération bancaire
+    %hr    
+    %form#operation-filter
+      .row
+        .col-md-2
+          .select-container.w-100.no-padding
+            %input.ope_label{ type: :text, name: "ope_label", placeholder: "LABEL OPERATION"}
+        .col-md-2
+          .select-container.w-100.no-padding
+            %input.ope_user_code{ type: :text, name: "ope_user_code", placeholder: "CODE DOSSIER"}
+        .col-md-2
+          .select-container.w-100.no-padding
+            %input.ope_bank_number{ type: :text, name: "ope_bank_number", placeholder: "BANK NUMBER"}
+        .col-md-2
+          .select-container.w-100.no-padding
+            %input.ope_api_id{ type: :text, name: "ope_api_id", placeholder: "API ID"}
+        .col-md-2
+          .select-container.w-100.no-padding
+            %input.ope_date.daterange{ type: :text, name: "ope_date", placeholder: "DATE ENTRE"}
+        .col-md-2
+          %button.btn.btn-dark#get_operations{ type: :button } Opération
+          %button.btn.btn-warning.hide#operation-check-action{ type: :button } Relivrer
+      .mb-2
+      .row
+        .col-md-1
+          .label.semibold.m-2 is locked?
+        .col-md-2
+          = select_tag 'is_locked', options_for_select([['Oui', true], ['Non', false]]), include_blank: true, class: 'form-select'
+        .col-md-2
+          .label.semibold.m-2 is coming?
+        .col-md-2
+          = select_tag 'is_coming', options_for_select([['Oui', true], ['Non', false]]), include_blank: true, class: 'form-select'
+        .col-md-1
+          .label.semibold.m-2 Processed?
+        .col-md-2
+          = select_tag 'processed_at', options_for_select([['Oui', 1], ['Non', 0]]), include_blank: true, class: 'form-select'
+    .mb-3
+    .row
+      .result.resend_operation.alert.alert-success.hide
+    .row
+      %div
+        .m-0.px-2.btn-default.float-end.toggle{ data: { action: "get_operations"} }= glyphicon('chevron-right', { size: 14, color: "#72AA42" })
+      .result.get_operations.hide
+        .alert.alert-warning.semibold Chargement . . .
+
+  .mb-4
+
+  .box.m-2.derivationLeft
+    %h5.semibold Bridge opération
+    %hr    
+    %form#bridge-filter
+      .row
+        .col-md-2
+          .select-container.w-100.no-padding
+            %input.bridge_code_user{ type: :text, name: "bridge_code_user", placeholder: "CODE CLIENT"}
+        .col-md-3
+          .select-container.w-100.no-padding
+            %input.bridge_bank_ids{ type: :text, name: "bridge_bank_ids", placeholder: "COMPTE BANCAIRE ids"}
+        .col-md-2
+          .select-container.w-100.no-padding
+            %input.bridge_date.singledate{ type: :text, name: "ope_date", placeholder: "DATE DEBUT"}
+        .col-md-5
+          %button.btn.btn-dark#get_flux_bridge{ type: :button } Flux manquant
+          %button.btn.btn-warning#get_ba_free{ type: :button, disabled: true } Compte bancaire dispo
+          %button.btn.btn-primary#get_transaction_free{ type: :button, disabled: true } Transaction disponible
+    .mb-3
+    .row
+      .result.resend_operation.alert.alert-success.hide
+    .row
+      %div
+        .m-0.px-2.btn-default.float-end.toggle{ data: { action: "get_bank_accounts_bridge"} }= glyphicon('chevron-right', { size: 14, color: "#72AA42" })
+      .result.get_flux_bridge.get_ba_free.get_transaction_free.hide
+        .alert.alert-warning.semibold Chargement . . .
+
+  .mb-4
+
+  .box.m-2.derivationLeft
+    %h5.semibold Pièces et écritures
+    %hr    
+    %form#piece-filter
+      .row
+        .col-md-2
+          .select-container.w-100.no-padding
+            %input.message_error{ type: :text, name: "message_error", placeholder: "ERREUR MESSAGE"}
+        .col-md-3
+          .select-container.w-100.no-padding
+            %input.piece_name{ type: :text, name: "piece_name", placeholder: "NOM PIECE"}
+        .col-md-2
+          .select-container.w-100.no-padding
+            %input.pack_piece_name{ type: :text, name: "pack_piece_name", placeholder: "NOM PACK"}
+        .col-md-2
+          .select-container.w-100.no-padding
+            %input.preseizure_date.daterange{ type: :text, name: "preseizure_date", placeholder: "DATE ECRITURE"}     
+        .col-md-3
+          %button.btn.btn-dark#get_pieces{ type: :button } Pièces
+          %button.btn.btn-dark#get_preseizures{ type: :button } Ecritures
+          %button.btn.btn-warning.check-action.hide#piece-check-action{ type: :button } Réenvoyer en pré-affectation
+          %button.btn.btn-warning.check-action.hide#preseizure-check-action{ type: :button } Relivrer ecritures
+    .mb-3
+    .row
+      .result.resend_to_preassignment.resend_delivery.alert.alert-success.hide
+    .row
+      %div
+        .m-0.px-2.btn-default.float-end.toggle{ data: { action: "get_pieces"} }= glyphicon('chevron-right', { size: 14, color: "#72AA42" })
+      .result.get_pieces.get_preseizures.hide
+        .alert.alert-warning.semibold Chargement . . .
+
+  .mb-4
+
+  .box.m-2.derivationLeft
+    %h5.semibold Temp document
+    %hr    
+    %form#temp_document-filter
+      .row        
+        .col-md-3
+          .select-container.w-100.no-padding
+            %input.pack_piece_name{ type: :text, name: "pack_piece_name", placeholder: "NOM PACK"}
+        .col-md-3
+          %button.btn.btn-dark#get_temp_document{ type: :button } Récuperation
+          %button.btn.btn-danger.hide#temp_document-check-action{ type: :button } Supprimer
+    .mb-3
+    .row
+      .result.destroy_temp_document.alert.alert-success.hide
+    .row
+      %div
+        .m-0.px-2.btn-default.float-end.toggle{ data: { action: "get_temp_document"} }= glyphicon('chevron-right', { size: 14, color: "#72AA42" })
+      .result.get_temp_document.hide
+        .alert.alert-warning.semibold Chargement . . .
+
+  .mb-4
+
+  .box.m-2.derivationLeft
+    %h5.semibold Livraison externes
+    %hr    
+    %form#external-filter
+      .row        
+        .col-md-3
+          .select-container.w-100.no-padding
+            %input.code_client{ type: :text, name: "code_client", placeholder: "CODE CLIENT"}
+        .col-md-2
+          .select-container.w-100.no-padding
+            %input.external_date.daterange{ type: :text, name: "external_date", placeholder: "DATE"} 
+        .col-md-3
+          %button.btn.btn-dark#set_delivery_external{ type: :button } Relancer livraison
+    .mb-3
+    .row
+      .result.set_delivery_external.alert.alert-success.hide
+
+  .mb-4
+
+  .box.m-2.derivationLeft
+    %h5.semibold Utilisateurs
+    %hr    
+    %form#users-filter
+      .row        
+        .col-md-3
+          .select-container.w-100.no-padding
+            %input.user_code_password{ type: :text, name: "user_code_password", placeholder: "CODE CLIENT"}
+        .col-md-3
+          %button.btn.btn-dark#generate_password{ type: :button } Générer Mote de passe
+        .col-md-3
+          .select-container.w-100.no-padding
+            %input.organization_code{ type: :text, name: "organization_code", placeholder: "CODE ORGANISATION"}
+        .col-md-3
+          %button.btn.btn-warning#generate_mail{ type: :button } Liste emails
+    .mb-3
+    .row
+      .result.generate_password.alert.alert-success.hide
+      .result.generate_mail
+
+
+#bank_utlities.modal.fade.in{'aria-hidden' => 'true', :role => 'dialog', :tabindex => '-1'}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Voir plus    
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        
+      .modal-footer
+
+= javascript_include_tag 'back/supports/assets/javascripts/main'

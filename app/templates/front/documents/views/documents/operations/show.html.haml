@@ -1,0 +1,54 @@
+= stylesheet_link_tag 'front/documents/assets/stylesheets/main'
+
+.container-fluid.main-content
+  .row.derivationLeft
+    .col-md-1.return-back
+      %a{href: operations_path}
+        %button.btn.btn-default
+          %span.me-2= glyphicon('arrow-left', {size: '12', color: '#72AA42'})
+          %span Retour
+    .col-md-7.no-padding.report_pack{ id: 'current_report', data: { id: @report.id } }
+      %h3.bold.mt-2
+        %span.me-2= @report.name.gsub('all', '').strip
+        %span.badge.badge-secondary.regular.datas_size= @preseizures.total_count
+        - if @filters.present?
+          %span.filter-info.badge.bg-info.regular.datas_size.blink Filtre actif
+    .col-md-3   
+      .search-content
+        .row.no-margin
+          .col-md-1.no-padding.text-center.glass
+            = glyphicon('magnifying-glass', { size: '16', color: 'background: rgba(26, 26, 26, 0.7)' })
+          .col-md-11.no-padding.no-margin
+            %input#search_input{placeholder: 'Recherche (contenu, nom du lot, dossier)', value: @options.try(:[], :text)}
+    .col-md-1.no-padding
+      %button.btn.btn-light.more-filter.semibold   
+        %span.me-2 Filtrer
+        %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+
+  .verif-fixed-action
+  .row.box.p-4.derivationRight.action-fixed
+    .col-md-9
+    .col-md-3.icon-actions.text-end
+      - if @user.has_collaborator_action?
+        %span.pointer.ms-2.preseizures_export{title: 'Export écriture', data:{ id: @report.id, type: 'special_operation', multi: 'true' }}= glyphicon('external-link', { size: '18', color:'rgba(26, 26, 26, 0.32);'})
+        %span.pointer.ms-2.deliver_preseizures{title: 'Livraison écriture comptable', data: { id: @report.id, type: 'special_operation', multi: 'true'}}= glyphicon('loop-circular', { size: '18', color:'rgba(26, 26, 26, 0.32);'})
+        %span.pointer.ms-2.action-selected.edit_selected_preseizures.hide{ title: 'Edition multiple', data: { type: 'operation' } }= glyphicon('pencil', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+      %span.pointer.form-check.d-inline.ms-2      
+        %input.form-check-input.pointer.float-none.select-all{ type: :checkbox, value: "" }
+
+  .all-results.derivationLeft
+    = javascript_declare_var 'has_more_result', (@preseizures.size > 0 && @preseizures.total_count > @preseizures.size).to_s
+    = javascript_declare_var 'is_from_operation_page', @is_operations? true : false
+    - if @preseizures.size > 0
+      - @preseizures.each_slice(2) do |_preseizures|
+        .row.animatedGroups.content-row-operations
+          - _preseizures.each_with_index do |preseizure, index|
+            = render partial: 'operation_box', locals: { preseizure: preseizure, animation: (index % 2 == 0)? 'toLeft' : 'toRight' }
+    - else
+      .no-data-found.grey-label.semibold.box= t('global.no-data-found')
+
+
+= render file: Rails.root.join('app/templates/front/documents/views/documents/_dialog_box.html.haml')
+= render file: Rails.root.join('app/templates/front/documents/views/documents/preseizures/_preseizures_dialog.html.haml')
+
+= javascript_include_tag 'front/documents/assets/javascripts/operations_details'

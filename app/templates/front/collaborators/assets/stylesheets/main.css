@@ -1,0 +1,45 @@
+.edit-delete .delete a {
+  text-decoration: none;
+  cursor: pointer;
+  color: #FF4848;
+}
+
+.edit-delete .edit a {
+  text-decoration: none;
+  cursor: pointer;
+  color: rgba(26, 26, 26, 0.7);
+}
+
+/* TO REMOVE */
+
+.groups .sub_menu {
+  right: auto;
+}
+
+.collaborators.page-content {
+  margin-bottom: 7%;
+}
+
+.form-group{
+  margin-bottom: 1% !important;
+}
+
+.select-container input, .select-container textarea {
+  padding: 2%;  
+}
+
+.content-list-group{
+  min-height: 10px;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 1280px) {
+  .content-list-group{
+    min-height: 10px;
+    font-size: 0.7rem;
+  }
+
+  .modal .select-container input, .modal .select-container textarea {
+    padding: 1%;
+  } 
+}

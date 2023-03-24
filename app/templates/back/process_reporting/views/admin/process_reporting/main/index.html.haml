@@ -1,0 +1,42 @@
+#process_reporting
+  .box.derivationLeft
+    .row
+      .col-md-10
+        %h3 
+          Reporting des traitements de
+          %span.badge.bg-dark= l(@time, format: '%B %Y')
+  .mb-4
+
+  .row.derivationRight
+    .col-md-12
+      .box
+        %table.table.table-condensed.table-striped.table-bordered.table-striped
+          %thead
+            %tr
+              %th{ rowspan: 2 }
+                = link_to l((@time - 1.month), format: '%b %Y').capitalize, "/admin/process_reporting/#{l((@time - 1.month), format: '%Y/%m')}"
+                \-
+                = l(@time, format: '%b %Y').capitalize
+                \-
+                = link_to l((@time + 1.month), format: '%b %Y').capitalize, "/admin/process_reporting/#{l((@time + 1.month), format: '%Y/%m')}"
+              %th.text-center{ colspan: 2 } Kits
+              %th.text-center{ rowspan: 2 } Réception plis
+              %th.text-center{ colspan: 3 } Numérisation
+              %th.text-center{ rowspan: 2 } Regroupement
+              %th.text-center{ rowspan: 2 } Pré-aff
+              %th.text-center{ colspan: 3 } Retours plis
+            %tr
+              %th.text-center Demandes
+              %th.text-center Envois
+              %th.text-center Feuilles
+              %th.text-center Hors-formats
+              %th.text-center Attaches
+              %th.text-center LS500
+              %th.text-center LS1000
+              %th.text-center LS3000
+          %tbody.organization_list
+            - @organizations.each do |organization|
+              %tr{ id: "row-#{organization.id}", class: 'row_organizations' }
+                %td{colspan: 12}
+
+= javascript_include_tag 'back/process_reporting/assets/javascripts/main'

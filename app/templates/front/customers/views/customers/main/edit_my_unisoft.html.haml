@@ -1,0 +1,37 @@
+#customer.edit.my_unisoft.derivationRight
+  %input{ type: :hidden, id: "organization_id", value: "#{@organization.id}"}
+  %input{ type: :hidden, id: "customer_id", value: "#{@customer.id}"}
+  %h6.semibold Liaison avec My Unisoft
+  .mb-4
+  = simple_form_for @customer, url: update_my_unisoft_organization_customer_path(@organization, @customer), html: { class:  'form-horizontal label-medium', id: 'my-unisoft-form' } do |f|
+    .accept_my_unisoft{ class: ('hide' unless @customer.try(:my_unisoft).try(:used?)) }  
+    = f.simple_fields_for :my_unisoft do |m|
+      .select-container.no-padding.w-100
+        .form-group
+          .label-section
+            = label_tag 'user[my_unisoft_attributes][society_id]', 'Veuillez choisir le dossier MyUnisoft correspondant'
+          .control-section
+            = select_tag 'user[my_unisoft_attributes][society_id]', options_for_select(my_unisoft_companies_list_options_for_select(@organization), @customer.my_unisoft&.society_id), include_blank: true, class: 'chosen-list w-100', id: "society-id"
+      .form-group.mt-2
+        - auto_deliver = @customer.try(:my_unisoft).try(:auto_deliver) || -1
+        .row
+          .col-md-4
+            = label_tag 'user[my_unisoft_attributes][auto_deliver]', t('activerecord.models.software_my_unisoft.attributes.auto_deliver'), class: 'semibold'
+          .col-md-4
+            .form-check.form-check-inline               
+              = radio_button_tag 'user[my_unisoft_attributes][auto_deliver]', auto_deliver_options[0][1], auto_deliver == -1, class: 'form-check-input'
+              %label.form-check-label Paramètres du cabinet
+          .col-md-2
+            .form-check.form-check-inline
+              = radio_button_tag 'user[my_unisoft_attributes][auto_deliver]', auto_deliver_options[1][1], auto_deliver == 0, class: 'form-check-input compta-user-options'
+              %label.form-check-label Non
+          .col-md-2
+            .form-check.form-check-inline
+              = radio_button_tag 'user[my_unisoft_attributes][auto_deliver]', auto_deliver_options[2][1], auto_deliver == 1, class: 'form-check-input compta-user-options'
+              %label.form-check-label Oui
+      %input#auto_deliver_customer{ type: :hidden, name: "auto_deliver_customer", value: "#{@customer.try(:my_unisoft).try(:auto_deliver?)}"}
+
+  .idocus_modal_buttons
+    - if @customer.configured?
+      - idocus_params = param_encode({ url: update_my_unisoft_organization_customer_path(@organization, @customer), method: 'post', form:{ id: 'my-unisoft-form', dump_action: true }, modal: { id: '#' }, redirect_to: { url: organization_customer_path(@organization, @customer, tab: 'my_unisoft'), html: { target: '.my_unisoft_configuration' } } })
+      %button.btn.btn-primary.my_unisoft_validation.as_idocus_ajax{ type: :button, idocus: idocus_params } Valider

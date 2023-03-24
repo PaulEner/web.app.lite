@@ -1,0 +1,7 @@
+Options +FollowSymLinks
+
+RewriteEngine On
+
+RewriteRule ^(system/.*)$ - [L]
+
+ErrorDocument 500 "<h2>Application error</h2>Rails application failed to start properly"

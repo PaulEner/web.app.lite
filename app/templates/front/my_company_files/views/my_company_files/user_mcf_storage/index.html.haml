@@ -1,0 +1,71 @@
+= stylesheet_link_tag 'front/my_company_files/assets/stylesheets/main'
+
+.box
+  #my_company_files_content
+    - if @organization.mcf_settings.try(:access_token).present? || @customer.try(:mcf_documents).try(:not_processable).try(:any?)
+      - if @organization.mcf_settings.try(:access_token).present?
+        .derivationLeft
+          %h4 Paramètre de compte
+          %table.table.table-striped.table-condensed
+            %tbody
+              %tr
+                %th Compte associé
+                %td
+                  - if @customer.mcf_storage.present?
+                    = @customer.mcf_storage
+                  - else
+                    %i{ style: 'color:gray' } Aucun
+          .row
+            .col-md-12
+              .form-group.no-margin
+                .w-100.text-end
+                  - if @organization.mcf_settings.configured?
+                    = link_to t('actions.edit'), '#', link: edit_mcf_organization_customer_path(@organization, @customer), class: 'btn btn-primary bold edit_mcf_customer'
+                  - else @organization.mcf_settings.configured?
+                    = link_to t('actions.edit'), '#', class: 'btn btn-primary', disabled: true
+        %br
+        %br
+      - if @customer.try(:mcf_documents).try(:not_processable).try(:any?)
+        .derivationRight
+          %h4 Erreur de récupération de documents
+          %table.table.table-striped.table-condensed
+            %tbody
+              %tr
+                %th
+                  %i{ style: 'color:red' }= @customer.mcf_documents.not_processable.count
+                  erreur(s) de récupération de documents venant de MCF detectée(s)
+          .row
+            .col-md-12
+              - mcf_documents_error = @customer.mcf_documents.not_processable.order('created_at' => 'desc').page(params[:page]).per(params[:per_page])
+              #mcf_errors
+                - if mcf_documents_error.empty?
+                  %p Aucune erreur de récupération de document détéctée.
+                - else
+                  = form_tag retake_mcf_errors_organization_customer_path(@organization, @customer), method: :post, class: 'form form-vertical margin0bottom', id: 'retake_mcf_errors' do
+                    %table.table.table-striped.table-condensed.margin0bottom.table_mcf_errors
+                      %tr
+                        %th= check_box_tag 'master_checkbox', 0, false
+                        %th Date
+                        %th Nom du fichier
+                        %th Journal
+                        %th Message erreur
+                      - mcf_documents_error.each_with_index do |mcf_document, index|
+                        %tr
+                          %td= check_box_tag 'mcf_documents_ids[]', mcf_document.id, false, class: ('checkbox checker_mcf_document_' + index.to_s)
+                          %td= mcf_document.created_at.strftime('%d/%m/%Y %H:%M')
+                          %td= mcf_document.original_file_name
+                          %td= mcf_document.journal
+                          %td= mcf_document.error_message
+                      %tr
+                        %td{colspan: 6}
+                          .form-group.no-margin
+                            .w-100.text-end
+                              - validation_param = param_encode({ url: retake_mcf_errors_organization_customer_path(@organization, @customer, {retake_mcf_documents: 1}), method: 'post', form: {id: 'retake_mcf_errors'}, html: { target: '#my_company_files_content' } })
+                              = button_tag 'Relancer la récupération', name: 'retake_mcf_documents', class: 'btn btn-primary margin1right as_idocus_ajax', data: {confirm: 'Etes-vous sûr?'}, idocus: validation_param
+                              - validation_param = param_encode({ url: retake_mcf_errors_organization_customer_path(@organization, @customer, {confirm_unprocessable_mcf: 1}), method: 'post', form: {id: 'retake_mcf_errors'}, html: { target: '#my_company_files_content' } })
+                              = button_tag 'Marquer la séléction comme vu', name: 'confirm_unprocessable_mcf', class: 'btn btn-primary margin1right as_idocus_ajax', data: {confirm: 'Etes-vous sûr?'}, idocus: validation_param
+                    = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: organization_customer_my_company_files_path(@organization, @customer), name: 'mcf_errors', target: '.table_mcf_errors', total_pages: mcf_documents_error.total_pages }
+
+= render partial: 'mcf_dialog'
+
+= javascript_include_tag 'front/my_company_files/assets/javascripts/main'

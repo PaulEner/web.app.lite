@@ -1,0 +1,9 @@
+.general
+  .row
+    .derivationRight
+      .col-md-8
+        %h3.bold Paramètres : Gestion des adresses (Liste des adresses de l'organisation)
+
+    - addresses = OpenStruct.new({ for: 'organization', paper_return_address: @organization.addresses.for_paper_return.first, paper_set_shipping_address: @organization.addresses.for_paper_set_shipping.first, billing_address: @organization.addresses.for_billing.first })
+
+    = render file: Rails.root.join('app/templates/front/addresses/views/addresses/_show.html.haml'), locals: { addresses: addresses, addr_for: 'organization', id: @organization.id }

@@ -1,0 +1,17 @@
+!!!
+%html
+  %head
+    %title [iDocus] #{@notification.title}
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour #{@notification.user.name},
+    %br
+    != @markdown.render @notification.message
+    = link_to 'Voir sur iDocus', link_through_notification_url(@notification)
+    %br
+    %br
+    Cordialement,
+    %br
+    L’équipe iDocus
+    %br
+    = link_to 'support@idocus.com', 'mailto:support@idocus.com'

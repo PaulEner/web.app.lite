@@ -1,0 +1,29 @@
+= simple_form_for @organization, url: admin_organizations_create_path do |f|
+  .row
+    .col-md-12
+      %h6.semibold Informations
+      %hr
+      .form-group
+        .select-container.w-100.no-padding
+          = f.input :name
+      .form-group
+        .select-container.w-100.no-padding
+          = f.input :code, hint: 'Doit être composé de caractère alphanumérique uniquement'
+  .row
+    .col-md-12
+      %h6.semibold Options
+      %hr
+      .form-group.row
+        .col-md-10
+          = f.label :is_detail_authorized, class: 'semibold'
+        .col-md-1
+          .form-check.form-switch
+            = f.input :is_detail_authorized, as: :boolean, label: false,  label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field mt-2', id: 'divulge_customer' }
+            %label.semibold{class: 'form-check-label label_check_field', for: 'divulge_customer'} Non
+      .form-group.row
+        .col-md-10
+          = f.label :is_test, class: 'semibold'
+        .col-md-1
+          .form-check.form-switch
+            = f.input :is_test, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field mt-2', id: 'organization_test' }
+            %label.semibold{ class: 'form-check-label label_check_field', for: 'organization_test'} Non

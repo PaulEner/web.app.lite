@@ -1,0 +1,62 @@
+.notification-profile
+  %input{ type: 'hidden', name: 'user[h_change_notifications]', value: 'true' }
+  %h5 Notifications et remontées d'alertes
+  = f.simple_fields_for :notify do |o|  
+    %ul.nav.nav-tabs.ms-3{ "role" => "tablist" }
+      %li.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link.active{ "data-bs-toggle" => "tab", "data-bs-target" => "#so_tabs_general", type: :button, "role" => "tab", "aria-controls" => "so_tabs_general", "aria-selected" => "true" } Générale      
+      - if @user.is_prescriber
+        %li.nav-item.no-margin{ "role" => "presentation" }
+          %button.semibold.nav-link{ "data-bs-toggle" => "tab", "data-bs-target" => "#so_tabs_pre_assignment", type: :button, "role" => "tab", "aria-controls" => "so_tabs_pre_assignment", "aria-selected" => "true" } Pré-affectation
+      %li.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link{ "data-bs-toggle" => "tab", "data-bs-target" => "#so_tabs_dropbox", type: :button, "role" => "tab", "aria-controls" => "so_tabs_dropbox", "aria-selected" => "true" } Livraison Dropbox
+      %li.nav-item.no-margin{ "role" => "presentation" }
+        %button.semibold.nav-link{ "data-bs-toggle" => "tab", "data-bs-target" => "#so_tabs_ftp", type: :button, "role" => "tab", "aria-controls" => "so_tabs_ftp", "aria-selected" => "true" }      
+          - if @user.is_prescriber
+            Import/Export FTP
+          - else
+            Livraison FTP
+      - if @user.my_package.try(:bank_active) || @user.is_prescriber
+        %li.nav-item.no-margin{ "role" => "presentation" }
+          %button.semibold.nav-link{ "data-bs-toggle" => "tab", "data-bs-target" => "#so_tabs_retrievers", type: :button, "role" => "tab", "aria-controls" => "so_tabs_retrievers", "aria-selected" => "true" } Automate
+
+    .tab-content
+      .tab-pane.box.no-margin.active#so_tabs_general{ "role" => "tabpanel", "aria-labelledby" => "so-tabs-general-tab" }
+        = hidden_field_tag :panel, 'subscription_options'
+        - if @user.my_package.try(:upload_active) && !@user.is_prescriber
+          = o.input :to_send_docs, as: :boolean, label: "oui, je veux recevoir des mails de relance pour ne pas oublier d'envoyer mes documents à numériser.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+        = o.input :published_docs, label: 'Lorsque de nouveaux documents sont disponibles', collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }, input_html: { class: 'form-select' }
+        - if @user.my_package.try(:upload_active) && !@user.is_prescriber
+          = o.input :reception_of_emailed_docs, as: :boolean, label: "oui, je veux recevoir un mail de confirmation lorsque la plateforme reçoit avec succès un document que j’ai envoyé par mail.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input  m-2' }
+        - if @user.my_package.try(:upload_active) || @user.my_package.try(:scan_active) || @user.is_prescriber
+          = o.input :document_being_processed, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des documents sont en cours de traitement.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input  m-2' }
+        - if @user.is_prescriber
+          / = o.input :paper_quota_reached, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque le quota de 100 feuilles par période a été atteint pour l'un de mes clients.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+        - elsif @user.is_guest || @user.is_package?('mail_active')
+          / = o.input :paper_quota_reached, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque le quota de 100 feuilles par période a été atteint.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+        - if @user.is_prescriber
+          = o.input :new_pre_assignment_available, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque de nouvelles pré-affectations sont disponibles.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+          = o.input :mcf_document_errors, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsqu'il y a des erreurs de récupération de documents venant de MCF (My Company Files)", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+        - unless @user.is_prescriber
+          / = o.input :new_scanned_documents, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mes documents papier ont été reçu.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+      - if @user.is_prescriber
+        .tab-pane.box.no-margin#so_tabs_pre_assignment{ "role" => "tabpanel", "aria-labelledby" => "so-tabs-pre-assignment-tab" }
+          / = o.input :pre_assignment_export, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des exports d'écritures comptables sont disponibles dans iDocus.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+          = o.input :detected_preseizure_duplication, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des doublons de pré-affectation sont bloqués/débloqués.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+          = o.input :pre_assignment_ignored_piece, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des pièces sont ignorées à la pré-affectation.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+          = o.input :pre_assignment_delivery_errors, label: "Lorsqu'une livraison de pré-affectation a échouée", collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }, input_html: { class: 'form-select' }
+      .tab-pane.box.no-margin#so_tabs_dropbox{ "role" => "tabpanel", "aria-labelledby" => "so-tabs-dropbox-tab" }
+        = o.input :dropbox_invalid_access_token, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon compte Dropbox est déconnecté.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+        = o.input :dropbox_insufficient_space, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon compte Dropbox n'a plus d'espace.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+      .tab-pane.box.no-margin#so_tabs_ftp{ "role" => "tabpanel", "aria-labelledby" => "so-tabs-ftp-tab" }    
+        = o.input :ftp_auth_failure, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon FTP est déconnecté.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+      - if @user.my_package.try(:bank_active) || @user.is_prescriber
+        .tab-pane.box.no-margin#so_tabs_retrievers{ "role" => "tabpanel", "aria-labelledby" => "so-tabs-retrievers-tab" }      
+          = o.input :r_wrong_pass, as: :boolean, label: "oui, je veux recevoir une notification lorsqu'un mot de passe est invalide pour un automate.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+          = o.input :r_site_unavailable, as: :boolean, label: "oui, je veux recevoir une notification lorsqu'un site web est indisponible pour un automate.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+          = o.input :r_action_needed, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsqu'une action est nécessaire pour un automate.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+          = o.input :r_bug, as: :boolean, label: "oui, je veux recevoir une notification lorsqu'un automate ne fonctionne pas.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input m-2' }
+          - if @user.is_prescriber
+            = o.input :r_no_bank_account_configured, as: :boolean, label: "oui, je veux recevoir une notification lorsque aucun compte bancaire n'est configuré pour un automate bancaire.", wrapper: :inline_checkbox, label_html: { class: 'form-check-label' }, input_html: { class: 'form-check-input  m-2' }
+          = o.input :r_new_documents, label: 'Lorsque de nouveaux documents sont disponibles', collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }, input_html: { class: 'form-select' }
+          = o.input :r_new_operations, label: 'Lorsque de nouvelles opérations sont disponibles', collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }, input_html: { class: 'form-select' }

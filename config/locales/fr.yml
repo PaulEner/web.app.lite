@@ -1,0 +1,1418 @@
+# French translations for Ruby on Rails
+# by Christian Lescuyer (christian@flyingcoders.com)
+# contributor: Sebastien Grosjean - ZenCocoon.com
+
+fr:
+  global:
+    no-data-found: 'Aucun résultat trouvé'
+
+  pieces:
+    delivery_state:
+      awaiting_analytics: 'En attente analytique'
+      awaiting_pre_assignment: 'Pré-affectation en cours'
+      delivered: 'Ecriture livrée'
+      delivery_pending: 'En attente livraison écriture'
+      delivery_failed: 'Erreur livraison écriture'
+      duplication: 'Ecriture en doublon'
+      piece_ignored: 'Pré-affectation ignorée'
+      not_processed: 'Rejetée'
+      processed: 'Traitée'
+
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      short: "%e %b"
+      long: "%e %B %Y"
+      long_ordinal: "%e %B %Y"
+      only_day: "%e"
+      only_date: "%d/%m/%y"
+
+    day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
+    abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
+    month_names: [~, janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre]
+    abbr_month_names: [~, jan., fév., mar., avr., mai, juin, juil., août, sept., oct., nov., déc.]
+    order:
+      - :day
+      - :month
+      - :year
+
+  time:
+    formats:
+      default: "%d %B %Y %H:%M"
+      standard: "%d/%m/%Y %H:%M"
+      time: "%H:%M"
+      short: "%d %b %H:%M"
+      long: "%A %d %B %Y %H:%M:%S %Z"
+      long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
+      only_second: "%S"
+      only_date: "%d/%m/%y"
+      default_date: "%d %B %Y"
+    am: am
+    pm: pm
+
+  datetime:
+    distance_in_words:
+      half_a_minute: une demi-minute
+      less_than_x_seconds:
+        zero: moins d'une seconde
+        one: moins de 1 seconde
+        other: 'moins de %{count} secondes'
+      x_seconds:
+        one: 1 seconde
+        other: '%{count} secondes'
+      less_than_x_minutes:
+        zero: moins d'une minute
+        one: moins de 1 minute
+        other: 'moins de %{count} minutes'
+      x_minutes:
+        one: 1 minute
+        other: '%{count} minutes'
+      about_x_hours:
+        one: environ une heure
+        other: 'environ %{count} heures'
+      x_days:
+        one: 1 jour
+        other: '%{count} jours'
+      about_x_months:
+        one: environ un mois
+        other: 'environ %{count} mois'
+      x_months:
+        one: 1 mois
+        other: '%{count} mois'
+      about_x_years:
+        one: environ un an
+        other: 'environ %{count} ans'
+      over_x_years:
+        one: plus d'un an
+        other: 'plus de %{count} ans'
+    prompts:
+      year: Année
+      month: Mois
+      day: Jour
+      hour: Heure
+      minute: Minute
+      second: Seconde
+
+  number:
+    format:
+      precision: 3
+      separator: ','
+      delimiter: ' '
+    currency:
+      format:
+        unit: '€'
+        precision: 2
+        format: '%n %u'
+    human:
+      format:
+        precision: 2
+      storage_units:
+        format: '%n %u'
+        units:
+          byte:
+            one:   octet
+            other: octets
+          kb: Ko
+          mb: Mo
+          gb: Go
+          tb: To
+
+  support:
+    array:
+      sentence_connector: et
+      skip_last_comma: true
+      words_connector: ', '
+      two_words_connector: ' et '
+      last_word_connector: ' et '
+
+  previous: précédent
+  next: suivant
+
+  activemodel:
+     errors:
+      messages:
+        inclusion: n'est pas inclus(e) dans la liste
+        exclusion: n'est pas disponible
+        invalid: n'est pas valide
+        confirmation: ne concorde pas avec sa confirmation
+        accepted: doit être accepté(e)
+        empty: doit être rempli(e)
+        blank: doit être rempli(e)
+        too_long: 'est trop long (pas plus de %{count} caractères)'
+        too_short: 'est trop court (au moins %{count} caractères)'
+        wrong_length: 'ne fait pas la bonne longueur (doit comporter %{count} caractères)'
+        taken: n'est pas disponible
+        not_a_number: n'est pas un nombre
+        greater_than: 'doit être supérieur à %{count}'
+        greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
+        equal_to: 'doit être égal à %{count}'
+        less_than: 'doit être inférieur à %{count}'
+        less_than_or_equal_to: 'doit être inférieur ou égal à %{count}'
+        odd: doit être impair
+        even: doit être pair
+        record_invalid: 'La validation a échoué : %{errors}'
+      models:
+        user:
+          attributes:
+            password:
+              too_short: doit contenir 6 caractères au minimum
+              too_long: doit contenir 20 caractères au maximum
+              confirmation: et la confirmation du mot de passe doivent être identiques
+        account_sharing_request:
+          attributes:
+            code_or_email:
+              already_exist: existe déjà
+
+  activerecord:
+    errors:
+      messages:
+        inclusion: n'est pas inclus(e) dans la liste
+        exclusion: n'est pas disponible
+        invalid: n'est pas valide
+        confirmation: ne concorde pas avec sa confirmation
+        accepted: doit être accepté(e)
+        empty: doit être rempli(e)
+        blank: doit être rempli(e)
+        too_long: 'est trop long (pas plus de %{count} caractères)'
+        too_short: 'est trop court (au moins %{count} caractères)'
+        wrong_length: 'ne fait pas la bonne longueur (doit comporter %{count} caractères)'
+        taken: n'est pas disponible
+        not_a_number: n'est pas un nombre
+        greater_than: 'doit être supérieur à %{count}'
+        greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
+        equal_to: 'doit être égal à %{count}'
+        less_than: 'doit être inférieur à %{count}'
+        less_than_or_equal_to: 'doit être inférieur ou égal à %{count}'
+        odd: doit être impair
+        even: doit être pair
+        record_invalid: 'La validation a échoué : %{errors}'
+      models:
+        user:
+          attributes:
+            password:
+              too_short: doit contenir 6 caractères au minimum
+              too_long: doit contenir 20 caractères au maximum
+              confirmation: et la confirmation du mot de passe doivent être identiques
+            password_confirmation:
+              confirmation: Les champs "mot de passe" doivent être identiques
+
+  composition: Composition
+
+  dashboard:
+    welcome_to: Bienvenue sur
+    folder_text_info: Vous pouvez voir l’état de vos dossiers ici ou directement accéder à vos documents.
+    my_favorite_folders: Mes dossiers favoris
+    view_my_documents: Voir mes documents
+    add_folder_to_favorite: Ajouter un dossier aux favoris
+    no_favorite_customer: Veuillez ajouter vos dossiers favoris
+    search_folder: Rechercher un dossier
+    validate: Valider
+    cancel_action: Annuler
+    configuration_state: État de la configuration
+    configuration_text: Le dossier client est configuré de façon optimale
+    good_state: Bonne
+    medium_state: Moyen
+    critical_state: Critique
+    folder_activity: Activité du dossier
+    pack_size: Nombre de lots
+    journal_size: Nombre de journaux
+    last_pack_added: Dernier lot ajouté
+    last_activity: Dernière activité
+    add_documents: Ajout de documents
+    # errors_found: Erreurs de téléversement
+    failed_delivery: Erreur livraison d'écritures
+    retrievers_failing: Pannes d’automates
+    pre_assignement_duplicated: Doublons en pré-affectation
+    favorite_success_state: bon
+    favorite_critical_state: critique
+
+  reporting:
+    reporting_text: Reporting
+    reporting_flow: Flux documentaire
+    reporting_delivery_account: Taux de livraison en compte d’attente
+    reporting_retrievers: Fonctionnement automates
+    active_retrievers: Automate actifs
+    failed_retrievers: Automate en panne
+    top_delay_sending_document: Top retard envoi de document
+    top_delivery_waiting_account: Top livraison compte d'attente
+    share_waiting_account: Part de compte d'attente
+    share_anomaly_account: Part de compte anomalie
+    share_default_account: Part de compte par défaut
+    folder_name: Nom du dossier
+    updated_at: Date de modification
+    pack_name: Nom du lot
+    last_document_date: Date du dernier doc.
+    retriever: Automate
+    state: Status
+    filter_by_period: Filtrer par period
+
+  organizations:
+    home: Accueil
+    my_organization: Mon organisation
+    organization: Organisation
+    customer: Client
+    general: Général
+    pdf_naming: Nommage PDF
+    reminder_emails: Emails de rappel
+    api_tokens: Clés API
+    address_management: Gestion des Adresses
+    software: Logiciels Comptables et .CSV
+    efs: Stockages externes
+    payment_method: Mode de Paiement
+    subscription: Abonnement
+    collaborators: Collaborateurs & Groupes
+    customers: Clients
+    journals: Journaux comptables
+    bank_assignment: Affectations bancaires
+    bank_assignment_rule: Règle d'affectations bancaires
+    invoices: Factures
+    paper_set_order: Kits Courriers
+    active_customers: Dossiers actifs
+    customers_evolution: Evolution du nombre de dossiers
+    distribution_of_subscriptions: Répartition des abonnements
+
+  folders:
+    shared_folders: Dossiers Partagés
+    share_a_folder: Partager un dossier
+    folder: Dossiers
+    shared_at: Partagé le
+    client_or_contact: Client ou Contact
+    folder_to_share: Dossier à partager
+    share_to_a_customer: Partager à un client
+    share_with_mail_address: Partager avec une adresse e-mail
+
+  subscription_options:
+    ido_micro: iDo'Micro
+    ido_nano: iDo'Nano
+    ido_x: iDo'X
+    ido_classic: iDo'Classique
+    retriever: Automate
+    digitize: Numérisation
+
+  kits:
+    mail_kit: Kit courrier
+    order_mail_kit: Commander kit courrier
+    folder: Dossier
+    order_date: Date de commande
+    company: Société
+    order: Commande
+    monitoring_number: N° de suivi
+    state: Statut
+
+  rules:
+    name: Nom de la règle
+    assigned_to: Affecté à
+    assign_to: Affecter à
+    type: Type de règle
+    categorizatiojn:  Catégorisation
+    searched_content:  Contenu recherché
+    account_number: Numéro de compte
+    account_number_helper_text: Le numéro qui sera assigné si la recherche est un succès
+    recipe: Recette
+    expense: Dépense
+    category: Catégorie
+    research: Recherche
+    correction: Correction
+    assigned_to_helper_text: Ne pourra plus être changé par la suite
+    type_helper_text: Effectue une recherche ou une correction du plan de compte
+    assigned_client: Client affectés par la règle
+    import_finished: Importation terminée !
+    label_content_search: Contenu recherche dans la libellé
+    label_content_search_helper_text: Utiliser un asterisque (*) pour représenter du texte ou caractère avant/après le contenu recherché
+    similar_rule_priorization: Priorisation de règle similaires
+    similar_rule_priorization_helper_text: 0 étant prioritaire sur 1. 1 étant prioritaire sur 2..
+    recovery_operation_retriever: Les règles ci-dessous s'appliquent aux opérations récupérées dans les automates
+    file_import_info: Une règle d'affectation doit avoir un nom unique. Si des règles dans le fichier d'import portent le même nom qu'une règle déjà existante, ces règles seront auto incrémentées.
+    drop_csv_file: Déposez un fichiers CSV ici
+    select_csv_file_from_computer: séléctionnez-les depuis votre ordinateur
+
+  invoices:
+    auto_invoice_integration: Intégration automatique des factures
+    invoice_number: Numéro de facture
+    users_code: Code de dossiers
+    document_type: Type de document
+    client_code: Code client
+    invoice_synchonize: Synchroniser factures
+
+  footer:
+    copyright_text: Tous droits réservés iDocus
+
+  layouts:
+    title: Idocus | Archivage numérique
+    home: Accueil
+    my_account: Mon compte
+    change_password: Changer mon mot de passe
+    external_storage: Configurer les stockages externes
+    notification: Notifications et remontées d'alertes
+    my_documents: Mes documents
+    bank_operations: Opérations bancaires
+    my_company: Mon organisation
+    reporting: Reporting
+    my_retrievers: Banques
+    pieces_and_pre_assignment: Pièces / Écritures comptables
+    pieces_errors: Pièces en erreur    
+    retriever:
+      automates: Automates
+      historic: Opérations
+      parameters: Paramètres divers
+
+  views:
+    pagination:
+      first: '&laquo;'
+      last: '&raquo;'
+      previous: '&lsaquo;'
+      next: '&rsaquo;'
+      truncate: '...'
+    standards:
+      or: ou
+      and: et
+      all: tous
+      displayed_by: affiché par
+      journal: journal
+      setting: paramètre
+      parameterize: paramètrer
+      configure: configurer
+      amount: montant
+      invoice: facture
+    flush_notifications:
+      bug_error: iDocus rencontre actuellement un bug
+      alert_message: Nous faisons tout notre possible pour régler le problème au plus vite. Merci de votre patience
+      notice_success: Les dossiers ont été bien ajoutés
+      cance_action: Vous pouvez annuler votre action
+      confirmed_cancel_action: en cliquant ici
+
+  actions:
+    name: Actions
+    show: Voir
+    new: Nouveau
+    add: Ajouter
+    edit: Éditer
+    destroy: Supprimer
+    cancel_destroy: Annuler la suppression
+    cancel: Annuler
+    return: Retour
+    update: Mettre à jour
+    submit: Valider
+    confirm: Êtes-vous sûr ?
+    propagate: Propager
+    next_step: Etape suivante >
+    complete_later: Terminer plus tard
+    previous_step: < Etape précédente
+    finish: Terminer
+    share: Partager
+    duplicate: Dupliquer
+    next: Suivant
+    download: Télécharger
+    rules:
+      add: Ajouter une règle
+      apply_to: Appliquer à
+      excel_export: Exporter sur Excel
+      import: Importer une règle
+      create: Créer une règle
+      invoice_synchronize: Synchroniser les factures
+
+  filters:
+    name: Filtre
+    action: Filtrer
+    cancel: Supprimer le(s) filtre(s)
+    reset: Réinitialiser
+    compare: Comparer
+
+  yes_value: Oui
+  no_value: Non
+
+  common:
+    details: Détails
+
+  authorization:
+    unessessary_rights: Vous ne disposez pas des droits nécessaires pour effectuer cette action.
+
+  subscription:
+    actions:
+      authorize_dematbox: Autoriser Dematbox
+      authorize_retriever: Autoriser Automate
+      authorize_preassignment: Autoriser la pré-affectation
+      authorize_upload: Autoriser le téléversement
+      update_max_number_of_journals: Modifier le nombre max. de journaux
+
+  activerecord:
+    errors:
+      messages:
+        taken: est déjà pris.
+        invalid: n'est pas valide
+        callbacks:
+          'Calling %{method} on %{klass} resulted in a false return from a callback.'
+        document_not_found:
+          'Document introuvable pour la classe %{klass} avec les ids %{identifiers}.'
+        eager_load:
+          'Eager loading :%{name} is not supported due to it being a many-to-many
+          or polymorphic belongs_to relation.'
+        invalid_time:
+          "'%{value}' is not a valid Time."
+        invalid_database:
+          'La base de données doit être une Mongo::DB, pas %{name}.'
+        invalid_type:
+          'Le champ a été défini comme un(e) %{klass} mais a reçu un(e)
+          %{other} avec la valeur %{value}.'
+        invalid_options:
+          'Invalid option :%{invalid} provided to relation :%{name}. Valid options
+          are: %{valid}.'
+        unsupported_version:
+          "MongoDB %{version} n'est pas supporté, veuillez mettre à jour avec
+          %{mongo_version}"
+        validations:
+          'La validation a échouée - %{errors}.'
+        invalid_collection:
+          "L'accès à la collection pour %{klass} n'est pas autorisé puisque
+          ce n'est pas un document embarqué, veuillez accéder à la collection
+          depuis le document racine."
+        invalid_field:
+          "Définir un champ appellé %{name} n'est pas autorisé. Veuillez ne
+          pas définir de champs en conflit avec les attributs internes de
+          Mongoid ou des noms de méthodes. Utilisez Document#instance_methods
+          pour consulter la liste des noms."
+        too_many_nested_attribute_records:
+          "Le nombre d'attributs imbriqués pour %{association} est limité à
+          %{limit} enregistrements."
+        embedded_in_must_have_inverse_of:
+          'Les options pour les associations embedded_in doivent inclure
+          inverse_of.'
+        dependent_only_references_one_or_many:
+          "L'option dependent => destroy|delete fournie est seulement valide
+          pour les associations references_on ou references_many."
+        association_cant_have_inverse_of:
+          "Definir un inverse_of pour cette association n'est pas autorisé.
+          Utilisez cette option seulement sur embedded_in ou references_many."
+        unsaved_document:
+          "You cannot call create or create! through a relational association
+          relation (%{document}) who's parent (%{base}) is not already saved."
+        mixed_relations:
+          'Referencing a(n) %{embedded} document from the %{root} document via a
+          relational association is not allowed since the %{embedded} is embedded.'
+        no_environment:
+          "Mongoid attempted to find the appropriate environment but no Rails.env,
+          Sinatra::Base.environment, or RACK_ENV could be found."
+        scope_overwrite:
+          "Cannot create scope :%{scope_name}, because of existing method
+          %{model_name}.%{scope_name}."
+        blank_on_locale: "can't be blank in %{location}"
+        blank: est vide
+        too_short: est trop court
+        too_long: est trop long
+        inclusion: n'est pas inclus(e) dans la liste
+        not_a_number: n'est pas un nombre
+        greater_than: 'doit être supérieur à %{count}'
+        greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
+        equal_to: 'doit être égal à %{count}'
+        less_than: 'doit être inférieur à %{count}'
+        less_than_or_equal_to: 'doit être inférieur ou égal à %{count}'
+        odd: doit être impair
+        even: doit être pair
+      models:
+        remote_file:
+          attributes:
+            state:
+              blank: doit être rempli(e)
+            service_name:
+              blank: doit être rempli(e)
+              inclusion: n'est pas inclus(e) dans la liste
+        user:
+          attributes:
+            expired: jeton expiré
+            group_ids:
+              empty: Sélectionner au moins un groupe
+        scan/document:
+          attributes:
+            paperclips:
+              greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
+            oversized:
+              greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
+        uploaded_document:
+          attributes:
+            pages_number_is_too_high: 'nombre de pages : %{pages_number}, trop élevé (100 pages max.)'
+            file_size_is_too_big: 'taille : %{size_in_mo} Mo, trop gros (%{authorized_size_mo} Mo max.)'
+            invalid_file_extension: 'extension %{extension} invalide (%{valid_extensions})'
+            journal_unknown: 'journal %{journal} inconnu'
+            invalid_period: "période '%{period}' inconnu"
+            file_is_corrupted_or_protected: Votre document est en-cours de traitement
+            already_exist: existe déjà
+            invalid_analytic_params: paramètres analytiques invalides
+            invalid_analytic_ventilation: la ventilation analytique doit être répartie sur un total de 100% par analyse
+        bank_account:
+          attributes:
+            journal:
+              invalid: 'Invalide ( doit être composé uniquement des caractéres A à Z et des chiffres 0 à 9, et doit commencer par une lettre )'
+        organization:
+          attributes:
+            authd_prev_period:
+              greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
+        exercise:
+          attributes:
+            start_date:
+              taken: existe déjà
+            end_date:
+              taken: existe déjà
+        paper_process:
+          attributes:
+            tracking_number:
+              taken: existe déjà
+            customer_code:
+              taken: existe déjà
+            journals_count:
+              greater_than: 'doit être supérieur à %{count}'
+            periods_count:
+              greater_than: 'doit être supérieur à %{count}'
+            order_id: n° de commande
+        organization_group:
+          attributes:
+            organizations:
+              too_short: Sélectionner au moins 2 organisations
+              too_long: Sélectionner au maximum 10 organisations
+    models:
+      common:
+        attributes:
+          created_at: Date de création
+          updated_at: Date de modification
+      user:
+        zero: 0 utilisateurs
+        one: 1 utilisateur
+        other: '%{count} utilisateurs'
+        name: Utilisateur
+        attributes:
+          name: Nom complet
+          formatted_identifier: Identifiant
+          company: Nom de la société
+          type_of_entity: Type d'entité
+          legal_registration_city: Ville d'enregistrement
+          registration_number: Numéro d'enregistrement
+          address_street: Rue
+          address_zip_code: Code postal
+          address_city: Ville
+          code: Code du dossier
+          knowings_code: Code Knowings
+          knowings_visibility: Visibilité Knowings
+          knowings_visibility_options:
+            private: Confidentiel
+            restricted: Restreint
+            visible: Visible
+          first_name: Prénom
+          last_name: Nom
+          email: Email
+          phone_number: N° de téléphone
+          is_pre_assignement_displayed: Activer la vue écriture comptable dans l'onglet 'Mes Documents' pour ce compte
+          act_as_a_collaborator_into_pre_assignment: Donner les droits collaborateur dans l'onglet 'Mes Documents' pour ce compte
+          display_period_upload: Afficher la période iDocus dans l'onglet 'Mes Documents' lors du téléversement (Vue client)
+          inactive_at: Dossier clôturé au
+          is_inactive: Dossier clôturé ?
+          is_admin: Est administrateur ?
+          is_organization_admin: Est administrateur de l'organisation ?
+          is_prescriber: Est collaborateur ?
+          is_fake_prescriber: Est collaborateur de test ?
+          is_guest: Est un contact ?
+          is_access_by_token_active: Accès par jeton activé ?
+          is_dematbox_authorized: Dematbox autorisé ?
+          prescriber: Prescripteur
+          ibiza_id: Dossier correspondant dans iBiza
+          exact_online_id: Dossier correspondant dans Exact Online
+          authd_prev_period: Nombre de périodes antérieures accessibles au téléversement des pièces par l'utilisateur
+          auth_prev_period_until_day: "Jour de clôture de la période précédente dans la période en cours (exemple : 11 février pour clôturer janvier)"
+          auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel et l'annuel)
+          organization: Organisation
+          jefacture_account_id: Identifiant Jefacture (SIREN)
+          default_banking_provider: Fournisseur d'opérations bancaires
+          cedricom_account_identifier: CEDRICOM - ID API dossier
+          jedeclare_account_identifier: JEDECLARE - ID API dossier
+      user_options:
+        zero: 0 option
+        one: 1 option
+        other: '%{count} options'
+        attributes:
+          is_taxable: Le dossier est-il assujetti à TVA?
+          is_pre_assignment_date_computed: Date de saisie des factures
+          is_retriever_authorized: Automate autorisé ?
+          is_operation_processing_forced: Forcer la pré-affectation des écritures récupérées par les automates ?
+          is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?
+          preseizure_date_option: Date de l'écriture des opérations bancaires
+          preseizure_date_option_organization: Paramètres du cabinet
+          operation_date: Date de réalisation de l'opération
+          operation_value_date: Date de prélèvement de l'opération
+      address:
+        zero: 0 adresses
+        one: 1 adresse
+        other: '%{count} adresses'
+        attributes:
+          first_name: Prénom
+          last_name: Nom
+          company: Société
+          company_number: N° de Siret
+          address_1: Adresse
+          address_2: Adresse (suite)
+          city: Ville
+          zip: Code postal
+          state: Etat
+          phone: Tél fixe ou mobile
+          building: Bâtiment et appartement
+          place_called_or_postal_box: Lieu-dit ou BP
+          door_code: Digicode
+          other: Autre (sonnerie, concierge...)
+          billing: Facturation
+          paper_return: Retour des factures papier
+          paper_set_shipping: Livraison du kit envoi courrier
+          dematbox_shipping: Livraison de l’iDocus Box
+          billing_address: Adresse de facturation
+          paper_return_address: Adresse de retour des factures papier
+          paper_set_shipping_address: Adresse de livraison du kit envoi courrier
+          dematbox_shipping_address: Adresse de livraison de l’iDocus Box
+      cms_image:
+        zero: 0 images
+        one: 1 image
+        other: '%{count} images'
+        name: CMS Image
+      product:
+        zero: 0 produits
+        one: 1 produit
+        other: '%{count} produits'
+        name: Produit
+        attributes:
+          title: Titre
+          position: Position
+          period_duration: Type de période
+      product_option:
+        zero: 0 options
+        one: 1 option
+        other: '%{count} options'
+        name: Option de produit
+        group: Groupe
+        attributes:
+          name: Nom
+          title: Nom (public)
+          description: Description
+          position: Position
+          price_in_cents_wo_vat: Prix
+          duration: "Durée de l'abonnement (1 = une seule fois, 0 = reconduit à chaque période)"
+          quantity: Quantité
+          action_name: Action à executer
+          notify: Notifier par email
+          is_default: Par défaut ?
+          subscribers: Abonnés
+          product_group: Groupe
+          groups: Groupes
+      product_group:
+        zero: 0 groupes
+        one: 1 groupe
+        other: '%{count} groupes'
+        name: Groupe de produit
+        attributes:
+          name: Nom
+          title: Nom (public)
+          position: Position
+          is_option_dependent: Bouton radio ? (sinon case à cocher)
+      software_csv_descriptor:
+        zero: 0 descripteur csv
+        one: 1 descripteur csv
+        other: '%{count} descripteurs csv'
+        name: Descripteur CSV
+        attributes:
+          client_code: Code client
+          journal: Journal iDocus
+          pseudonym: Journal comptable
+          type: Type de traitement
+          period: Période iDocus
+          piece_number: Numéro de pièce iDocus
+          original_piece_number: Numéro de pièce d'origine
+          date: Date réelle
+          period_date: 1er ou date réelle
+          deadline_date: Echéance
+          operation_label: Libellé bancaire
+          piece: Nom de la pièce
+          number: Numéro de compte
+          original_amount: Montant
+          currency: Devise
+          conversion_rate: Taux de conversion
+          third_party: Tiers
+          credit: Crédit
+          debit: Débit
+          complete_unit: Unité monétaire (Complète)
+          partial_unit: Unité monétaire (Partielle)
+          lettering: Lettrage
+          piece_url: URL pièce
+          remark: Remarque
+          use_own_csv_descriptor_format: Utilise son propre format de CSV ?
+          auto_deliver: Activer la génération automatique de l'export (zip) des écritures comptables et pièces?
+          is_used: Activer l’option de création d'export (csv) des écritures comptables ?
+      remote_file:
+        zero: 0 fichier distant
+        one: 1 fichier distant
+        other: '%{count} fichiers distant'
+        name: Fichier distant
+        attributes:
+          path: chemin
+          size: poids
+          tried_at: dernière essaie le
+          service_name: nom du service
+          error_message: message d'erreur
+      account_book_type:
+        zero: 0 journal
+        one: 1 journal
+        other: '%{count} journaux'
+        name: Journal comptable
+        attributes:
+          created_at: Date de création
+          updated_at: Date de modification
+          name: Code journal
+          pseudonym: Code journal logiciel comptable
+          use_pseudonym_for_import: Utiliser le journal logiciel comptable  pour l'import
+          description: Description
+          domain: Domaine (Knowings)
+          default_account_number: Compte de tiers par défaut
+          account_number: Compte de tiers d'attente
+          default_charge_account: Compte de charge / produit par défaut
+          charge_account: Compte de charge / produit d'attente
+          vat_account: Compte TVA
+          anomaly_account: Compte d'anomalie
+          is_expense_categories_editable: Catégories de dépenses editable ?
+          expense_categories: Catégories de dépenses
+          instructions: Instructions (400 char. max.)
+          position: Position
+          is_default: Par défaut ?
+          entry_type: Type de saisie
+          entry_type_0: Aucun
+          entry_type_1: Notes de frais
+          entry_type_2: Achat
+          entry_type_3: Vente
+          entry_type_4: Banque
+          entry_type_5: Prestation spécifique
+          user_id: Utilisateur
+          clients: Clients
+          force_assignment:  Forcer les modifications pour le client
+          jefacture_enabled: Utiliser ce journal pour les flux JeFacture
+      reminder_email:
+        zero: O email de rappel
+        one: 1 email de rappel
+        other: '%{count} emails de rappel'
+        name: Email de rappel
+        pluralized_name: Emails de rappels
+        attributes:
+          name: Nom de l'email
+          delivery_day: Jour de l'envoi
+          period: Périodicité
+          period_options:
+            monthly: Mensuel
+            quarterly: Trimestriel
+          delivered_at: Délivrés le
+          summarize: Délivrés / Traités / Total
+          object: Objet
+          content: Contenu
+        actions:
+          add: Ajouter un email de rappel
+          send: Envoyer
+          send_confirmation: Voulez vous vraiment envoyer les rappels maintenant ?
+      file_sending_kit:
+        zero: O kit d'envoi de documents
+        one: 1 kit d'envoi de documents
+        other: "%{count} kit d'envoi de documents"
+        name: Kit d'envoi de documents
+        attributes:
+          title: Titre
+          instruction: Instruction(s)
+          position: Position
+          folders: Chemises
+          mails: Mails
+          customer_labels: Etiquettes d'envois du kit
+          workshop_labels: Etiquettes ateliers
+          logo:
+            path: Chemin
+            height: Hauteur
+            width: Largeur
+            center:  Logo centre (affiché dans le mail)
+            left: Logo gauche
+            right: Logo droite
+        actions:
+          generate: Générer
+      software_ibiza:
+        zero: 0 iBiza
+        one: iBiza
+        other: '%{count} iBiza'
+        name: iBiza
+        attributes:
+          is_used: Utilise Ibiza?
+          ibiza_id: Dossier correspondant dans iBiza
+          auto_deliver: Livrer automatiquement les écritures ?
+          is_analysis_activated: Activer la compta analytique ?
+          is_analysis_to_validate: Valider la compta analytique des pièces avant envoi en pré-affectation ?
+          specific_url_options: URL de connexion iBiZa à iDocus (Optionnel)
+          access_token: Jeton d'accès Scan et OCR
+          state: Etat
+          access_token_2: Jeton d'accès iDo'FacBanque
+          state_2: Etat
+          description: Description
+          description_separator: Séparateur du champ description
+          piece_name_format: Format de nom de la pièce iDocus dans iBiza (colonne "Pièce" dans iBiza)
+          piece_name_format_sep: Séparateur du format de nom de la pièce
+          states:
+            none: non assigné
+            waiting: en cours de vérification
+            valid: validé
+            invalid: non valide
+
+      ibizabox_folder:
+        zero: 0 répertoire iBiza
+        one: répertoire iBiza
+        other: '%{count} répertoires iBiza'
+        name: répertoire iBiza
+        attributes:
+          states:
+            inactive: Inactif
+            ready: Prêt
+            processing: Traitement en cours
+            waiting_selection: En attente de sélection
+      organization:
+        zero: 0 organisation
+        one: 1 organisation
+        other: '%{count} organisations'
+        name: Organisation
+        attributes:
+          name: Nom
+          description: Description
+          leader: Administrateur de l'organisation
+          leaders: Administrateurs de l'organisation
+          collaborators: Collaborateurs
+          collaborators_count: Nombre de collaborateurs
+          members: Membres
+          members_count: Nombre de membres
+          customers: Clients
+          customers_count: Nombre de clients
+          jefacture_api_key: Clé d'API Jefacture
+          invoice_created_customer: Facturer un dossier à la création ?
+          is_detail_authorized: Divulguer le coût iDocus au client ?
+          is_test: Mode test ?
+          is_for_admin: Administratif ?
+          is_active: Est actif ?
+          is_suspended: Est suspendu ?
+          is_quadratus_used: Activer l'option d'export des écritures comptables et pièces pour Quadratus (.zip)?
+          is_quadratus_auto_deliver: Activer la génération automatique de l'export (zip) des écritures comptables et pièces pour Quadratus?
+          is_coala_used: Activer l'option d'export des écritures comptables et pièces pour Coala (.zip)?
+          is_coala_auto_deliver: Activer la génération automatique de l'export (zip) des écritures comptables et pièces pour Coala?
+          is_cegid_used: Activer l'option d'export des écritures comptables et pièces pour Cegid (.zip)?
+          is_cegid_auto_deliver: Activer la génération automatique de l'export (zip) des écritures comptables et pièces pour Cegid?
+          is_csv_descriptor_used: Activer l’option de création d'export (csv) des écritures comptables ?
+          is_csv_descriptor_auto_deliver: Activer la génération automatique de l'export (zip) des écritures comptables et pièces?
+          is_pre_assignment_date_computed: Date de saisie des factures
+          is_operation_processing_forced: Forcer la pré-affectation des écritures récupérées par les automates ?
+          is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?
+          is_duplicate_blocker_activated: Bloquer les doublons de pré-affectation ?
+          is_fec_agiris_used: Activer l'option d'export des écritures comptables et pièces pour Fec Agiris?
+          is_fec_agiris_auto_deliver: Activer la génération automatique de l'export des écritures comptables et pièces pour Fec Agiris?
+          subject_to_vat: Est assujetti à la tva ?
+          specific_mission: Mission spécifique ?
+          invoice_mails: Email(s) en copie de la facture iDocus
+          preseizure_date_option: Date de l'écriture des opérations bancaires
+          is_exact_online_used: Utilise Exact Online?
+          is_exact_online_auto_deliver: Livrer automatiquement les écritures ?
+          default_banking_provider: Fournisseur d'opérations bancaires
+          status:
+            admin: Administrateur
+            collaborator: Collaborateur
+            customer: Client
+          authd_prev_period: Nombre de périodes antérieures accessibles au téléversement des pièces par l'utilisateur
+          auth_prev_period_until_day: "Jour de clôture de la période précédente dans la période en cours (exemple : 11 février pour clôturer janvier)"
+          auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel et l'annuel)
+          cedricom_name: CEGID Relations Bancaires - Nom technique du cabinet
+          cedricom_user: CEGID Relations Bancaires - Identifiant
+          cedricom_password: CEGID Relations Bancaires - Mot de passe
+          jedeclare_account_identifier: JEDECLARE - ID API Cabinet
+          jedeclare_user: JEDECLARE - Identifiant
+          jedeclare_password: JEDECLARE - Mot de passe
+      group:
+        zero: 0 groupe
+        one: 1 groupe
+        other: '%{count} groupes'
+        name: Groupe
+        attributes:
+          name: Nom
+          description: Description
+          members: Collaborateurs
+          collaborators_count: Nombre de collaborateurs
+          customers: Clients
+          customers_count: Nombre de clients
+          dropbox_delivery_folder: Chemin de livraison
+          is_dropbox_authorized: Autorisé ?
+      organization_rights:
+        zero: 0 droits
+        one: 1 droit
+        other: '%{count} droits'
+        name: Droits de l'organisation
+        names:
+          collaborators_management: Gestion des collaborateurs
+          customers_management: Gestion des clients
+          groups_management: Gestion des groupes
+          journals_management: Gestion des journaux comptables
+          customer_journals_management: Gestion des journaux comptables des clients
+        attributes:
+          is_collaborators_management_authorized: Gestion des collaborateurs autorisé ?
+          is_customers_management_authorized: Gestion des clients autorisé ?
+          is_groups_management_authorized: Gestion des groupes autorisé ?
+          is_journals_management_authorized: Gestion des journaux comptables autorisé ?
+          is_customer_journals_management_authorized: Gestion des journaux comptables des clients autorisé ?
+      invoice:
+        zero: 0 facture
+        one: 1 facture
+        other: '%{count} factures'
+        name: Facture
+        attributes:
+          number: Numéro
+          amount_w_vat: Montant (TTC)
+          amount_in_cents_w_vat: Montant en centime (TTC)
+          requested_at: Order de prlv. envoyé le
+          received_at: Rglet. effectué le
+      expense_category:
+        zero: 0 catégorie de dépense
+        one: 1 catégorie de dépense
+        other: '%{count} catégories de dépenses'
+        name: Catégorie de dépense
+        attributes:
+          name: Nom
+          description: Description
+      scanning_provider:
+        zero: 0 atelier
+        one: 1 atelier
+        other: '%{count} ateliers'
+        name: Atelier
+        attributes:
+          name: Nom
+          code: Code
+          customers: Clients
+          customers_count: Nombre de clients
+          is_default: Par défaut ?
+      accounting_plan:
+        zero: 0 plan de compte
+        one: 1 plan de compte
+        other: '%{count} plan de compte'
+        name: Plan de compte
+        attributes:
+          providers: Fournisseurs
+          customers: Clients
+      accounting_plan_item:
+        zero: 0 item de plan de compte
+        one: 1 item de plan de compte
+        other: '%{count} items de plan de compte'
+        name: Item de plan de compte
+        attributes:
+          third_party_account: Compte de tiers
+          third_party_name: Nom du tiers
+          conterpart_account: Compte de contrepartie
+          code: Code TVA
+          vat_not_recoverable: TVA non récupérable
+          vat_autoliquidation: Fournisseur auto-liquidé
+          vat_autoliquidation_debit_account: Compte de TVA autoliquidée déductibe
+          vat_autoliquidation_credit_account: Compte de TVA autoliquidée collectée
+
+      temp_document:
+        zero: 0 fichier
+        one: 1 fichier
+        other: '%{count} fichiers'
+        name: Fichier temporaire
+        attributes:
+          original_file_name: Nom original du document
+          content_file_name: Nom du document
+          content_content_type: Type
+          content_file_size: Taille (Mo)
+          content_updated_at: Contenu mise à jour le
+          position: Position
+          is_an_original: Original ?
+          delivered_by: Delivré par
+          delivery_type: Origine du document
+          dematbox_doc_id: Id document
+          dematbox_box_id: Id box
+          dematbox_service_id: Id service
+          dematbox_text: Texte
+          dematbox_is_notified: Notifié ?
+          dematbox_notified_at: Notifié le
+          state: Etat
+          stated_at: Etat mise à jour le
+          is_locked: Bloqué ?
+      retriever:
+        zero: 0 récupérateur
+        one: 1 récupérateur
+        other: '%{count} récupérateurs'
+        name: Récupérateur automatique
+        attributes:
+          name: Nom personnalisé
+          service_name: Service
+          capabilities: Type
+          state: Etat
+          is_sane: Fonctionnelle
+      new_provider_request:
+        zero: 0 demande de fournisseur
+        one: 1 demande de fournisseur
+        other: '%{count} demande de fournisseurs'
+        name: Demande de fournisseur de récupération
+        attributes:
+          state: Etat
+          api_id: Id. API
+          name: Nom
+          url: URL
+          email: Email
+          login: Identifiant
+          password: Mot de passe
+          types: Types de récupération
+          description: Description
+          message: Message
+          is_notified: Notifié ?
+          notified_at: Notifié le
+          processing_at: Traitement démarré le
+      bank_account:
+        zero: 0 Compte bancaire
+        one: 1 Compte bancaire
+        other: '%{count} Comptes bancaires'
+        name: Compte bancaire
+        attributes:
+          bank_name: Banque
+          name: Nom
+          number: Numéro de compte
+          journal: Code journal
+          foreign_journal: Code journal logiciel comptable
+          accounting_number: Compte de trésorerie
+          temporary_account: Compte d’attente
+          start_date: Date historique
+          cedricom_mandate_identifier: CEDRICOM - Identifiant Mandat
+          jedeclare_mandate_identifier: JEDECLARE - Identifiant Mandat
+          cedricom_mandate_state: CEDRICOM - État Mandat
+          jedeclare_mandate_state: JEDECLARE - État Mandat
+      vat_account:
+        zero: 0 compte de TVA
+        one: 1 compta de TVA
+        other: '%{count} Comptes de TVA'
+        name: Compte de TVA
+        attributes:
+          code: Code TVA
+          nature: Nature
+          account_number: Numéro de compte
+      knowings:
+        zero: 0 knowings
+        one: 1 knowings
+        other: '%{count} knowings'
+        name: Knowings
+        attributes:
+          is_active: Activer la livraison ?
+          username: Identifiant
+          password: Mot de passe
+          url: URL
+          state: Etat
+          pole_name: Nom du Pôle
+          is_third_party_included: Tiers inclus ?
+          is_pre_assignment_state_included: Etat de la pré-affectation inclus ?
+      exercise:
+        zero: 0 exercice
+        one: 1 exercice
+        other: '%{count} exercices'
+        name: Exercice
+        attributes:
+          start_date: Date de début
+          end_date: Date de fin
+          is_closed: Fermé ?
+      email:
+        zero: 0 email
+        one: 1 email
+        other: '%{count} emails'
+        name: Email
+        attributes:
+          state: Etat
+          from: Emetteur
+          to: Destinataire
+          subject: Sujet
+          attachment_names_count: Nb de F.
+          size: Taille
+      event:
+        zero: 0 événement
+        one: 1 événement
+        other: '%{count} événements'
+        name: Evénement
+        attributes:
+          number: N°
+          user: Déclencheur
+          user_code: Code utilisateur
+          action: Action
+          target_id: Identifiant cible
+          target_type: Type de la cible
+          target_name: Cible
+          target_attributes: Attributs de la cible
+          path: Chemin
+          ip_address: Adresse IP
+        actions:
+          visit: Visite
+          create: Création
+          update: Modification
+          destroy: Suppression
+          add: Ajout
+          remove: Retrait
+      pre_assignment_delivery:
+        zero: 0 livraison
+        one: 1 livraison
+        other: '%{count} livraisons'
+        name: Livraison de pré-affectation
+        attributes:
+          pack_name: Nom du lot
+          number: N°
+          state: Etat
+          is_auto: Automatique ?
+          total_item: Nombre d'élément
+          software_id: Identifiant externe
+          grouped_date: Date groupé
+          data_to_deliver: Donnée à envoyer
+          error_message: Message d'erreur
+          deliver_to: Livraison vers
+      paper_process:
+        zero: 0 traitement papier
+        one: 1 traitement papier
+        other: '%{count} traitements papiers'
+        name: Traitement papier
+        attributes:
+          type: Type
+          tracking_number: N° de suivi
+          customer_code: Code client
+          journals_count: Nombre de journaux
+          periods_count: Nombre de périodes
+          letter_type: Type de LS
+          pack_name: Nom du lot
+      period_billing:
+        order: Ordre
+        amount_in_cents_wo_vat: Montant en centime (HT)
+      account_number_rule:
+        zero: 0 règle de plan de compte
+        one: 1 règle de plan de compte
+        other: '%{count} règles de plan de compte'
+        name: Règle de plan de compte
+        attributes:
+          rule_target: Appliqué à
+          name: Nom de la règle
+          affect: Affecté à
+          rule_type: Type de règle
+          content: Contenu recherché
+          third_party_account: Numéro de compte
+          priority: Priorité
+          customer_code: Code client
+          users: Clients
+          categorization: Catégorisation
+          affect_values:
+            organization: Organisation
+            user: Client
+          rule_type_values:
+            match: Recherche
+            truncate: Correction
+          rule_target_values:
+            debit: Recette
+            credit: Dépense
+            both: Tous
+      file_naming_policy:
+        zero: 0 charte de nommage
+        one: 1 charte de nommage
+        other: '%{count} chartes de nommage'
+        name: charte de nommage
+        attributes:
+          scope: Portée
+          separator: Séparateur
+          first_user_identifier: Premier identifiant client
+          second_user_identifier: Deuxième identifiant client
+          is_journal_used: Journal iDocus
+          is_period_used: Période iDocus
+          is_piece_number_used: N° de piece iDocus
+          is_third_party_used: Nom du tiers
+          is_invoice_number_used: N° de facture d'origine
+          is_invoice_date_used: Date de la facture
+      subscription_option:
+        zero: 0 option d'abonnement
+        one: 1 option d'abonnement
+        other: "%{count} options d'abonnement"
+        name: Option d'abonnement
+        attributes:
+          name: Nom
+          price_in_cents_wo_vat: Prix (en centimes)
+          position: Position
+          period_duration: Durée de l'abonnement
+      order:
+        zero: 0 option commande
+        one: 1 option commande
+        other: "%{count} commandes"
+        name: Commande
+        attributes:
+          state: Statut
+          type: Produit
+          price_in_cents_wo_vat: Prix (en centimes)
+          vat_ratio: Ratio TVA
+          dematbox_count: Nombre d'iDocus'Box
+          paper_set_casing_size: Taille d'enveloppe
+          paper_set_casing_count: Nombre d'enveloppes
+          paper_set_folder_count: Nombre de chemise
+          paper_set_start_date: Date de début
+          paper_set_end_date: Date de fin
+      notification:
+        zero: 0 notification
+        one: 1 notification
+        other: "%{count} notifications"
+        name: Notification
+        attributes:
+          notice_type: Type de notification
+          is_sent: Envoyé ?
+          is_read: Lu ?
+          title: Titre
+          message: Message
+      pack_report_preseizure:
+        zero: 0 pré-affectation
+        one: 1 pré-affectation
+        other: "%{count} pré-affectations"
+        name: Pré-affectation
+        attributes:
+          third_party: Tiers
+          amount: Montant
+          date: Date d'opération
+      news:
+        zero: 0 nouvelle
+        one: 1 nouvelle
+        other: "%{count} nouvelles"
+        name: Nouvelles
+        attributes:
+          title: Titre
+          body: Message
+          target_audience: Audience cible
+          url: URL vers l'article complet
+          published_at: Publié le
+      member:
+        zero: 0 membre
+        one: 1 membre
+        other: "%{count} membres"
+        name: Membre
+        attributes:
+          role: Rôle
+          role_values:
+            collaborator: Collaborateur
+            admin: Administrateur de l'organisation
+      softwares_settings:
+        name: Logiciel comptable
+        attributes:
+          is_ibiza_auto_deliver: Livrer automatiquement les écritures ?
+          is_ibiza_compta_analysis_activated: Activer la compta analytique ?
+          is_exact_online_auto_deliver: Livrer automatiquement les écritures ?
+          is_ibiza_analysis_to_validate: Valider la compta analytique des pièces avant envoi en pré-affectation ?
+          is_coala_auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
+          is_cegid_auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
+          is_quadratus_auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
+          use_own_csv_descriptor_format: Utilise son propre format de CSV ?
+          is_csv_descriptor_auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
+      software_exact_online:
+        zero: 0 Exact online
+        one: 1 Exact online
+        other: '%{count} Exact online'
+        name: Exact online
+        attributes:
+          user_name: Nom d'utilisateur
+          email: Email
+          full_name: Nom complet
+          auto_deliver: Livrer automatiquement les écritures ?
+          is_used: Utilise Exact Online?
+          state: Etat
+      software_my_unisoft:
+        attributes: 
+          is_used: Utilise My Unisoft ?
+          auto_deliver: Livrer automatiquement les écritures ?
+      software_acd:
+        attributes: 
+          is_used: Utilise ACD ?
+          auto_deliver: Livrer automatiquement les écritures ?
+          username: Identifiant iSuite Expert
+          password: Mot de passe iSuite Expert
+      software_sage_gec:
+        attributes: 
+          is_used: Utilise Sage GEC ?
+          auto_deliver: Livrer automatiquement les écritures ?
+          sage_private_api_uuid: Clé API privée Sage GEC
+      software_coala:
+        attributes:
+          is_used: Activer l'option d'export des écritures comptables et pièces pour Coala (.zip)?
+          auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
+      software_cegid:
+        attributes:
+          is_used: Activer l'option d'export des écritures comptables et pièces pour Cegid (.zip)?
+          auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
+      software_quadratus:
+        attributes:
+          is_used: Activer l'option d'export des écritures comptables et pièces pour Quadratus (.zip)?
+          auto_deliver: Activer la génération automatique de l'export (zip) des écritures comptables et pièces pour Quadratus?
+      software_cogilog:
+        attributes:
+          is_used: Activer l'option d'export des écritures comptables et pièces pour Cogilog (.txt)?
+          auto_deliver: Activer la génération automatique de l'export (txt) des écritures comptables et pièces pour Cogilog?
+      software_fec_agiris:
+        attributes:
+          is_used: Activer l'option d'export des écritures comptables et pièces pour Fec Agiris?
+          auto_deliver: Activer la génération automatique de l'export des écritures comptables et pièces pour Fec Agiris?
+      software_fec_acd:
+        attributes:
+          is_used: Activer l'option d'export des écritures comptables et pièces pour Fec ACD ?
+          auto_deliver: Activer la génération automatique de l'export des écritures comptables et pièces pour Fec Agiris?
+      software_ciel:
+        attributes:
+          is_used: Activer l'option d'export des écritures comptables et pièces pour Ciel (.txt)?
+          auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
+    state_machines:
+      retriever:
+        states:
+          ready: OK
+          creating: Création en cours
+          updating: Mise à jour en cours
+          destroying: Suppression en cours
+          synchronizing: Synchronisation en cours
+          waiting_selection: En attente de sélection
+          waiting_additionnal_info: En attente de l'utilisateur
+          error: Erreur
+          unavailable: Indisponible
+      new_provider_request:
+        states:
+          pending: En attente
+          processing: Traitement en cours
+          rejected: Rejeté
+          accepted: Traité
+      knowings:
+        states:
+          not_performed: Non configuré
+          verifying: En cours de vérification
+          invalid: Echoué
+          valid: Vérifié
+      email:
+        states:
+          created:       Créé
+          error:         En erreur
+          processed:     Traité
+          unprocessable: Intraitable
+          rejected:      Rejetté
+      temp_document:
+        states:
+          created: Créé
+          unreadable: Corrompu
+          rejected: Rejeté
+          ocr_needed: Besoin de traitement OCR
+          bundle_needed: Requière un regroupement
+          bundling: En cours de regroupement
+          bundled: Regroupé
+          ready: Prêt
+          processed: Traité
+      pre_assignment_delivery:
+        states:
+          pending: En attente de traitement
+          building_data: Construction des données à envoyer
+          data_built: Donnée construite
+          sending: Envoi en cours
+          sent: Envoyé
+          error: Erreur
+      order:
+        states:
+          pending: En attente
+          confirmed: Confirmé
+          cancelled: Annulée
+          processed: Traitée
+      ibizabox_folder:
+        states:
+          inactive: Inactif
+          ready: Prêt
+          processing: Traitement en cours
+          waiting_selection: En attente de sélection

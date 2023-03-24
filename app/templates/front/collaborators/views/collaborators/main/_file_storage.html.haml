@@ -1,0 +1,3 @@
+- if @user.is_admin && @organization.is_active
+  #file_storages.tab-pane.box.no-margin.fade{ class: ('active show' if params[:tab] == 'file_storages') }
+    = render file: Rails.root.join('app/templates/front/external_file_storages/views/external_file_storages/efs_user/_efs_user.html.haml'), locals: { user: @member.user }

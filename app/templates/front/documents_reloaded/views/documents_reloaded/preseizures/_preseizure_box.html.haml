@@ -1,0 +1,239 @@
+- if piece
+  .row
+    .col-md-12
+      %h5.pack.semibold.no-margin= piece.name
+
+- elsif operation
+  .row
+    .col-md-12
+      %h5.pack.semibold= operation.try(:label)
+
+.row.ms-1
+  .col-md-5
+    %label.third
+      %span.badge.bg-light.text-dark.edit-third-party.date{ title: 'Editer la date'}
+        %label.pointer= preseizure.date.strftime('%d/%m/%Y')
+        %span.ms-1= glyphicon('pencil', size: 8, color: '#000')
+      .third-party-date.hide.content-tp
+        .row
+          .col-md-10
+            .select-container.w-100
+              %input.date-edit-third-party{ type: :text, placeholder: preseizure.date.strftime('%d/%m/%Y')}
+          .col-md-2.text-start.no-padding.mt-1
+            %span.badge.bg-danger.cancel-third-party= glyphicon('x', size: 10, color: 'white')
+            %span.badge.badge-success.hide.valid-third-party{ data: { type: 'date', preseizure_id: preseizure.id }}= glyphicon('check', size: 10, color: 'white')
+      %span -         
+      %span Devise :
+      %span= preseizure.unit
+
+- if piece
+  .mb-2
+  .row
+    .col-md-5
+      %label.third
+        %span Nom de tiers :
+        %span.semibold.edit-third-party.name{ title: 'Editer le nom de tiers', data: { preseizure_id: preseizure.id }}
+          %label.pointer= preseizure.try(:third_party)
+          %span.ms-1= glyphicon('pencil', size: 8, color: '#000')
+        .third-party-name.hide.content-tp
+          .row
+            .col-md-10
+              .select-container.w-100
+                %input{ type: :text, placeholder: preseizure.try(:third_party)}
+            .col-md-2.text-center.pt-1
+              %span.badge.bg-danger.float-end.cancel-third-party= glyphicon('x', size: 10, color: 'white')
+              %span.badge.badge-success.float-end.hide.valid-third-party{ data: { type: 'name', preseizure_id: preseizure.id }}= glyphicon('check', size: 10, color: 'white')
+.row
+  .col-md-12
+    - delivery = preseizure.pre_assignment_deliveries.where(state: 'sent').first
+    - delivery = preseizure.pre_assignment_deliveries.where(state: 'error').last if not delivery
+    - if delivery
+      - label_delivery = delivery.deliver_to == "sage_gec" ? 'Sage' : 'iBiza'
+      %span Dernier envoi
+      %span= label_delivery
+      %span.semibold= delivery.try(:updated_at).strftime("%d/%m/%Y")
+      %span - 
+      %span= delivery.try(:updated_at).strftime("%Hh%M")
+      - if delivery.try(:state) != 'sent' && delivery.try(:error_message)
+        %span.ms-3.badge.bg-danger= "Erreur : #{delivery.try(:error_message)}"
+      - else
+        %label.ms-3 Envoyé vers
+        %span.badge.bg-success= label_delivery
+
+- entries  = preseizure.entries
+- pre_tax_amount = entries.select { |entry| entry.account.type == 2 }.try(:first).try(:amount) || 0
+- irregular_debit_credit_somme = verif_debit_credit_somme_of entries
+- data_analytics = data_analytic_of(preseizure)
+
+.row.ml-3.mb-3.mr-0  
+  %div{ class: "col-md-#{(data_analytics.any?) ? '6' : '12'}"}
+    %label.semibold Ecritures
+    %label.red-label.float-end.semibold{class: "#{irregular_debit_credit_somme ? '' : 'hide' }"}
+      balance non équilibrée
+    .preseizures.content-table
+      %table.table.entries.mb-0{data: { preseizure_id: preseizure.id }}
+        %thead
+          %th.no-border.table-three-column N° de compte
+          %th.no-border.table-three-column Débit
+          %th.no-border.table-three-column Crédit
+          %th.no-border.table-three-column
+        %tbody.semibold
+          - entries.each_with_index do |entry, index|
+            %tr{ class: (index % 2 == 0)? '' : 'striped' }
+              %td.account
+                .content_account{title: "#{@user.has_collaborator_action? ? 'Cliquez pour modifier' : ''}"}
+                  = entry.account.number.presence || '---'
+                - if @user.has_collaborator_action?
+                  .edit_account.hide
+                    %input.edit_account_number.margin0{type: :text, placeholder: entry.account.number , value: entry.account.number}
+                    .suggestion_account_list.hide
+              %input.account_id_hidden{type: :hidden, value: entry.account.id}
+              %td.entry{title: "#{(@user.has_collaborator_action? && entry.type == 1) ? 'Cliquez pour modifier' : ''}", class: "#{irregular_debit_credit_somme ? 'color_red' : '' }"}
+                - if entry.type == 1
+                  .content_amount
+                    .content_amount_number
+                      %span= entry.amount.to_f
+                      - if @user.has_collaborator_action?
+                        %span.debit_or_credit.hide.pointer.float-end
+                          = glyphicon('arrow-thick-right', {size: 20})
+                  - if @user.has_collaborator_action?
+                    .edit_amount.hide
+                      %input.margin0{type: :text, placeholder: entry.amount, value: entry.amount}
+                      %input.entry_type{type: :hidden, value: entry.type}
+                - else
+                  &#45;
+              %td.entry{title: "#{(@user.has_collaborator_action? && entry.type == 2) ? 'Cliquez pour modifier' : ''}", class: "#{irregular_debit_credit_somme ? 'color_red' : '' }"}
+
+                - if entry.type == 2
+                  .content_amount
+                    - if @user.has_collaborator_action?
+                      %span.debit_or_credit.hide.float-start.pointer= glyphicon('arrow-thick-left', {size: 20})                    
+                    .content_amount_number
+                      %span.ms-2= entry.amount.to_f
+                  - if @user.has_collaborator_action?
+                    .edit_amount.hide
+                      %input.margin0{type: :text, placeholder: entry.amount, value: entry.amount}
+                      %input.entry_type{type: :hidden, value: entry.type}
+                - else
+                  &#45;
+              %td.entry
+                - if piece && entry.account.type != 1
+                  %span.remove=glyphicon('trash', { color: 'black', size: 11 })
+              - if @user.has_collaborator_action?
+                %input.entry_id_hidden{type: :hidden, value: entry.id}
+      - if piece
+        .mt-2
+        .btn-add-content.text-end.me-4
+          %button.btn.btn-light.btn-sm.add-entry.py-0
+            %span.me-2= glyphicon('plus', { color: '#72AA42', size: 8 })
+            %span Ajouter
+          .action-add-content.text-end.hide
+            %button.btn.btn-default.btn-sm#cancel-entry Annuler
+            %button.btn.btn-primary.btn-sm.w-25#valid-entry Valider
+        .mb-2
+
+  - if data_analytics.any?
+    .col-md-5
+      %label.ms-5.semibold Analyse comptable
+      .analytics.content-table.ms-5
+        %table.table
+          %thead
+            %tr
+              %th.text-center Analyse
+              %th.text-center Axe
+              %th.text-center Ventilation
+              %th.text-center Montant ventilé
+          %tbody.entries
+            - data_analytics.each_with_index do |analysis, index|
+              %tr{ class: (index % 2 == 0)? '' : 'striped' }
+                %td.text-center= analysis[:name]
+                %td.text-center
+                  %ul
+                    -if analysis[:axis1].present?
+                      %li.semibold= analysis[:axis1]
+                    -if analysis[:axis2].present?
+                      %li.semibold= analysis[:axis2]
+                    -if analysis[:axis3].present?
+                      %li.semibold= analysis[:axis3]
+                %td.text-center= analysis[:ventilation].to_f.to_s + " %"
+                %td.text-center= ( pre_tax_amount.to_f * (analysis[:ventilation].to_f / 100) ).to_f.round(3)
+
+%hr.no-margin.w-100
+.row
+  .col-md-9
+    %span.badge.bg-info.semibold= sprintf '%03d', preseizure.position || 0
+    - if preseizure.created_at >= 1.days.ago
+      %span.badge.badge-success Nouveau
+
+    - delivery_state = 'none'
+    - if piece && !preseizure.is_exported?
+      - delivery_state = piece.get_state_to('text')
+      - if preseizure.pre_assignment_deliveries.where(state: ['pending', 'data_built']).size > 0
+        %span.badge.bg-warning.semibold Ecriture en cours de livraison
+      - elsif ['delivery_failed', 'duplication', 'piece_ignored'].include?(delivery_state)
+        %span.badge.badge-danger.semibold= t("pieces.delivery_state.#{delivery_state}")
+      - elsif ['awaiting_analytics', 'awaiting_pre_assignment', 'delivery_pending'].include?(delivery_state)
+        %span.badge.badge-warning.semibold= t("pieces.delivery_state.#{delivery_state}")
+      - elsif delivery_state != 'none'
+        %span.badge.badge-success.semibold= t("pieces.delivery_state.#{delivery_state}")
+
+      /- piece.get_tags.split('-').each_slice(3).first.try(:each) do |tag|
+      /  - if tag != '-'
+      /    %span.badge.bg-dark.semibold= tag
+
+      - tags = piece.get_tags.split('-')
+      - tags.each do |tag|
+        %span.badge.bg-dark.semibold= tag
+
+
+    - elsif operation && !preseizure.is_exported?
+      - delivery_state = preseizure.get_state_to('text')
+      - if preseizure.pre_assignment_deliveries.where(state: ['pending', 'data_built']).size > 0
+        %span.badge.bg-warning.semibold Ecriture en cours de livraison
+      - elsif ['delivery_failed', 'duplication', 'piece_ignored'].include?(delivery_state)
+        %span.badge.badge-danger.semibold= t("pieces.delivery_state.#{delivery_state}")
+      - elsif ['awaiting_analytics', 'awaiting_pre_assignment', 'delivery_pending'].include?(delivery_state)
+        %span.badge.badge-warning.semibold= t("pieces.delivery_state.#{delivery_state}")
+      - elsif delivery_state != 'none'
+        %span.badge.badge-success.semibold= t("pieces.delivery_state.#{delivery_state}")
+
+    - if delivery_state == 'none'
+      - if preseizure.is_exported?
+        %span.badge.badge-success.semibold Téléchargé
+      - elsif preseizure.is_not_exported?
+        %span.badge.badge-warning.semibold Non récupéré
+
+    - if preseizure.third_party.present?
+      %span.badge.bg-dark.semibold= preseizure.third_party
+
+  .col-md-3.icon-actions.text-end.pe-4
+    %span.ms-2.edit_preseizures{title: 'Édition écriture comptable', data:{ id: preseizure.id }}= glyphicon('pencil', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+    - if @user.has_collaborator_action?
+      %span.ms-2.preseizures_export{title: 'Export écriture comptable', data:{ id: preseizure.id, type: 'preseizure' }}= glyphicon('external-link', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+      - if preseizure.user.uses_api_softwares? && preseizure.need_delivery?
+        %span.ms-2.deliver_preseizures{title: 'Livraison écriture comptable', data: { id: preseizure.id, type: 'preseizure' }}= glyphicon('loop-circular', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+    - if piece      
+      %span.ms-2.update_tags{title: 'Taguer la pièce', data: {id: piece.id, type: 'piece'}}= glyphicon('tag', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+      %span.ms-2.delete_piece{title: 'Supprimer la pièce', data: {id: piece.id}}= glyphicon('trash', { size: '14', color:'#FF4848'})
+    
+%template
+  %tr.new-entrie-content
+    %td.account
+      .row
+        .col-md-4
+          .select-container.no-padding.w-100
+            %select.type_account.w-100
+              %option{ value: 2 } Montant HT
+              %option{ value: 3 } TVA
+        .col-md-8
+          %span.acount-number
+          .content_account
+          .edit_account
+            %input.w-100.edit_account_number{ placeholder: "N° de compte "}
+            .suggestion_account_list.hide
+    %td.entry
+      %span.entry-1
+      %input.w-100#type_1{ placeholder: "Débit "}
+    %td.entry
+      %span.entry-2
+      %input.w-100#type_2{ placeholder: "Crédit "}

@@ -1,0 +1,56 @@
+.container-fluid
+  .row.derivationLeft
+    .col-md-8.text-start
+      %h3.bold Historique de récupération
+    %div{ class: "col-md-#{@user.collaborator? ? 2 : 4}"}
+      .row
+        .col-md-3
+          .semibold Dossier
+        .col-md-8
+          = select_tag 'account_id', options_for_select(customers_active, @account.try(:id)), include_blank: false, class: 'chosen-list w-100'
+    - if @user.collaborator?
+      .col-md-2.text-start.p-1
+        %button.btn.btn-light.semibold.retriever-filter-historic.w-100{ disabled: false }
+          %span.me-2 Recherche
+          %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+
+  .mb-4
+
+  .row
+    - if !@user.collaborator?
+      .col-md-2#search-form.derivationLeft
+        .my-3
+        %h6.semibold.search-title
+          %span Recherche :
+          %span#search-action opération bancaire
+        %hr
+        %input{ type: :hidden, id: "search-type", value: "operations" }
+        #search-operations.content-search-form
+          = render partial: 'search_form_operation'
+        #search-documents.content-search-form.hide
+          = render partial: 'search_form_document'
+        .mb-3
+        .row.w-100.text-center
+          .col-md-6
+            %button.btn.btn-light.btn-sm.no-border-radius.w-100.semibold.btn-reset{ type: :button } Effacer
+          .col-md-6
+            %button.btn.btn-dark.btn-sm.no-border-radius.w-100.semibold.btn-search{ type: :button } Lancer
+    %div.derivationRight{ class: "col-md-#{@user.collaborator? ? 12 : 10 }"}
+      %ul.nav.nav-tabs.ms-3{ "role" => "tablist" }
+        %li.nav-item.no-margin{ "role" => "presentation" }
+          %button.semibold.nav-link.check-filter-form-view#operations-tab{ class: (params[:tab] != 'documents')? 'active' : '',"data-bs-toggle" => "tab", "data-bs-target" => "#operations", "data-bs-title" => "opérations bancaires", type: :button, "role" => "tab", "aria-controls" => "operations", "aria-selected" => "true" }
+            Opérations bancaires
+            %span.ms-1.badge.badge-secondary.regular#total-operations 0
+        - if @account.retrievers.where('budgea_id > 0').size > 0
+          %li.nav-item.no-margin{ "role" => "presentation" }
+            %button.semibold.nav-link.check-filter-form-view#documents-tab{ class: (params[:tab] == 'documents')? 'active' : '', "data-bs-toggle" => "tab", "data-bs-target" => "#documents", "data-bs-title" => "documents", type: :button, "role" => "tab", "aria-controls" => "documents", "aria-selected" => "false"}
+              Documents
+              %span.ms-1.badge.badge-secondary.regular#total-documents 0
+      .tab-content
+        .tab-pane.box.no-margin#operations{ class: (params[:tab] != 'documents')? 'active' : '',"role" => "tabpanel", "aria-labelledby" => "operations-tab" }
+        - if @account.retrievers.where('budgea_id > 0').size > 0
+          .tab-pane.box.no-margin#documents{ class: (params[:tab] == 'documents')? 'active' : '', "role" => "tabpanel", "aria-labelledby" => "documents-tab" }
+
+  = render partial: 'dialogs'
+      
+= javascript_include_tag 'front/retrieved_datas_v2/assets/javascripts/main'

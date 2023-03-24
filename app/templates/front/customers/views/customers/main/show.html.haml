@@ -1,0 +1,7 @@
+= stylesheet_link_tag 'front/customers/assets/stylesheets/main'
+
+#customer-content
+  - if @customer.still_active?
+    = render 'form'
+
+= javascript_include_tag 'front/customers/assets/javascripts/main'

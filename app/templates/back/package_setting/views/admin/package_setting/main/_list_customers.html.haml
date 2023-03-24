@@ -1,0 +1,7 @@
+.row
+  .col-md-6
+    %label.semibold Listes dossiers à jour
+    .mb-4
+    %ul.ms-3
+      - @lists.each do |code|
+        %li= code

@@ -1,0 +1,12 @@
+#news.new
+  .row
+    .col-md-12
+      .box.small-shadow.clearfix
+        = render partial: 'navigation'
+
+  .card
+    .card-header
+      %h3 Créer une annonce
+    = render partial: 'form'
+
+= javascript_include_tag 'admin/news'

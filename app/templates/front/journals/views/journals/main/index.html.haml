@@ -1,0 +1,53 @@
+= stylesheet_link_tag 'front/organizations/assets/stylesheets/show'
+
+%input#organization_id{type: :hidden, value: @organization.id, name: 'organization_id'}
+
+.book
+  .row.derivationRight
+    .col-md-10
+      %h3.bold
+        Journaux comptables
+        %span.badge.badge-secondary.badge-sm.regular= @journals.total_count
+    .col-md-2.text-center
+      %button.btn.btn-primary.bold.new-journal.new_edit_account_book_type{link: new_organization_journal_path(@organization)}
+        %span.me-2= glyphicon('plus', { color: "#FFF", size: '15'})       
+        %span Nouveau journal
+
+  .box.mt-4.derivationLeft
+    %table.table.table-striped.table_integration
+      %thead
+        %th Nom du journal comptable
+        %th Code
+        %th Par défaut ?
+        %th Type de pré-saisie
+        %th Type de compte
+        %th Compte de tiers
+        %th Compte de charge/produit
+        %th.text-end Action
+      %tbody
+        - @journals.each do |journal|
+          %tr
+            %td.semibold= journal.full_name
+            %td= journal.name
+            %td= journal.is_default ? 'Oui' : 'Non'
+            %td= t("activerecord.models.account_book_type.attributes.entry_type_#{journal.entry_type}")
+            %td
+              - if journal.is_pre_assignment_processable?
+                = journal.default_account? ? 'compte par défaut' : "compte d'attente"
+            %td= journal.meta_account_number
+            %td= journal.meta_charge_account
+            %td.text-end.pointer
+              .action.sub-menu-book
+                %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+              .sub_menu.edit-journal.text-start.hide
+                %ul.no-margin.no-padding.regular                 
+                  %li.edit{journal_id: journal.id}
+                    = link_to glyphicon('pencil', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Éditer', '#', link: edit_organization_journal_path(@organization, journal), class: 'new_edit_account_book_type'
+                  %li.delete.red-label
+                    = link_to glyphicon('trash', { size: '15', color: "#FF4848" }) + ' Supprimer', organization_journal_path(@organization, journal), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'red-label'
+
+    = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { name: 'journales', total_pages: @journals.total_pages } 
+
+  = render partial: 'modal'
+
+= javascript_include_tag 'front/journals/assets/javascripts/main'

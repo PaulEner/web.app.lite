@@ -1,0 +1,33 @@
+#notifications
+  .row.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-6      
+      %h3
+        Liste des notifications utilisateurs
+        %span.badge.bg-dark= @notifications.total_count
+    .col-md-6.text-end
+      %button.btn.btn-warning.retriever-admin-filter
+        %span.me-2= glyphicon('transfer', { size: '10', color: '#000', style: 'transform: rotate(90deg)'})
+        %span Filtrer
+
+  .row.box.derivationRight
+    .col-md-12#table_notifications
+      %table.table.table-condensed.table-striped
+        %thead
+          %tr
+            %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+            %th Utilisateur
+            %th= sortable :title, t('activerecord.models.notification.attributes.title')
+            %th Message
+            %th= sortable :is_sent, t('activerecord.models.notification.attributes.is_sent')
+            %th= sortable :is_read, t('activerecord.models.notification.attributes.is_read')
+        %tbody
+          - @notifications.each do |notification|
+            %tr
+              %td= l(notification.created_at, format: '%d %b %Y %H:%M')
+              %td= link_to(notification.user.code, [:admin, notification.user])
+              %td= notification.title
+              %td!= markdown_render notification.message
+              %td= notification.is_sent ? glyphicon('check', size: 12) : glyphicon('x', size: 12)
+              %td= notification.is_read ? glyphicon('check', size: 12) : glyphicon('x', size: 12)
+      
+      = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: admin_notifications_path, target: '#table_notifications', total_pages: @notifications.total_pages, filter: 'form-notifications-filter' }

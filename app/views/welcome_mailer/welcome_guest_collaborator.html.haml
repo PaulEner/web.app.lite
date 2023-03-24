@@ -1,0 +1,176 @@
+- if @guest.organization&.code == 'ALM'
+  !!!
+  %html
+    %head
+      %title [Axelium] Création de compte Axelium
+      %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+    %body
+      Bonjour #{@guest.name},
+      %br
+      %br
+      Vous bénéficiez d'un espace personnel sur la plateforme Axelium qui vous permet de consulter et gérer les documents de vos comptes.
+      %br
+      %br
+      Nous venons de vous créer un compte pour y accéder.
+      %br
+      %br
+      Merci de bien vouloir cliquer sur ce lien afin de générer votre mot de passe : #{link_to edit_user_password_url(reset_password_token: @token, host: 'https://www.idp-axeliumconseil.fr/'), edit_user_password_url(reset_password_token: @token, host: 'https://www.idp-axeliumconseil.fr/') }
+      %br
+      Par mesure de sécurité, ce lien est actif pendant 7 jours.
+      %br
+      Si vous avez dépassé ce délai, vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant ici : #{link_to new_user_password_url(host: 'https://www.idp-axeliumconseil.fr/'), new_user_password_url(host: 'https://www.idp-axeliumconseil.fr/') }
+      %br
+      %br
+      %br
+      Votre identifiant est : #{@guest.email}
+      %br
+      %br
+      %br
+      Nous vous souhaitons une bonne utilisation de notre service.
+      %br
+      %br
+      Cordialement,
+      %br
+      L’équipe Axelium
+
+- elsif @guest.organization&.code == 'DK'
+  !!!
+  %html
+    %head
+      %title [DK Partners] Création de compte DK Partners
+      %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+    %body
+      Bonjour #{@guest.name},
+      %br
+      %br
+      Vous bénéficiez d'un espace personnel sur la plateforme DK Partners qui vous permet de consulter et gérer les documents de vos comptes.
+      %br
+      %br
+      Nous venons de vous créer un compte pour y accéder.
+      %br
+      %br
+      Merci de bien vouloir cliquer sur ce lien afin de générer votre mot de passe : #{link_to edit_user_password_url(reset_password_token: @token, host: 'https://demat.dkpartners.fr/'), edit_user_password_url(reset_password_token: @token, host: 'https://demat.dkpartners.fr/') }
+      %br
+      Par mesure de sécurité, ce lien est actif pendant 7 jours.
+      %br
+      Si vous avez dépassé ce délai, vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant ici : #{link_to new_user_password_url(host: 'https://demat.dkpartners.fr/'), new_user_password_url(host: 'https://demat.dkpartners.fr/') }
+      %br
+      %br
+      %br
+      Votre identifiant est : #{@guest.email}
+      %br
+      %br
+      %br
+      Nous vous souhaitons une bonne utilisation de notre service.
+      %br
+      %br
+      Cordialement,
+      %br
+      L’équipe DK Partners
+
+- elsif @guest.organization&.code == 'CEN'
+  !!!
+  %html
+    %head
+      %title [Censial] Création de compte Censial
+      %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+    %body
+      Bonjour #{@guest.name},
+      %br
+      %br
+      Vous bénéficiez d'un espace personnel sur la plateforme Censial Online qui vous permet de consulter et gérer les documents de vos comptes.
+      %br
+      %br
+      Nous venons de vous créer un compte pour y accéder.
+      %br
+      %br
+      Merci de bien vouloir cliquer sur ce lien afin de générer votre mot de passe : #{link_to edit_user_password_url(reset_password_token: @token, host: 'https://www.censial-online.fr/'), edit_user_password_url(reset_password_token: @token, host: 'https://www.censial-online.fr/') }
+      %br
+      Par mesure de sécurité, ce lien est actif pendant 7 jours.
+      %br
+      Si vous avez dépassé ce délai, vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant ici : #{link_to new_user_password_url(host: 'https://www.censial-online.fr/'), new_user_password_url(host: 'https://www.censial-online.fr/') }
+      %br
+      %br
+      %br
+      Votre identifiant est : #{@guest.email}
+      %br
+      %br
+      %br
+      Nous vous souhaitons une bonne utilisation de notre service.
+      %br
+      %br
+      Cordialement,
+      %br
+      L’équipe Censial Online
+
+- elsif @guest.organization&.code == 'OR'
+  !!!
+  %html
+    %head
+      %title [My Orial] Création de compte My Orial
+      %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+    %body
+      Bonjour #{@guest.name},
+      %br
+      %br
+      Vous bénéficiez d'un espace personnel sur la plateforme My Orial qui vous permet de consulter et gérer les documents de vos comptes.
+      %br
+      %br
+      Nous venons de vous créer un compte pour y accéder.
+      %br
+      %br
+      Merci de bien vouloir cliquer sur ce lien afin de générer votre mot de passe : #{link_to edit_user_password_url(reset_password_token: @token, host: 'https://my.orial.fr/'), edit_user_password_url(reset_password_token: @token, host: 'https://my.orial.fr/') }
+      %br
+      Par mesure de sécurité, ce lien est actif pendant 7 jours.
+      %br
+      Si vous avez dépassé ce délai, vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant ici : #{link_to new_user_password_url(host: 'https://my.orial.fr/'), new_user_password_url(host: 'https://my.orial.fr/') }
+      %br
+      %br
+      %br
+      Votre identifiant est : #{@guest.email}
+      %br
+      %br
+      %br
+      Nous vous souhaitons une bonne utilisation de notre service.
+      %br
+      %br
+      Cordialement,
+      %br
+      L’équipe My Orial
+
+- else
+  !!!
+  %html
+    %head
+      %title [iDocus] Création de compte iDocus
+      %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+    %body
+      Bonjour #{@guest.name},
+      %br
+      %br
+      Vous bénéficiez d'un espace personnel sur la plateforme iDocus qui vous permet de consulter et gérer les documents de vos comptes.
+      %br
+      %br
+      Nous venons de vous créer un compte pour y accéder.
+      %br
+      %br
+      Merci de bien vouloir cliquer sur ce lien afin de générer votre mot de passe : #{link_to edit_user_password_url(reset_password_token: @token), edit_user_password_url(reset_password_token: @token) }
+      %br
+      Par mesure de sécurité, ce lien est actif pendant 7 jours.
+      %br
+      Si vous avez dépassé ce délai, vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant ici : #{link_to new_user_password_url, new_user_password_url }
+      %br
+      %br
+      %br
+      Votre identifiant est : #{@guest.email}
+      %br
+      %br
+      %br
+      Nous vous souhaitons une bonne utilisation de notre service.
+      %br
+      %br
+      Cordialement,
+      %br
+      L’équipe iDocus
+      %br
+      = link_to 'support@idocus.com', 'mailto:support@idocus.com'

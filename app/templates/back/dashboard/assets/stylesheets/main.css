@@ -1,0 +1,23 @@
+label.count{
+  font-size: 18px;
+}
+
+.label_more_info label, .foot-box{
+  cursor: pointer;
+}
+
+.flux{
+  cursor: pointer;
+  min-height: 100%;
+}
+
+.flux.active{
+  color: white;
+  background: linear-gradient(90deg, rgba(26, 26, 26, 0.45) 0%, #333 100%);
+}
+
+.result-flux .box{
+  max-height: 515px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}

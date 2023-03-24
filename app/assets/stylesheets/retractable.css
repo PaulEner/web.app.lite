@@ -1,0 +1,438 @@
+//Retractable CSS
+
+//Animations
+@mozkeyframes blink {
+  50% { opacity: 0; }
+}
+@webkitkeyframes blink {
+  50% { opacity: 0; }
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@mozkeyframes fadeIn {
+  0% { opacity: 0; }
+  80% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+@webkitkeyframes fadeIn {
+  0% { opacity: 0; }
+  80% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  80% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+
+@mozkeyframes scaleIn {
+  from { opacity: 0; transform: scale(1.06) }
+  to { opacity: 1; transform: scale(1) }
+}
+@webkitkeyframes scaleIn {
+  from { opacity: 0; transform: scale(1.06) }
+  to { opacity: 1; transform: scale(1) }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(1.06) }
+  to { opacity: 1; transform: scale(1) }
+}
+
+
+@mozkeyframes showLogin {
+  0% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+  0% { opacity: 0; }
+  40% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+@webkitkeyframes showLogin {
+  0% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+  0% { opacity: 0; }
+  40% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+@keyframes showLogin {
+  0% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+  0% { opacity: 0; }
+  40% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+@mozkeyframes slideDown {
+  from  { max-height: 0px; }
+  to { max-height: 500px; }
+}
+@webkitkeyframes slideDown {
+  from  { max-height: 0px; }
+  to { max-height: 500px; }
+}
+@keyframes slideDown {
+  from  { max-height: 0px; }
+  to { max-height: 500px; }
+}
+
+@mozkeyframes derivationTop {
+  from { opacity: 0; top: -60px; transform: scale(1.06); }
+  to { opacity: 1; top: 0; transform: scale(1); }
+}
+@webkitkeyframes derivationTop {
+  from { opacity: 0; top: -60px; transform: scale(1.06); }
+  to { opacity: 1; top: 0; transform: scale(1); }
+}
+@keyframes derivationTop {
+  from { opacity: 0; top: -60px; transform: scale(1.06); }
+  to { opacity: 1; top: 0; transform: scale(1); }
+}
+
+@mozkeyframes derivationBottom {
+  from { opacity: 0; top: 60px; transform: scale(1.06); }
+  to { opacity: 1; top: 0; transform: scale(1); }
+}
+@webkitkeyframes derivationBottom {
+  from { opacity: 0; top: 60px; transform: scale(1.06); }
+  to { opacity: 1; top: 0; transform: scale(1); }
+}
+@keyframes derivationBottom {
+  from { opacity: 0; top: 60px; transform: scale(1.06); }
+  to { opacity: 1; top: 0; transform: scale(1); }
+}
+
+@mozkeyframes derivationLeft {
+  from { opacity: 0; left: -60px; transform: scale(1.06); }
+  to { opacity: 1; left: 0; transform: scale(1); }
+}
+@webkitkeyframes derivationLeft {
+  from { opacity: 0; left: -60px; transform: scale(1.06); }
+  to { opacity: 1; left: 0; transform: scale(1); }
+}
+@keyframes derivationLeft {
+  from { opacity: 0; left: -60px; transform: scale(1.06); }
+  to { opacity: 1; left: 0; transform: scale(1); }
+}
+
+@mozkeyframes derivationRight {
+  from { opacity: 0; left: 60px; transform: scale(1.06); }
+  to { opacity: 1; left: 0; transform: scale(1); }
+}
+@webkitkeyframes derivationRight {
+  from { opacity: 0; left: 60px; transform: scale(1.06); }
+  to { opacity: 1; left: 0; transform: scale(1); }
+}
+@keyframes derivationRight {
+  from { opacity: 0; left: 60px; transform: scale(1.06); }
+  to { opacity: 1; left: 0; transform: scale(1); }
+}
+
+@mozkeyframes showMenu {
+  from { top: -100px; }
+  to { top: 0; }
+}
+@webkitkeyframes showMenu {
+  from { top: -100px; }
+  to { top: 0; }
+}
+@keyframes showMenu {
+  from { top: -100px; }
+  to { top: 0; }
+}
+
+@mozkeyframes showFooter {
+  from { bottom: -100px; }
+  to { bottom: 0; }
+}
+@webkitkeyframes showFooter {
+  from { bottom: -100px; }
+  to { bottom: 0; }
+}
+@keyframes showFooter {
+  from { bottom: -100px; }
+  to { bottom: 0; }
+}
+
+@mozkeyframes showSideMenu {
+  from { left: -450px; }
+  to { left: 0; }
+}
+@webkitkeyframes showSideMenu {
+  from { left: -450px; }
+  to { left: 0; }
+}
+@keyframes showSideMenu {
+  from { left: -450px; }
+  to { left: 0; }
+}
+
+@mozkeyframes showLogo {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@webkitkeyframes showLogo {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes showLogo {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+@mozkeyframes shine {
+  0%{ background-position: 0; }
+  60% { background-position: 180px; }
+  100% { background-position: 180px; }
+}
+@webkitkeyframes shine {
+  0%{ background-position: 0; }
+  60% { background-position: 180px; }
+  100% { background-position: 180px; }
+}
+@keyframes shine{
+  0%{ background-position: 0; }
+  60% { background-position: 180px; }
+  100% { background-position: 180px; }
+}
+
+
+// CSS ANIMATED
+.btn, .scroll-on-top, .animated-pointer, .underlined-pointer{
+  transition: all 0.3s ease-out;
+}
+
+.btn:hover, .scroll-on-top:hover, .animated-pointer:hover{
+  transform: scale(1.06);
+  opacity: 0.8;
+}
+
+.underlined-pointer:hover{
+  text-decoration: underline!important;
+}
+
+.blink {
+  animation: blink 2s steps(1) infinite;
+  -webkit-animation: blink 2s steps(1) infinite;
+}
+
+.shine{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  padding: 12px 48px;
+  color: #ffffff;
+  background: linear-gradient(to right, #4d4d4d 0, white 10%, #4d4d4d 20%);
+  background-position: 0;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s infinite linear;
+  animation-fill-mode: forwards;
+  -webkit-text-size-adjust: none;
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.retractable.slidedown {
+  opacity: 0;
+  overflow: hidden;
+}
+
+tbody.retractable.slidedown tr {
+  opacity: 0;
+  -webkit-transition: -webkit-opacity 0.2s ease-out;
+  -moz-transition: -moz-opacity 0.2s ease-out;
+  -o-transition: opacity 0.2s ease-out;
+  -ms-transition: opacity 0.2s ease-out;
+  transition: opacity 0.2s ease-out;
+}
+
+.fadein {
+  opacity: 1;
+  animation-name: fadeIn;
+  animation-duration: 0.8s;
+}
+
+.scalein{
+  opacity: 1;
+  animation-name: scaleIn;
+  animation-duration: 0.8s;
+}
+
+.animatedGroups .animatedChild{
+  display: none;
+}
+
+.derivationTop {
+  animation-name: derivationTop;
+  animation-duration: 0.8s;
+  position: relative;
+}
+
+.derivationBottom {
+  animation-name: derivationBottom;
+  animation-duration: 0.8s;
+  position: relative;
+}
+
+.derivationLeft {
+  animation-name: derivationLeft;
+  animation-duration: 0.8s;
+  position: relative;
+}
+
+.derivationRight {
+  animation-name: derivationRight;
+  animation-duration: 0.8s;
+  position: relative;
+}
+
+.showLogin{
+  overflow: hidden;
+  animation-name: showLogin;
+  animation-duration: 1.2s;
+}
+
+.showMenu{
+  animation-name: showMenu;
+  animation-duration: 0.6s;
+}
+
+.showFooter{
+  animation-name: showFooter;
+  animation-duration: 0.6s;
+}
+
+.side-menu{
+  animation-name: showSideMenu;
+  animation-duration: 1s;
+  animation-timing-function: ease-out;
+  position: relative;
+}
+
+.bg-menu .dropdown-menu.show{
+  overflow: hidden;
+  animation-name: slideDown;
+  animation-duration: 1s;
+  animation-timing-function: ease-out;
+}
+
+.logo img{
+  position: relative;
+  animation-name: showLogo;
+  animation-duration: 1.8s;
+  animation-fill-mode: forwards;
+  animation-delay: 0.7s;
+  width: 90%;
+  padding-top: 5%;
+}
+
+.head_customer_link{
+  transition: all 0.1s ease-out;
+}
+
+.head_customer_link:hover{
+  transform: scale(1.03);
+  color: #3d5d23 !important;
+}
+
+.sub-btn-link{
+  transition: all 0.2s ease-out;
+}
+
+.sub-btn-link:hover{
+  /*border-bottom: 1px solid #fff;*/
+  padding-left: 3% !important;
+}
+
+// CSS NORMAL
+
+.retractable.with-menu {
+  padding-left: 50px;
+}
+
+.retractable.with-filter {
+  padding-right: 290px; 
+}
+
+//retractable menu
+.retractable .retractable-menu {
+    position: fixed;
+    width: 260px;
+    z-index: 300;
+    left: -210px;
+    -webkit-transition: -webkit-left 0.2s ease-out;
+    -moz-transition: -moz-left 0.2s ease-out;
+    -o-transition: left 0.2s ease-out;
+    -ms-transition: left 0.2s ease-out;
+    transition: left 0.2s ease-out;
+}
+
+.retractable .retractable-menu:hover {
+  left: -2px;
+}
+.retractable .retractable-menu .side-menu {
+  padding-left: 11px !important;
+  padding-right: 11px !important;
+  background-image: url('application/bg_body_2.png');
+  background-repeat: repeat;
+  background-attachment: fixed;
+}
+.retractable .retractable-menu .retractable-caret {
+  text-align: right;
+  width: 100%;
+  display: inline-block;
+  border-bottom: 1px solid #fff;
+  margin-bottom: 8px;
+  padding-bottom: 5px;
+}
+.retractable .retractable-menu .retractable-caret .title {
+  display: inline-block;
+  text-align: left;
+  width: 90%;
+}
+
+//retractable-filter
+.retractable .retractable-filter {
+  position: fixed;
+  z-index: 20;
+  margin-right: 15px;
+  right: 0;
+  width: 270px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.36), 0 2px 10px 0 rgba(0, 0, 0, 0.32) !important;
+}
+.retractable .retractable-filter .locker {
+  padding: 2px;
+}
+.retractable .retractable-filter.close {
+  position: absolute;
+  width: auto;
+}
+
+//detachable table head
+table.table-detachable-head thead.detached {
+  display:none;
+  position: fixed;
+  z-index: 50;
+  background-color: #214255;
+  color: #fff;
+  top: 30px;
+}
+table.table-detachable-head thead.detached a {
+  color: #CCE6FF;
+}
+table.table-detachable-head thead.detached a:hover {
+  color: #E6FFE6;
+}
+
+
+@media (max-width: 1186px) {
+  table.table-detachable-head thead.detached {
+    top: 46px;
+  }
+}

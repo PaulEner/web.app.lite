@@ -1,0 +1,86 @@
+.box
+  .form-group
+    .row         
+      .col-md-12
+        %label.semibold Informations basiques & Authentification
+    %hr
+
+  .more-information
+    %form#ido_form.ido_form
+      %input.idocus_field{ type: "hidden", name: "ido_connector_id", id: "ido_connector_id", value: @connector[:id] }
+      %input.idocus_field{ type: "hidden", name: "ido_budgea_id", id: "ido_budgea_id", value: @retriever.try(:budgea_id) }
+      %input.idocus_field{ type: "hidden", name: "ido_connector_name", id: "ido_connector_name", value: @connector[:name] }
+      %input.idocus_field{ type: "hidden", name: "ido_capabilities", id: "ido_capabilities", value: @connector[:capabilities].join('_') }
+
+      .form-group
+        %label.semibold Connecteur :
+        %span.connector-type.text-table-green.ms-3= @connector[:name]
+
+      .form-group
+        %label.semibold Type de connecteur :
+        - connector_type = 'Autres'
+        - connector_type = 'Opérations bancaires'        if @connector[:capabilities].include?('bank')
+        - connector_type = 'Documents'                   if @connector[:capabilities].include?('document')
+        - connector_type = 'Opé. bancaires et Documents' if @connector[:capabilities].include?('bank') && @connector[:capabilities].include?('document')
+        %span.connector-type.text-table-green.ms-3= connector_type
+
+      .form-group
+        %label.semibold Nom personnalisé
+        .select-container.no-padding.w-100
+          = text_field_tag 'ido_custom_name', @retriever.try(:name) || @connector[:name], required: true, class: 'idocus_field'
+
+      - if @retriever.try(:journal) || @connector[:capabilities].include?('document')
+        .form-group
+          %label.semibold Journal
+          .select-container.no-padding.w-100
+            = select_tag 'ido_journal', options_for_select(retriever_journals_of(@account), @retriever.try(:journal).try(:id)), include_blank: false, class: 'form-select idocus_field'
+
+      .budgea_fields
+        - if @connector[:auth_mechanism] == 'webauth'
+          = hidden_field_tag 'webauth_mechanism', 'webauth_mechanism', class: 'oauth'
+
+        - CustomUtils.arrStr_to_array(@connector[:fields]).each do |field|
+          .form-group
+            %label.semibold= field[:label]
+            .select-container.no-padding.w-100
+              - required_field = field[:required].to_s == 'true' && !@retriever.try(:id)
+              - if field[:name].match(/website/)
+                - required_field = true
+              - case field[:type]
+              - when 'list'
+                - class_plus = field[:name].match(/website/) ? 'field_website' : ''
+                = select_tag field[:name], options_for_select(parse_options_with(field[:values])), include_blank: !required_field, class: "form-select #{class_plus}"
+              - when 'password'
+                = password_field_tag field[:name].strip, nil, required: required_field
+              - when 'oauth'
+                = hidden_field_tag field[:name].strip, field[:value].strip
+              - else
+                = text_field_tag field[:name].strip, nil, required: required_field
+
+.box.contact-box.hide
+  .form-group
+    .row         
+      .col-md-10
+        %label.semibold Informations de contact
+        %span (Obligatoire pour les comptes de type professionnels)
+      .col-md-2
+
+    %hr
+
+  .contact-information
+    %form#contact_form.contact_form
+      %input{ type: "hidden", name: "local_company", id: "local_company", value: @account.company }
+      %input{ type: "hidden", name: "local_name", id: "local_name", value: @account.last_name }
+      %input{ type: "hidden", name: "local_first_name", id: "local_first_name", value: @account.first_name }
+      .form-group
+        %label.semibold Nom de la société
+        .select-container.no-padding.w-100
+          = text_field_tag "society", nil, required: false
+      .form-group
+        %label.semibold Nom du dirigeant
+        .select-container.no-padding.w-100
+          = text_field_tag "name", nil, required: false
+      .form-group
+        %label.semibold Prénom du dirigeant
+        .select-container.no-padding.w-100
+          = text_field_tag "first_name", nil, required: false

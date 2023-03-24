@@ -1,0 +1,56 @@
+.derivationLeft
+  %input#documents-selection-size{ type: 'hidden', value: documents.total_count }
+  .form-group.no-margin
+    .w-100.text-end            
+      %button#integrate_documents.btn.btn-light-primary.bold 
+        %span.me-2= glyphicon('action-undo', { size: '15', color: "#0d6efd" })
+        %span Intégrer les documents séléctionnés
+
+  .mb-4
+
+  .row
+    .col-md-12
+      %table.table.table-striped.table_integration#tbl_documents
+        %thead            
+          %th.text-center
+            .form-check
+              %input.form-check-input.pointer.float-none.check-all-bank-account{ type: :checkbox, value: "" }
+          %th= sortable :created_at, 'Date de la récupération'
+          %th= sortable :retriever_id , 'Service'
+          %th= sortable :date, 'Date'
+          %th= sortable :name, 'Nom original'
+          %th= sortable :pages_number, 'Nb. pages'
+          %th= sortable :amount, 'Montant'
+        %tbody
+          - if documents.any?
+            - documents.each do |document|
+              %tr
+                %td.text-center
+                  .form-check
+                    %input.selected_document.form-check-input.pointer.float-none.check-bank-account{ type: :checkbox, data: { value: document.id } }
+                %td= l(document.created_at)
+                %td
+                  - if document.retriever.nil?
+                    %span.label supprimé
+                  = document.retriever_name
+                %td= l(document.metadata['date'], format: '%d %b %Y') rescue ''               
+                %td= link_to document.metadata['name'] + '.pdf', '#', class: 'do-showDocument', data: { url: document.get_access_url }
+                %td= document.pages_number            
+                %td= document.metadata['amount'].to_s + ' €'
+          - else
+            %tr
+              %td{colspan: 7}= t('global.no-data-found')
+
+    = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { name: 'documents-selection', mark: 'retriever_parameters', total_pages: documents.total_pages }
+
+
+  .modal.fade.in#retrieved_document
+    .modal-dialog{style: 'min-width: 1024px'}
+      .modal-content
+        .modal-header
+          %h5.modal-title.bold Document
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        .modal-body
+          %iframe{ :src => "", :id => "retrieved-document", style: "height: 700px; width: 100%" }
+        .modal-footer
+

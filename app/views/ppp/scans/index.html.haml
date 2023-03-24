@@ -1,0 +1,139 @@
+#scans
+  .box.derivationLeft
+    .row
+      - if is_return_labels_authorized?
+        .col-md-1
+          %button.btn.btn-light-primary.semibold{ type: 'button', "data-bs-toggle" => 'modal', "data-bs-target" => "#returnLabelsDialog" } Etiquettes de retour
+      .col-md-1
+        = link_to 'Export CSV', scans_path(format: 'csv', year: @current_time.year, month: @current_time.month, day: @current_time.day), class: 'btn btn-light semibold'
+      %div{ class: (is_return_labels_authorized? ? 'col-md-10' : 'col-md-11') }
+        %table.table.table-striped.table-condensed.table-bordered.navigation
+          %tr
+            %td.first.date.text-center
+              = select_year @current_time.to_date, start_year: 2011, end_year: Time.now.year
+              = select_month @current_time.to_date, use_month_numbers: true
+              = hidden_field_tag :date_day, @current_time.day
+            - time = @current_time.beginning_of_month
+            - month = @current_time.end_of_month.month
+            - while time.month == month
+              - if time.day == @current_time.day
+                %td.text-center{ class: 'current' }
+                  - if @groups[time.day].present?
+                    = link_to time.day, "/scans/#{@current_time.year}/#{@current_time.month}/#{time.day}"
+                  - else
+                    = time.day
+              - else
+                - if @groups[time.day].present?
+                  %td.text-center{ class: 'present' }= link_to time.day, "/scans/#{@current_time.year}/#{@current_time.month}/#{time.day}"
+                - else
+                  %td.text-center
+                    - if time.to_date == Time.now.to_date
+                      = link_to time.day, "/scans/#{@current_time.year}/#{@current_time.month}/#{time.day}"
+                    - else
+                      = time.day
+              - time = time + 1.day
+          %tr
+            %td.text-center
+            - time = @current_time.beginning_of_month
+            - month = @current_time.end_of_month.month
+            - while time.month == month
+              %td
+                - if @groups[time.day].present?
+                  = @groups[time.day].size
+              - time = time + 1.day
+    .row
+      .col-md-2
+      .col-md-8
+        - if session[:new_document] && @current_time.to_date == Date.today
+          .alert.alert-danger.already_exist
+            %b Ces valeurs concernent la chemise "#{session[:new_document][:name]}" déjà intégré dans la plateforme iDocus :
+            %br
+            %table.table.table-bordered.table-condensed
+              %tr.bg-brown.text-white
+                %th
+                %th Nombre d'attaches
+                %th Nombre de hors format
+                %th
+              %tr
+                %td.first
+                  Valeurs actuelles
+                  - if @old_document.scanned_at.present?
+                    = link_to "(#{@old_document.scanned_at.strftime("%d/%m/%Y")})", "/scans/#{@old_document.scanned_at.strftime("%Y/%m/%d")}"
+                %td= @old_document.paperclips
+                %td= @old_document.oversized
+                %td= link_to 'Annuler', cancel_scans_path, class: 'btn btn-light-secondary'
+              %tr
+                %td.first Nouvelles valeurs
+                %td= paperclips = session[:new_document][:paperclips]
+                %td= oversized = session[:new_document][:oversized]
+                %td
+                  = form_tag overwrite_scan_path(session[:old_document]), method: 'patch' do
+                    = hidden_field_tag :paperclips, paperclips
+                    = hidden_field_tag :oversized, oversized
+                    = submit_tag 'Remplacer', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
+              %tr
+                %td.first Nouvelles valeurs
+                %td= @old_document.paperclips + (paperclips = session[:new_document][:paperclips])
+                %td= @old_document.oversized + (oversized = session[:new_document][:oversized])
+                %td
+                  = form_tag add_scan_path(session[:old_document]), method: 'patch' do
+                    = hidden_field_tag :paperclips, paperclips
+                    = hidden_field_tag :oversized, oversized
+                    = submit_tag 'Additionner', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
+
+        %table.table.table-bordered.condensed
+          %tr.text-grey
+            %th.date       Heure
+            %th.paperclips Nombre d'attaches
+            %th.oversized  Nombre de hors format
+            %th.name       Nom
+            - if current_user
+              %th.scanned_by Numérisé par
+            %th.actions.text-center    Actions
+          - if @current_time.to_date == Date.today
+            %tr.form
+              = form_for @document, url: scans_path, method: :post do |f|
+                %td.date -
+                %td.paperclips
+                  .select-container.w-100
+                    != f.number_field :paperclips, class: 'col-md-8'
+                    - if (error = @document.errors.messages[:paperclips].try(:first))
+                      %br
+                      %span.errors.alignleft= error
+                %td.oversized
+                  .select-container.w-100
+                    != f.number_field :oversized, class: 'col-md-8'
+                    - if (error = @document.errors.messages[:oversized].try(:first))
+                      %br
+                      %span.errors.alignleft= error
+                %td.name
+                  .select-container.w-100
+                    != f.text_field :name, autofocus: true
+                    - if (error = @document.errors.messages[:name].try(:first))
+                      %br
+                      %span.errors= error
+                - if current_user
+                  %td.scanned_by
+                %td.actions= submit_tag 'Valider', class: 'btn btn-primary semibold'
+          - @documents.each do |document|
+            %tr
+              %td.date=         l(document.scanned_at, format: '%H:%M')
+              %td.paperclips=   document.paperclips
+              %td.oversized=    document.oversized
+              %td.name=         document.name
+              - if current_user
+                %td.scanned_by= document.scanned_by
+              %td.actions.text-center
+      .col-md-2
+
+- #if (@user && @user['is_return_labels_authorized']) or current_user
+- if @user || current_user
+  #returnLabelsDialog.modal.hide.fade.in
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %h3 Génération des étiquettes de retour
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        .modal-body
+          #returnLabelsForm
+          %iframe{ src: '', id: 'returnLabelsShow' }

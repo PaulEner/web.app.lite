@@ -1,0 +1,14 @@
+= stylesheet_link_tag 'front/news/assets/stylesheets/main'
+
+- if @news_present
+  - @news.each_with_index do |news, index|
+    .toast.new.m-3{ role: "alert", "aria-live" => "assertive",  "aria-atomic" => "true", "data-bs-delay": 25000 }
+      .toast-header
+        %strong.me-auto= news.title
+        %small= l news.created_at, format: '%e %B %Y'
+        %button.btn-close{ type: "button", "data-bs-dismiss" => "toast", "aria-label" => "Close" }
+      .toast-body
+        .scrollable_body
+          = news.body.html_safe
+          - if news.url.present?
+            .link= link_to 'Lire la suite', news.url, target: '_blank'

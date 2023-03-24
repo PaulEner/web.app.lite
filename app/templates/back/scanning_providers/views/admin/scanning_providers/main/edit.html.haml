@@ -1,0 +1,10 @@
+#scanning_provider.edit
+  .row
+    .col-12
+      .box.small-shadow.clearfix
+        = render partial: 'navigation'
+
+  .card
+    .card-header
+      %h3 Édition de l'atelier : #{link_to @scanning_provider, admin_scanning_provider_path(@scanning_provider)}
+    = render partial: 'form'

@@ -1,0 +1,58 @@
+- customer_selected = User.find(params[:uid].present? ? params[:uid] : @user.id)
+= hidden_field_tag :customer_code, customer_selected.code
+.row
+  .col-md-2
+    .lefter.mt-5
+      %ul.principal.p-0
+        - @journals.each_with_index do |journal, index|
+          %li.direct_links
+            %a.rubric{ href: "#", data: { journal: { id: journal.id } } }              
+              %span.link_principal{ class: (journal.name == params[:journal] || (!params[:journal].present? && index == 0)) ? 'active' : ''}= journal.full_name
+        
+        %li.direct_links.add-rubric
+          %span.float-end= glyphicon('plus', { color: "#C1D837", size: 10})
+          %span.link_principal.green-label Ajouter une rubrique
+        %li.input-add-rubric.hide
+          %hr
+          = render file: Rails.root.join('app/templates/front/journals/views/journals/main/_rubric_form.html.haml'), locals: { organization_id: @user.organization_id }
+          - ajx_params = param_encode({ url: '#url', form: { id: 'edit-rubric-form', dump_action: true, validate: true }, before_send: 'journal.before_rubric_addition', after_send: 'refresh_customer_view' })
+          .row
+            .col-md-5
+            .col-md-7
+              %button.btn.btn-light.btn-sm.cancel-add-rubric{ idocus: ajx_params } Annuler
+              %button.btn.btn-dark.btn-sm.as_idocus_ajax{ idocus: ajx_params } Valider
+  .col-md-10      
+    .box.derivationLeft#table_pieces
+      .row
+        .col-md-12
+          - if @filter_active
+            .filter_active.hide Filter
+          %table.table.table-striped.list_customers
+            %thead
+              %th Nom du fichier
+              %th Date envoi
+              %th Libellé personnalisé
+              %th Etiquettes
+              %th.text-end Action
+            %tbody
+              - @temp_documents.each do |temp_document|
+                %tr
+                  %td.pointer.show-detail{ title: 'Voir détail', data: { content_url: temp_document.get_access_url, temp_document_id: temp_document.id }}
+                    .name.text-table-green= temp_document.original_file_name
+                  %td
+                    %span.info= temp_document.created_at.strftime('%d/%m/%Y')                  
+                  %td= temp_document.try(:label).presence || '-'
+                  %td 
+                    - temp_document.tags&.each do |tag|
+                      %span.badge.bg-dark= tag.strip
+                  %td.text-end.pointer.align-middle
+                    .action.sub_edit_delete.list-collaborators
+                      %span.glyph= glyphicon('ellipses', { size: '15', color: 'gba(26, 26, 26, 0.7)', style: 'transform: rotate(90deg)'})
+                    .sub_menu.text-start.hide
+                      %ul.no-margin.no-padding.regular
+                        %li.edit-tags
+                          = link_to glyphicon('pencil', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Editer les tags', '#', class: 'link update_tags', data: { id: temp_document.id, type: 'temp_documents' }
+                        / %li
+                        /   = link_to glyphicon('trash', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Supprimer', delete_temp_document_path({ id: temp_document.id, rubric: temp_document.label }), method: :delete, data: { confirm: t('actions.confirm') }
+
+          = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: documents_reloaded_path, target: '#table_pieces', total_pages: @temp_documents.total_pages, filter: 'pack_filter_form' }

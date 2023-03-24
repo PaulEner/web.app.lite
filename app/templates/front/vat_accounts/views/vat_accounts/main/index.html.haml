@@ -1,0 +1,57 @@
+/ = stylesheet_link_tag 'front/vat_accounts/assets/stylesheets/main'
+
+#vat_accounts{vat_accounts_count: @vat_accounts.size}
+  %input#organization_id{type: :hidden, value: @organization.id, name: 'organization_id'}
+  %input#customer_id{type: :hidden, value: @customer.id, name: 'customer_id'}
+  = stylesheet_link_tag 'front/vat_accounts/assets/stylesheets/main'
+  .row.derivationLeft
+    .col-md-7      
+    .col-md-5.text-end.no-padding
+      / %button.btn.btn-light.semibold
+      /   %span.me-2= glyphicon('cloud-download', { size: '16', color: '#72AA42'})
+      /   %span Importer un CSV            
+      %button.btn.btn-primary.semibold.edit-vat-account{ type: :button }
+        %span.me-2= glyphicon('plus', { size: '15', color: '#FFFF'})
+        %span Ajouter un compte TVA
+  .mb-3
+  .row.derivationRight
+    .col-md-12
+      %table.table.table-striped.table_integration
+        %thead
+          %tr.header
+            %th= t('activerecord.models.vat_account.attributes.code')
+            %th= t('activerecord.models.vat_account.attributes.nature')
+            %th= t('activerecord.models.vat_account.attributes.account_number')
+            %th.text-end Actions       
+        %tbody
+          - @vat_accounts.each do |vat_account|
+            %tr
+              %td.semibold= vat_account.code
+              %td= vat_account.nature
+              %td= vat_account.account_number
+              %td.text-end.pointer.allow-action
+                .action.sub_edit_delete
+                  %span.glyph= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+                .sub_menu.text-start.hide
+                  %ul.no-margin.no-padding.regular
+                    %li.edit-vat-account{ "data-vat-account-id" => vat_account.id }
+                      = link_to glyphicon('pencil', { size: '15', color: "rgba(26, 26, 26, 0.7)" }) + ' Éditer', '#'
+                    %li= link_to glyphicon('trash', { size: '15', color: "#FF4848" }) + ' Supprimer', organization_customer_accounting_plan_vat_account_path(@organization, @customer, { id: vat_account.id }), data: { method: :delete, confirm: 'Voulez-vous vraiment supprimer ce client ?' }, class: 'red-label'        
+
+  .modal#add-vat-account
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %h5.modal-title.bold Ajouter un compte TVA
+          %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+        .modal-body
+           
+        .modal-footer
+          - idocus_params = param_encode({ url: "#update_vat_account", method: 'POST', form: { id: 'vat_account_edit_form', dump_action: true }, modal: { id: 'add-vat-account' }, after_send: 'show_accounting_plan' })
+          %button.btn.btn-primary.submit_customer.as_idocus_ajax{ type: :button, idocus: idocus_params } Valider 
+
+
+  = javascript_include_tag 'front/vat_accounts/assets/javascripts/main'
+
+
+/ = javascript_include_tag 'front/vat_accounts/assets/javascripts/main'

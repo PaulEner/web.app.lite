@@ -1,0 +1,144 @@
+.modal#skipAccountingPlan
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h5.modal-title.bold Gestion des recherches
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      %form#skipAccountingPlanForm{ action: update_skip_accounting_plan_accounts_organization_account_number_rules_path }
+        .modal-body
+          %label.semibold
+            La recherche dans les plans comptables sera ignorée pour les dossiers suivants :
+            %br
+            %i.regular ( De ce fait, le compte d'attente sera appliqué si la recherche sur les règles n'aboutie pas )
+            %br
+            %br
+          = select_tag 'account_list', options_for_select(@list_accounts, @list_skiped_accounting_plan), include_blank: false, multiple: true, class: 'searchable-option-list'
+          %hr
+          %label.semibold
+            La présence du résultat de la recherche sera validée dans le plan comptable pour les dossiers suivants :
+            %br
+            %br
+          = select_tag 'account_validation', options_for_select(@list_accounts, @validated_accounts_list), include_blank: false, multiple: true, class: 'searchable-option-list'
+        .modal-footer
+          .parentFeedback.hide.float-left
+            .feedback.active
+          %input#skipAccountingPlanButton.btn.btn-primary{ :type => "button", :value => "Valider" }
+
+.modal#add-new-rule
+  .modal-dialog{style: 'min-width: 800px'}
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Ajouter une règle
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        
+      .modal-footer
+        %button.btn.btn-light.cancel{ type: :button, 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal' } Annuler
+        - idocus_params = param_encode({ url: '#url', form:{ id: 'account-number-rule-form', dump_action: true }, modal: { id: 'add-new-rule' }, after_send: 'reload_page' })
+        %button.btn.btn-primary.share.validate-account-number-rule.as_idocus_ajax{ type: :button, disabled: true, idocus: idocus_params} Ajouter
+
+.modal#import-rule
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Importer une règle
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      = form_tag import_organization_account_number_rules_path(@organization), method: 'patch', multipart: true, class: 'form-horizontal' do
+        .modal-body
+          %p.regular.mb-4 Une règle d'affectation doit avoir un nom unique. Si des règles dans le fichier d'import portent le même nom qu'une règle déjà existante, ces règles seront auto incrémentées.         
+
+          .form-group
+            .label-section
+              = label_tag 'account_number_rule[affect]', t('activerecord.models.account_number_rule.attributes.affect'), class: 'semibold', for: 'affect-rule-to'
+            .control-section
+              = select_tag 'account_number_rule[affect]', options_for_select([['Organisation', 'organization'], ['Client', 'user']]), include_blank: false, id: 'affect-rule-to', class: 'form-control select form-select optional'
+              %i.bloc_helper Ne pourra plus être changé par la suite
+
+          = render partial: 'affect_to_form'
+          
+          .form-group
+            .row            
+              .col-md-8
+                .control-section
+                  = file_field_tag :file, class: 'filestyle form-control', data: { classButton: 'btn btn-secondary', input: true, buttonText: glyphicon('file') + '' }, accept: "text/plain", id: 'import_number_rules_file'
+              .col-md-4
+                .w-100.text-center
+                  = submit_tag 'Importer', class: 'btn btn-dark import-csv w-75'
+        .modal-footer
+          .row.w-100.text-center
+            = link_to "Télécharger le modèle d'import .csv", import_model_organization_account_number_rules_path(@organization), class: 'btn btn-default bold w-75 m-auto'
+
+.modal#filter-rule
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Filtrer
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}        
+      = form_tag organization_account_number_rules_path, method: :get, class: 'form-filter' do
+        .modal-body
+          = hidden_field_tag :direction, sort_direction
+          = hidden_field_tag :sort, sort_column
+          = hidden_field_tag :per_page, per_page
+
+          .form-group
+            .label-section
+              = label_tag 'account_number_rule_contains[name]', t('activerecord.models.account_number_rule.attributes.name'), class: 'semibold'
+            .control-section.select-container.no-padding.w-100  
+              = text_field_tag 'account_number_rule_contains[name]', (session[:account_number_rule_contains][:name] rescue '')
+          .form-group
+            .label-section
+              = label_tag 'account_number_rule_contains[affect]', t('activerecord.models.account_number_rule.attributes.affect'), class: 'semibold', for: 'filter-affect-to'
+            .control-section  
+              = select_tag 'account_number_rule_contains[affect]', options_for_select(affect_options_for_select, (session[:account_number_rule_contains][:affect] rescue nil)), include_blank: true, id: 'filter-affect-to', class: 'form-select'
+          .form-group
+            .label-section
+              = label_tag 'account_number_rule_contains[rule_type]', t('activerecord.models.account_number_rule.attributes.rule_type'), class: 'semibold', for: 'filter-rule-type'
+            .control-section  
+              = select_tag 'account_number_rule_contains[rule_type]', options_for_select(rule_type_options_for_select, (session[:account_number_rule_contains][:rule_type] rescue nil)), include_blank: true, id: 'filter-rule-type', class: 'form-select'
+          .form-group
+            .label-section
+              = label_tag 'account_number_rule_contains[categorization]', t('activerecord.models.account_number_rule.attributes.categorization'), class: 'semibold', for: 'rule-categories'
+            .control-section  
+              = select_tag 'account_number_rule_contains[categorization]', options_for_select(@organization.account_number_rules.map(&:categorization).uniq, (session[:account_number_rule_contains][:categorization] rescue '')), include_blank: true, id: 'rule-categories', class: 'form-select'
+          .form-group
+            .label-section
+              = label_tag 'account_number_rule_contains[customer_code]', t('activerecord.models.account_number_rule.attributes.customer_code'), class: 'semibold'
+            .control-section.select-container.no-padding.w-100
+              = text_field_tag 'account_number_rule_contains[customer_code]', (session[:account_number_rule_contains][:customer_code] rescue '')
+          .form-group
+            .label-section
+              = label_tag 'account_number_rule_contains[content]', t('activerecord.models.account_number_rule.attributes.content'), class: 'semibold'
+            .control-section.select-container.no-padding.w-100
+              = text_field_tag 'account_number_rule_contains[content]', (session[:account_number_rule_contains][:content] rescue ''), class: 'semibold'
+          .form-group
+            .label-section
+              = label_tag 'account_number_rule_contains[third_party_account]', t('activerecord.models.account_number_rule.attributes.third_party_account'), class: 'semibold'
+            .control-section.select-container.no-padding.w-100
+              = text_field_tag 'account_number_rule_contains[third_party_account]', (session[:account_number_rule_contains][:third_party_account] rescue '')
+          
+        .modal-footer
+          .row.w-100
+            .col-md-6.text-start
+              = link_to organization_account_number_rules_path(@organization, { reinit: 1 }), class: 'btn btn-default' do
+                %span.me-2 Réinitialiser
+            .col-md-6.text-end
+              %button.btn.btn-light.semibold.cancel{ type: :button, 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal' } Annuler
+              = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary filter semibold'
+
+.modal#confirm-export
+  .modal-dialog{style: 'min-width: 500px'}
+    .modal-content
+      .modal-header
+        %h5.modal-title.bold Que voulez-vous exporter ?
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body
+        .w-100.row.form-group
+          .w-50.form-check.form-check-inline.no-margin.ps-5
+            %label.semibold.form-check-label Tous
+            = radio_button_tag 'export_type','all', true, class: 'form-check-input'
+          .w-50.form-check.form-check-inline.no-margin
+            %label.semibold Ceux séléctionnées
+            = radio_button_tag 'export_type','selected', false,  class: 'form-check-input'
+      .modal-footer
+        %button.btn.btn-light.cancel{ type: :button, 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal' } Annuler
+        %button.btn.btn-primary.validate-export-rule{ type: :button } Valider

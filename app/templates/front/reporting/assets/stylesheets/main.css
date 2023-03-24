@@ -1,0 +1,47 @@
+.text-canvas-reporting{
+  position: absolute;
+  margin: 46px -30px;
+  font-size: 30px;
+}
+
+.sol-current-selection{
+  display: none;
+}
+
+.multi-select-menu{
+  max-height: 200px;
+  overflow: auto;
+}
+
+.multi-select-button{
+  padding: 0 0.6em;
+}
+
+@media (max-width: 1280px) {
+  .table tbody {
+    font-size: 11px;
+  }
+
+  h4{
+  	font-size: 1rem;
+  }
+
+  .multi-select-button{
+  	font-size: 0.8rem;	
+  }
+
+  .multi-select-container svg{
+  	width: 12px !important;
+		height: 12px !important;
+  }
+
+  .multi-select-menuitem {    
+    font-size: 10px;
+	}
+
+  .text-canvas-reporting{    
+    margin: 32px -20px;
+    font-size: 20px;
+  }
+
+}

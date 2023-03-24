@@ -1,0 +1,102 @@
+= stylesheet_link_tag 'front/organizations/assets/stylesheets/show'
+= stylesheet_link_tag 'front/account_number_rules/assets/stylesheets/main'
+
+%input#organization_id{type: :hidden, value: @organization.id, name: 'organization_id'}
+
+.bank-affectation
+  .row.derivationRight
+    .col-md-5
+      %h3.bold
+        Règle d'affectations bancaires
+        %span.badge.badge-secondary.badge-sm.regular= @account_number_rules_count
+        - if session[:account_number_rule_contains]
+          %span.badge.bg-info.blink.regular Filtre actif
+    .col-md-2.no-padding
+      .input-group.mb-3.search-content
+        %span.input-group-text#basic-addon1= glyphicon('magnifying-glass', { size: '16', color: 'background: rgba(26, 26, 26, 0.7)' })          
+        %input.form-control#search_input{ type: :text, "aria-label" => "Rechercher", "aria-describedby" => "basic-addon1", name:'account_number_rule_contains[search_text]', placeholder: 'Rechercher' }
+    .col-md-2.text-center.no-padding
+      %button.btn.btn-light.more-filter.semibold.w-75
+        %span.me-2 Filtrer
+        %span= glyphicon('transfer', { size: '15', color: '#72AA42', style: 'transform: rotate(90deg)'})
+    .col-md-3.no-padding.text-center
+      %button.btn.btn-primary.semibold.add-rule.w-75
+        %span.me-2 Ajouter une règle    
+        %span.chevron-add-rule= glyphicon('chevron-bottom', { size: '15', color: '#FFFF'})
+        %hr.no-margin
+        .sub_rule_menu.text-start.hide
+          %ul.no-margin.no-padding.regular
+            %li.sub-btn-link.new.p-1.create_or_update_account_number_rules{href: new_organization_account_number_rule_path(@organization)}
+              %span.me-1= glyphicon('plus', { size: '12', color: 'white'})
+              %span.semibold Créer une règle
+            .m-1
+            %li.sub-btn-link.download.p-1
+              %span.me-1= glyphicon('cloud-download', { size: '12', color: 'white'})
+              %span.semibold Importer une règle      
+
+  .box.derivationLeft
+    = form_tag(export_or_destroy_organization_account_number_rules_path(@organization), id: 'form_export_or_destroy',  method: :post) do
+      = hidden_field_tag :export_type_submit
+      = hidden_field_tag :export_or_destroy, 'export'
+      .row
+        .col-md-6
+          %label.mt-3
+            Les règles ci-dessous s'appliquent aux opérations récupérées dans les automates.
+            %br Vous pouvez exporter les règles sélectionnées ou les supprimer.
+        .col-md-3.text-end
+          %button.btn.btn-light-secondary.semibold.btn-action-rule#export-rule{ type: 'submit', name: 'export_or_destroy', value: 'export', disabled: 'disabled'} Exporter sur Excel
+          %button.btn.btn-light-secondary.semibold.btn-action-rule.no-margin#delete-rule{type: 'submit', name: 'export_or_destroy', value: 'destroy', 'data-confirm' => 'Etes-vous sûr de vouloir supprimer les règles sélectionnées ?', disabled: 'disabled'} Supprimer
+        .col-md-3.text-end
+          %button.btn.btn-default.skip_accounting_plan.semibold
+            %span.me-2= glyphicon('cog', { size: '12', color: '#72AA42'})
+            %span Paramètres avancés
+          
+      .row.mt-5
+        .col-md-12
+          %table.table.table-striped.table_integration#tbl_account_number_rules
+            %thead
+              %th.text-center
+                .form-check
+                  = check_box_tag 'master_checkbox', 0, false, class: 'form-check-input pointer float-none check-all-bank-rule'
+              %th= sortable :name, 'Nom de la règle'
+              %th= sortable :affect, 'Affecté à'
+              %th= sortable :rule_type, 'Type de règle'
+              %th= sortable :categorization, 'Catégorisation'
+              %th= sortable :content, 'Contenu recherche'
+              %th= sortable :third_party_account, 'N° de compte'
+              %th.text-end Action
+            %tbody
+              - @account_number_rules.each do |rule|
+                %tr
+                  %td.text-center
+                    .form-check
+                      = check_box_tag 'rules[rule_ids][]', rule.id, false, id: "rule_#{rule.id}", class: 'form-check-input pointer float-none check-bank-rule checkbox'
+                  %td= rule.name
+                  %td
+                    = t('activerecord.models.account_number_rule.attributes.affect_values.' + rule.affect)
+                    - if rule.affect == 'user'
+                      - if rule.users.size == 1
+                        (#{rule.users.first.code})
+                      - else
+                        (#{rule.users.size})
+                  %td= t('activerecord.models.account_number_rule.attributes.rule_type_values.' + rule.rule_type) + " (#{rule.priority})"
+                  %td= rule.categorization
+                  %td= rule.content
+                  %td= rule.third_party_account
+                  %td.text-end.pointer
+                    .action.sub-menu-bank-affectation
+                      %span= glyphicon('ellipses', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'})
+                    .sub_menu.text-start.hide
+                      %ul.no-margin.no-padding.regular                      
+                        %li.edit
+                          = link_to glyphicon('pencil', { size: '15', color: 'rgba(26, 26, 26, 0.7);'}) + ' Éditer', edit_organization_account_number_rule_path(@organization, rule), class: 'edit create_or_update_account_number_rules', title: 'Éditer'
+                        %li.duplicate
+                          = link_to glyphicon('layers', { size: '15', color: 'rgba(26, 26, 26, 0.7);', style: 'transform: rotate(90deg)'}) + ' Dupliquer', new_organization_account_number_rule_path(@organization, template: rule), class: 'duplicate create_or_update_account_number_rules', title: 'Créer une règle en se basant sur cette règle'
+                        %li.delete.red-label
+                          = link_to glyphicon('trash', { size: '15', color: "#FF4848" }) + ' Supprimer', organization_account_number_rule_path(@organization, rule), class: 'delete-account-number', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
+
+        = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { name: 'account_number_rules', total_pages: @account_number_rules.total_pages }  
+
+  = render partial: 'dialog'
+
+= javascript_include_tag 'front/account_number_rules/assets/javascripts/main'

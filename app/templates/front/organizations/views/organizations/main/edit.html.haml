@@ -1,0 +1,178 @@
+= stylesheet_link_tag 'front/organizations/assets/stylesheets/edit'
+
+.general
+  .row.derivationRight
+    %h3.bold Paramètres : Général (Édition de l'organisation)
+
+
+  = simple_form_for @organization, html: { id: 'organization_edit', class: 'form-horizontal label-medium' } do |f|
+    .box.mt-4.derivationLeft
+      = hidden_field_tag :part, params[:part]
+      - if params[:part] != 'other_software'
+        .form-group
+          .select-container.no-padding.w-100
+            = f.input :name, input_html: { class: '', placeholder: "iDocus" }
+        - unless @organization.specific_mission
+          .form-group
+            .select-container.no-padding.w-100
+              = f.input :jefacture_api_key, input_html: { class: '', placeholder: "ex : T4534638846" }
+
+          - if current_user.is_admin
+            .form-group
+              .select-container.no-padding.w-100
+                = f.input :code, label_html: { class: 'semibold custom-label-field' }, input_html: { class: '  custom-input-field', placeholder: "IDOC" }
+            .form-group
+              .row
+                .col-md-11
+                  = f.label :invoice_created_customer, :class => "semibold"
+                .col-md-1
+                  .form-check.form-switch.idocus-custom-form-check
+                    = f.input :invoice_created_customer, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'invoice_created_customer' }
+                    %label.semibold{class: 'form-check-label label_check_field', for: 'invoice_created_customer'} Non
+              %i Si "oui" le dossier est facturé dès sa création, si "non" le dossier est facturé aux premiers flux.
+            .form-group
+              .row
+                .col-md-11
+                  = f.label :is_detail_authorized, :class => "semibold"
+                .col-md-1
+                  .form-check.form-switch.idocus-custom-form-check
+                    = f.input :is_detail_authorized, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'is_detail_authorized' }
+                    %label.semibold{class: 'form-check-label label_check_field', for: 'is_detail_authorized'} Non
+            .form-group
+              .row
+                .col-md-11
+                  = f.label :is_test, :class => "semibold"
+                .col-md-1
+                  .form-check.form-switch.idocus-custom-form-check
+                    = f.input :is_test, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'is_test' }
+                    %label.semibold{class: 'form-check-label label_check_field', for: 'is_test'} Non
+          .form-group
+            .row
+              .col-md-11
+                = f.label :is_operation_processing_forced, :class => "semibold"
+              .col-md-1
+                .form-check.form-switch.idocus-custom-form-check
+                  = f.input :is_operation_processing_forced, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'is_operation_processing_forced' }
+                  %label.semibold{class: 'form-check-label label_check_field', for: 'is_operation_processing_forced'} Non
+   
+          .form-group
+            .row
+              .col-md-11
+                = f.label :is_operation_value_date_needed, :class => "semibold"
+              .col-md-1
+                .form-check.form-switch.idocus-custom-form-check
+                  = f.input :is_operation_value_date_needed, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'is_operation_value_date_needed' }
+                  %label.semibold{class: 'form-check-label label_check_field', for: 'is_operation_value_date_needed'} Non
+          .form-group
+            .row
+              .col-md-11
+                = f.label :is_duplicate_blocker_activated, :class => "semibold"
+              .col-md-1
+                .form-check.form-switch.idocus-custom-form-check
+                  = f.input :is_duplicate_blocker_activated, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'is_duplicate_blocker_activated' }
+                  %label.semibold{class: 'form-check-label label_check_field', for: 'is_duplicate_blocker_activated'} Non          
+
+          .form-group
+            .row
+              .col-md-5.semibold 
+                %label Date de l’écriture des opérations bancaires
+              .col-md-3
+                .form-check.form-check-inline
+                  = f.radio_button :preseizure_date_option, preseizure_date_options[0][1], id: '', class: 'form-check-input'
+                  = f.label :preseizure_date_option, preseizure_date_options[0][0], class: 'form-check-label'
+              .col-md-4
+                .form-check.form-check-inline
+                  = f.radio_button :preseizure_date_option, preseizure_date_options[1][1], id: '', class: 'form-check-input'
+                  = f.label :preseizure_date_option, preseizure_date_options[1][0], class: 'form-check-label'
+          .form-group
+            .row
+              .col-md-5.semibold 
+                %label Date de saisie des factures
+              .col-md-3
+                .form-check.form-check-inline
+                  = f.radio_button :is_pre_assignment_date_computed, false, id: '', class: 'form-check-input'
+                  = f.label :is_pre_assignment_date_computed, "Date d’origine", class: 'form-check-label'
+              .col-md-4
+                .form-check.form-check-inline
+                  = f.radio_button :is_pre_assignment_date_computed, true, id: '', class: 'form-check-input'
+                  = f.label :is_pre_assignment_date_computed, "Date de la période iDocus", class: 'form-check-label'
+
+        .form-group
+          %label.semibold Nombre de périodes antérieures accessibles au téléversement des pièces
+          .select-container.no-padding.w-100
+            = f.input :authd_prev_period, as: :integer, label: false, input_html: { min: 0 }
+
+        .form-group
+          %label.semibold Jour de clôture de la période précédente dans la période en cours
+          .select-container.no-padding.w-100
+            = f.input :auth_prev_period_until_day, as: :integer, label: false, input_html: { min: 0, max: 28 }, hint: '0 à 28'
+          %i Par exemple le 11 février pour cloturer janvier. Choisir un chiffre de 0 à 28.
+
+        .form-group
+          .select-container.no-padding.w-100
+            = f.input :invoice_mails, label_html: { class: 'semibold custom-label-field' }, input_html: { class: '  custom-input-field', placeholder: "Ex : jean.dupont@mail.com, marie.dupuis@mail.com" }, hint: 'Doit être séparé par une virgule (",") si plusieurs'
+        .form-group
+          .select-container.no-padding.w-100
+            = f.input :jedeclare_user, input_html: { class: '', placeholder: "ex : cabinet@cabinet.com" }
+
+        .form-group
+          .select-container.no-padding.w-100
+            = f.input :jedeclare_password, input_html: { class: '', placeholder: "" }
+            
+        - if current_user.is_admin
+          - unless @organization.specific_mission
+            .form-group
+              .row
+                .col-md-11
+                  = f.label :subject_to_vat, :class => "semibold"
+                .col-md-1
+                  .form-check.form-switch.idocus-custom-form-check
+                    = f.input :subject_to_vat, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'subject_to_vat' }
+                    %label.semibold{class: 'form-check-label label_check_field', for: 'subject_to_vat'} Non
+            
+          .form-group
+            .row
+              .col-md-11
+                = f.label :specific_mission, :class => "semibold"
+              .col-md-1
+                .form-check.form-switch.idocus-custom-form-check
+                  = f.input :specific_mission, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'specific_mission' }
+                  %label.semibold{class: 'form-check-label label_check_field', for: 'specific_mission'} Non
+          
+          = f.input :default_banking_provider, as: :select, label_html: { class: 'semibold custom-label-field' }, collection: default_banking_provider_options_for_select, input_html: { class: '  custom-input-field form-select' }
+
+          .form-group
+            .select-container.no-padding.w-100
+              = f.input :cedricom_name, input_html: { class: '', placeholder: "ex : NOMCABINET" }
+
+          .form-group
+            .select-container.no-padding.w-100
+              = f.input :jedeclare_account_identifier, input_html: { class: '', placeholder: "ex : NOMCABINET" }
+
+        .form-group
+          .select-container.no-padding.w-100
+            = f.input :cedricom_user, input_html: { class: '', placeholder: "ex : cabinet@cabinet.com" }
+
+        .form-group
+          .select-container.no-padding.w-100
+            = f.input :cedricom_password, input_html: { class: '', placeholder: "" }
+
+
+      - elsif !@organization.specific_mission
+        - ['quadratus', 'coala', 'csv_descriptor'].each do |software|
+          = f.simple_fields_for software.to_sym do |sf|
+            .form-group
+              .row
+                .col-md-11
+                  = sf.label :is_used, t("activerecord.models.software_#{software}.attributes.is_used"), :class => "semibold"
+                .col-md-1
+                  .form-check.form-switch.idocus-custom-form-check
+                    = f.input :is_used, as: :boolean, label: false, label_html: { class: 'semibold form-check-label' }, input_html: { class: 'form-check-input input_switch input_check_field', id: 'is_used' }
+                    %label.semibold{class: 'form-check-label label_check_field', for: 'is_used'} Non
+
+      .form-group.no-margin
+        .w-100.text-end
+          - idocus_params = param_encode({ url: "/organizations/#{@organization.id}", method: 'put', form:{ id: 'organization_edit' } })
+          %button.btn.btn-primary.semibold.as_idocus_ajax{ type: 'button', idocus: idocus_params} Valider les modifications
+
+= javascript_include_tag 'front/organizations/assets/javascripts/main'

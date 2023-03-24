@@ -1,0 +1,7 @@
+#main-customer.container-fluid.main-content
+  .customer-document-content
+    = render partial: 'body_customer' 
+
+= render partial: 'upload_dialog_customer' if @render_upload
+
+= javascript_include_tag 'front/my_documents/assets/javascripts/customer'

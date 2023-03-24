@@ -1,0 +1,24 @@
+.edit.preseizure
+  = simple_form_for @preseizure, url: '', method: 'get', html: { class: 'form-group', id: 'preseizure_edition_form' } do |f|
+    = f.hidden_field :id
+    .select-container.w-100.no-padding
+      = f.input :date, as: :string, disabled: (@user.has_collaborator_action? ? false : true), input_html: { :value => f.object.date.try(:to_date), id: 'date-preseizure' }
+    .select-container.w-100.no-padding
+      = f.input :deadline_date, as: :string, disabled: (@user.has_collaborator_action? ? false : true), input_html: { :value => f.object.deadline_date.try(:to_date), id: 'deadline-date-preseizure' }
+    .select-container.w-100.no-padding
+      = f.input :third_party, disabled: (@user.has_collaborator_action? ? false : true)
+    - if params[:ids].nil?
+      .select-container.w-100.no-padding
+        = f.input :operation_label, as: :text, disabled: (@user.has_collaborator_action? ? false : true)
+      .select-container.w-100.no-padding
+        = f.input :piece_number, disabled: (@user.has_collaborator_action? ? false : true)
+      .select-container.w-100.no-padding
+        = f.input :amount, disabled: (@user.has_collaborator_action? ? false : true)
+      .select-container.w-100.no-padding
+        = f.input :currency, disabled: ( @user.has_collaborator_action? ? false : true)
+    - else
+      = hidden_field_tag :preseizures_ids, params[:ids]
+    .select-container.w-100.no-padding
+      = f.input :conversion_rate, disabled: (@user.has_collaborator_action? ? false : true)
+    .select-container.w-100.no-padding
+      = f.input :observation, as: :text, disabled: (@user.has_collaborator_action? ? false : true)

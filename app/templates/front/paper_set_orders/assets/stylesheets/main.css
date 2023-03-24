@@ -1,0 +1,17 @@
+#add-new-paper-set-order.modal .modal-dialog, #select_for_orders.modal .modal-dialog, #file_sending_kits_edit.modal .modal-dialog{
+  min-width: 1024px !important;
+}
+
+#add-new-paper-set-order.modal .form-group {
+  margin-bottom: 2% !important;
+}
+
+#add-new-paper-set-order.modal .select-container input{
+  padding: 0.5% !important;
+}
+
+@media (max-width: 1280px) {
+	.sub_menu {
+	  min-width: 16%;
+	}
+}

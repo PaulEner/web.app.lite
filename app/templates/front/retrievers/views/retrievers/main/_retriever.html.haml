@@ -1,0 +1,78 @@
+.w-50.animatedChild{ class: animation }
+  - _user = retriever.user
+  - is_specific_mission = @user.organization.specific_mission
+
+  .box.retriever-box.animated-pointer
+    .row
+      .col-md-6
+        %h6.pack.semibold= _user.info
+        %label.under_pack.regular 
+          - if retriever.provider_and_bank?
+            Doc. et Op. Bancaires
+          - elsif retriever.bank?
+            Op. Bancaires
+          - else
+            Document
+          %span &#124;
+          %span.semibold= retriever.name
+          %span= "(" + retriever.service_name + ")"
+      .col-md-4
+        .created-date
+          %label.semibold Ajouté le :
+          %label= retriever.created_at.strftime("%d-%m-%Y")
+        .updated-date
+          %label Modifié le :
+          %label= retriever.updated_at.strftime("%d-%m-%Y")
+      .col-md-2.text-center
+        %h5.semibold= retriever.journal_name.presence || ''
+    %hr.no-margin.w-100
+    .row.retriever_actions
+      .col-md-6.pt-1
+        %span.badge.semibold{ class: "badge-#{badge_type_of(retriever)}" }= state_of(retriever)
+        - if retriever.state != 'ready' && retriever.error_message.present?
+          %span.badge.semibold.bg-danger{ class: "state_field_#{retriever.id}", data: { "bs-toggle" => 'popover', "bs-trigger" => "hover", "bs-placement" => 'top', "bs-content" => retriever.error_message.to_s } }= retriever.error_message.to_s.truncate(30)
+      .col-md-6.icon-actions.text-end.pt-1
+        %span.action-group.ms-1.pointer.retriever_infos{ title: "Créé le : #{retriever.created_at.strftime('%d-%m-%Y %H:%M:%S')} / Modifié le: #{retriever.updated_at.strftime('%d-%m-%Y %H:%M:%S')}"}= glyphicon('info', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+
+        //specific mission actions
+        - if is_specific_mission
+          %span.action-group.ms-1.pointer.edit_connection{ title: 'Édition', data: { retriever: retriever.to_json, banking_provider: 'internal' } }= glyphicon('pencil', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+          %span.action-group.ms-1.pointer.delete_connection{ title: 'Suppression', data: { id: retriever.id }}= glyphicon('trash', { size: '14', color:'red'})
+
+          // budgea actions
+        - elsif retriever.budgea_id
+          - if (retriever.ready? || retriever.waiting_additionnal_info?) || (retriever.error? && !retriever.budgea_error_message.in?(['SCARequired', 'decoupled', 'webauthRequired']))
+            %span.action-group.ms-1.pointer.trigger_connection{ title: 'Synchronisation', data: { id: retriever.id, user_id: retriever.user_id }}= glyphicon('loop-circular', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+            %span.action-group.ms-1.pointer.edit_connection{ title: 'Édition', data: { retriever: retriever.to_json, user_id: retriever.user_id, banking_provider: 'budgea' } }= glyphicon('pencil', { size: '14', color:'rgba(26, 26, 26, 0.32);'})
+          - if retriever.ready? || retriever.error? || retriever.unavailable? || retriever.waiting_additionnal_info? || retriever.destroying? || retriever.configuring?
+            %span.action-group.ms-1.pointer.delete_connection{ title: 'Suppression', data: { id: retriever.id, user_id: retriever.user_id }}= glyphicon('trash', { size: '14', color:'red'})
+          - case retriever.budgea_error_message
+          - when 'SCARequired'
+            %button#SCARequired.btn.btn-primary.scarequire_decoupled_button{ data: { id: retriever.id, user_id: retriever.user_id } }
+              Lancer la procédure d'authentification
+          - when 'decoupled'
+            %button#decoupled.btn.btn-success.scarequire_decoupled_button{ data: { id: retriever.id, user_id: retriever.user_id } }
+              Valider la reprise de la synchronisation
+          - when 'webauthRequired'
+            %input{ id: "ido_connector_id_#{retriever.budgea_id}", type: :hidden, value: "#{retriever.budgea_id}"}
+            %input{ id: "ido_capabilities_#{retriever.budgea_id}", type: :hidden, value: "#{retriever.capabilities}"}
+            %input{ id: "ido_custom_name_#{retriever.budgea_id}", type: :hidden, value: "#{retriever.name}"}
+            %input{ id: "ido_connector_name_#{retriever.budgea_id}", type: :hidden, value: "#{retriever.service_name}"}
+
+            %button#webauth.btn.btn-primary.webauth_button{ data: { id: retriever.budgea_id, user_id: retriever.user_id } }
+              Lancer la procédure d'authentification
+            %span
+              %img.hide{ id: "loading_#{retriever.budgea_id}", src: "/assets/application/bar_loading.gif", alt: "chargement..."}
+
+          - if retriever.waiting_selection?
+            - if retriever.provider?
+              = link_to 'Sélectionnez vos documents', retriever_parameters_path(tab: 'documents'), class: 'btn btn-primary'
+            - else
+              = link_to 'Sélectionnez vos comptes', retriever_parameters_path, class: 'btn btn-primary'
+
+          //bridge actions
+        - elsif retriever.bridge_id
+          = link_to glyphicon('pencil', { size: '14', color:'rgba(26, 26, 26, 0.32);'}), Bridge::EditItem.new(retriever.user, retriever).execute, title: 'Editer', class: 'ms-1 animated-pointer', target: '_blank', rel: 'tooltip'
+          = link_to glyphicon('trash', { size: '14', color:'red'}), bridge_delete_path(retriever_id: retriever.id), title: 'Supprimer', class: 'ms-1 animated-pointer', target: '_blank', rel: 'tooltip'
+          = link_to "Lancer la procédure d'authentification", Bridge::OtpItem.new(retriever.user, retriever).execute, class: 'btn btn-primary', target: '_blank' if retriever.bridge_status == 1010
+          = link_to "Lancer la procédure d'authentification", Bridge::ValidateProItem.new(retriever.user).execute, class: 'btn btn-primary', target: '_blank' if retriever.bridge_status == 1100

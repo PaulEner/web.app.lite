@@ -1,0 +1,101 @@
+#tickets
+  .row.box.clearfix.derivationLeft
+    .col-md-8   
+      .float-start
+        %h3 
+          Liste des tickets
+          %span.badge.bg-dark= @tickets.total_count
+    .col-md-4.text-end
+      %button.btn.btn-warning.tickets-filter
+        %span.me-2= glyphicon('transfer', { size: '10', color: '#000', style: 'transform: rotate(90deg)'})
+        %span Filtrer
+      %span.readonly-container
+        %button.btn.btn-dark.tickets-new
+          %span.me-2= glyphicon('plus', { size: '10', color: 'white'})
+          %span Nouveau
+    
+      
+  .row.box.derivationRight.mb-5
+    .col-md-12      
+      %table.table.table-condensed.table-striped#table_tickets
+        %thead
+          %tr
+            %th.text-center N°
+            %th.text-center Date création
+            %th.text-center Libellé
+            %th.text-center Affecté à
+            %th.text-center Priorité
+            %th.text-center Type
+            %th.text-center Statut
+            %th.text-end Action
+        %tbody
+        - @tickets.each do |ticket|
+          %tr.text-center{ class: (ticket.priority == 5 ? 'back-red-metal' : '')}
+            %td= ticket.id
+            %td= ticket.created_at.strftime('%Y-%m-%d %H:%M')
+            %td
+              = ticket.title
+              .hide.popover_content_tickets.alert.alert-warning
+                .w-100
+                  = ticket.content            
+            %td= ticket.assigned_to_name
+            %td= ticket.priority
+            %td= ticket.category.capitalize
+            %td
+              - case ticket.state
+                - when 'ready'
+                  %span.badge.bg-primary Créer
+                - when 'waiting'
+                  %span.badge.bg-warning En attente
+                - when 'processing'
+                  %span.badge.bg-info En cours
+                - when 'processed'
+                  %span.badge.bg-success Fait
+                - when 'closed'
+                  %span.badge.bg-dark Fermer
+                - when 'reopen'
+                  %span.badge.bg-success Ré-ouvert 
+            %td.text-end.pointer
+              .action.sub_edit_delete
+                %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+              .sub_menu.text-start.hide
+                %ul.no-margin.no-padding.regular
+                  %li.edit-ticket{ data: { id: ticket.id }}
+                    = link_to "#", class: 'no-style black-label set-state' do                          
+                      %span.me-2= glyphicon('pencil', size: 12)                
+                      %span Modifier
+                  - if %w(ready waiting).include?(ticket.state)
+                    %li.close-ticket{ data: { id: ticket.id }}
+                      = link_to processing_admin_tickets_path(ticket, { id: ticket.id}), class: 'no-style black-label set-state', data: { confirm: "Voulez-vous vraiment mettre en attente ce ticket ?" } do
+                        %span.me-2= glyphicon('cog', size: 12)                
+                        %span Mettre en cours
+                  - if %w(processing).include?(ticket.state)
+                    %li.close-ticket{ data: { id: ticket.id }}
+                      = link_to waiting_admin_tickets_path(ticket, { id: ticket.id}), class: 'no-style black-label set-state', data: { confirm: "Voulez-vous vraiment mettre en attente ce ticket ?" } do
+                        %span.me-2= glyphicon('warning', size: 12)                
+                        %span Mettre en attente
+                  %li.close-ticket{ data: { id: ticket.id }}
+                    = link_to close_admin_tickets_path(ticket, { id: ticket.id}), class: 'no-style black-label set-state', data: { confirm: "Voulez-vous vraiment fermer ce ticket ?" } do
+                      %span.me-2= glyphicon('circle-x', size: 12)                
+                      %span Fermer ticket
+                  %li.delete-ticket{ data: { id: ticket.id }}
+                    = link_to admin_ticket_path(ticket, { id: ticket.id}), class: 'no-style black-label set-state', data: { method: :delete, confirm: "Voulez-vous vraiment supprimer ce ticket ?" } do
+                      %span.me-2= glyphicon('trash', size: 12)                
+                      %span Supprimer
+          
+      = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { url: admin_tickets_path, target: '#table_tickets', total_pages: @tickets.total_pages, filter: 'form-filter' }
+
+.modal.fade.in#tickets-modal
+  .modal-dialog
+    .modal-content{style: 'min-height: 350px'}
+      .modal-header
+        %h5.modal-title.bold Tickets
+        %button.btn-close{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' }
+      .modal-body
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' } Annuler
+        - idocus_params = param_encode({ url: '#url', form: { id: 'form-ticket', dump_action: true }, modal: { id: 'tickets-modal' }, after_send: 'show_tickets' })
+        %button.btn.btn-primary.semibold.as_idocus_ajax{ type: 'button', idocus: idocus_params } Valider
+      
+    
+= javascript_include_tag 'back/tickets/assets/javascripts/main'

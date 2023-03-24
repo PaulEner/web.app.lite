@@ -1,0 +1,59 @@
+#scanning_providers
+  .row.derivationLeft.box.small-shadow.clearfix.header
+    .col-md-6      
+      %h3
+        Liste des ateliers 
+        %span.badge.bg-dark= @scanning_providers.count
+    .col-md-6.text-end.readonly-container
+      %button.btn.btn-dark.new-asp
+        = link_to "#", class: 'no-style' do
+          %span.me-2= glyphicon('plus', size: 10, color: 'white')
+          %span= t('actions.new')
+
+  .row.derivationRight.box
+    .col-md-12
+      %table.table.table-bordered-inner.table-condensed.table-striped
+        %thead
+          %tr
+            %th= t('activerecord.models.common.attributes.created_at')
+            %th= t('activerecord.models.scanning_provider.attributes.is_default')
+            %th= t('activerecord.models.scanning_provider.attributes.name')
+            %th= t('activerecord.models.scanning_provider.attributes.customers_count')
+            %th.text-end Action
+        %tbody
+          - @scanning_providers.each do |scanning_provider|
+            %tr
+              %td= l(scanning_provider.created_at)
+              %td= scanning_provider.is_default ? t('yes_value') : t('no_value')
+              %td= link_to scanning_provider, admin_scanning_provider_path(scanning_provider)
+              %td= scanning_provider.customers.count
+              %td.text-end.pointer.readonly-container
+                .action.sub_edit_delete
+                  %span.glyph= glyphicon('ellipses', { size: '12', style: 'transform: rotate(90deg)'})
+                .sub_menu.text-start.hide
+                  %ul.no-margin.no-padding.regular                    
+                    %li.edit-asp{ data: { id: scanning_provider.id }}     
+                      = link_to '#', class: 'no-style black-label' do
+                        %span.me-2= glyphicon('pencil', size: 12)
+                        %span Modifier
+                    %li
+                      = link_to admin_scanning_provider_path(scanning_provider), class: 'no-style black-label', data: { method: 'DELETE', confirm: t('actions.confirm') } do
+                        %span.me-2= glyphicon('trash', size: 12, color: '#FF4848')
+                        %span.red-label Supprimer
+
+
+.modal.fade.in#scanning_providers-modal
+  .modal-dialog{ style: "min-width: 860px;" }
+    .modal-content
+      .modal-header.clearfix
+        %h5.modal-title.bold Ateliers
+        %button.btn-close{'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button'}
+      .modal-body.back-grey
+         
+      .modal-footer
+        %button.btn.btn-light.semibold.cancel{ 'aria-label' => 'Close', 'data-bs-dismiss' => 'modal', :type => 'button' } Annuler
+        - idocus_params = param_encode({ url: '#url', form: { id: 'form-asp', dump_action: true }, before_send: 'update_email_content', modal: { id: 'news-modal' }, after_send: 'show_news' })
+        %button.btn.btn-primary.semibold.as_idocus_ajax{ type: 'button', idocus: idocus_params } Valider
+  
+
+= javascript_include_tag 'back/scanning_providers/assets/javascripts/main'

@@ -1,0 +1,130 @@
+- packages   = BillingMod::Configuration::LISTS
+- my_package =  @customer.try(:my_package) || FakeObject.new
+- if !@customer.persisted?
+  - my_package.name = 'ido_classic'
+  - my_package.preassignment_active = true
+- count      = 0
+
+- is_manual_paper_set_order = CustomUtils.is_manual_paper_set_order?(@organization)
+
+.packages_list  
+  - packages.each do |package, infos|
+    - is_my_package    = CustomUtils.is_ido_premium?(@organization.code) ? true : (package.to_s == my_package&.name)
+    - class_derivation = ((count % 2) == 0) ? "derivationLeft" : "derivationRight"
+    - count += 1
+    - human_name = infos[:human_name].presence || nil    
+    - to_disable = !current_user.try(:is_admin) && (is_my_package) && @customer.persisted? && !my_package.try(:is_commitment_end?)
+
+    - next if human_name.blank? || %w(preassignment mail).include?(package.to_s)
+    - next if package.to_s == 'ido_mini'
+    - next if package.to_s == 'ido_micro'      && @organization.try(:uses_micro_plus?)
+    - next if package.to_s == 'ido_micro_plus' && !@organization.try(:uses_micro_plus?)
+    - next if package.to_s == 'ido_digitize'   && !is_manual_paper_set_order
+    - next if package.to_s != 'ido_premium'    && CustomUtils.is_ido_premium?(@organization.code)
+    - next if package.to_s == 'ido_premium'    && !CustomUtils.is_ido_premium?(@organization.code)
+
+    .package{ class: "#{class_derivation} #{'active' if is_my_package}", data: { name: package } }
+      .row.box{ class: "#{'hide' if package.to_s == 'ido_premium'}"}
+        .col-sm-4.text-center
+          .label-package.bold{ class: "label-#{package}" }= human_name
+        .col-sm-4
+          .semibold.description= infos[:description]
+          %label.regular= infos[:hint]
+          - if package.to_s == my_package.try(:name) && my_package.commitment_end_period.to_i > 0 && my_package.commitment_end_period.to_i >= Date.today.strftime('%Y%m').to_i
+            %hr
+              %label.semibold Information :
+              %label
+                votre engagement de 12 mois se termine le                
+                - if my_package.commitment_end_period.to_i == Date.today.strftime('%Y%m').to_i                
+                  %span.badge.bg-danger.semibold= l CustomUtils.period_to_date(my_package.commitment_end_period).end_of_month
+                - else
+                  %label= l CustomUtils.period_to_date(my_package.commitment_end_period).end_of_month
+        .col-sm-2.text-end
+          %label.price.bold
+            = infos[:price]
+            %span €/mois
+        .col-sm-2.text-center.pt-3
+          = radio_button_tag 'package[name]', package.to_s, is_my_package, class: "form-check-input radio-button main-option #{'commitment_pending' if to_disable}", data: { price: BillingMod::Configuration.price_of(package, @customer)}
+      .options{class: "#{'hide' if not is_my_package}"}
+        .row
+          .col-sm-6.m-3
+            - if package.to_s == 'ido_x' || package.to_s == 'ido_premium'
+              .form-group.ms-3
+                = label_tag 'user[jefacture_account_id]', "Identifiant Jefacture (SIREN)", class: 'col-form-label semibold'
+                .select-container.no-padding.w-100                  
+                  = text_field_tag 'user[jefacture_account_id]', @customer.jefacture_account_id, class: 'form-control', placeholder: "ex : 278 254 652"
+            - options = infos[:options].presence || []
+            - options.each do |opt, value|
+              - next if value != 'optional'
+              - if opt.to_s == 'bank'
+                .row.retriever-option
+                  .col-md-10.form-group.no-margin
+                    .form-check.form-check-inline{ data: { toggle: 'tooltip', placement: 'right' }}
+                      %label.semibold Avec option automate
+                  .col-md-2.form-check.form-switch
+                    %label.form-check-label Non
+                    = check_box_tag "package[#{package.to_s}][bank]", opt.to_s, is_my_package && my_package.try(:bank_active), class: "form-check-input input_switch option_checkbox", data: { price: BillingMod::Configuration.price_of('ido_retriever', @customer) }
+              - if opt.to_s == 'mail'
+                .row.mail-option
+                  .col-md-10.form-group.no-margin
+                    .form-check.form-check-inline{ data: { toggle: 'tooltip', placement: 'right' }}
+                      %label.semibold Avec option courrier
+                      - if package.to_s == 'ido_premium'
+                        %br
+                        %i.hint
+                          = "Vous permet d’adresser vos pièces par courrier à notre centre de numérisation. Pour #{BillingMod::Configuration.price_of('mail')}€ HT"
+                  .col-md-2.form-check.form-switch
+                    %label.form-check-label Non
+                    = check_box_tag "package[#{package.to_s}][mail]", opt.to_s, is_my_package && my_package.try(:mail_active), class: "form-check-input option_checkbox input_switch", data: { price: BillingMod::Configuration.price_of('mail', @customer)}
+
+              - if opt.to_s == 'digitize' && is_manual_paper_set_order
+                .row.mail-option
+                  .col-md-10.form-group.no-margin
+                    .form-check.form-check-inline{ data: { toggle: 'tooltip', placement: 'right' }}
+                      %label.semibold Avec numérisation
+                  .col-md-2.form-check.form-switch
+                    %label.form-check-label Non
+                    = check_box_tag "package[#{package.to_s}][scan]", 'scan', is_my_package && my_package.try(:scan_active) && is_manual_paper_set_order, class: "form-check-input option_checkbox input_switch", data: { price: 0 }
+
+              - if opt.to_s == 'preassignment'
+                .row.preassignmentt-option
+                  .col-md-10.form-group.no-margin
+                    .form-check.form-check-inline.pre_assignment
+                      %label.semibold Pré-saisie comptable
+                  .col-md-2.form-check.form-switch                     
+                    - is_preassignment_active = is_my_package ? my_package&.preassignment_active : true
+                    %label.form-check-label.pre-assignment-state= (is_my_package && my_package&.preassignment_active) ? 'Oui' : 'Non'
+                    = check_box_tag "package[#{package.to_s}][preassignment]", opt.to_s, is_preassignment_active, class: "form-check-input option_checkbox input_switch", data: { price: BillingMod::Configuration.price_of('preassignment', @customer)}
+          .col-sm-5.m-3
+            .input-journal-numbers
+              .form-group
+                = label_tag "package[#{package.to_s}][number_of_journals]", "Nombre de journaux", class: 'col-form-label required semibold'
+                .select-container.no-padding.w-100.subscription_number_of_journals
+                  = number_field_tag "package[#{package.to_s}][number_of_journals]", my_package.try(:journal_size) || 5, class: 'form-control special_input number_of_journals', min: 5, max: 30, required: true, autofocus: true, pattern: '/^[0-9]+$/', placeholder: "5", data: { price: BillingMod::Configuration.price_of('journal_excess', @customer)}
+                  - if @customer.account_book_types.count > my_package.try(:journal_size).to_i
+                    &nbsp;
+                    %span{id: 'err-msg-input-number'}
+                    %div.clearfix
+                      %i Supprimez un journal comptable avant de baisser cette option.
+
+  %hr
+  - if @customer.persisted?
+    .form-group.row.w-100
+      .col-md-6.text-start.ps-3
+        - if current_user.is_admin
+          .form-check.form-check-inline.me-5
+            %label.form-check-label Appliquer tout de suite les options à la baisse ?
+            = check_box_tag 'package[apply_now]', 'apply_now', false, class: 'form-check-input'
+      .col-md-6.text-end
+        %h6
+          Prix du forfait avec les options sélectionnées :
+          %b.total_price.bold 0,00 €
+
+  .future_package
+    - next_period  = CustomUtils.period_of(1.month.after)
+    - next_package = @customer.package_of(next_period)
+
+    - if next_package
+      .text-center
+        .alert.alert-warning.mb-3.w-50
+          = popover_content(next_package, "Votre abonnement du mois prochain")

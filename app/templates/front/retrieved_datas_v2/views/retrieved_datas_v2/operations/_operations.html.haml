@@ -1,0 +1,56 @@
+.derivationLeft
+  - if waiting_operations_count > 0 || current_user.is_admin
+    .row
+      %div{ class: "col-md-#{ (waiting_operations_count > 0 && current_user.is_admin) ? 6 : 9}"}
+      - if current_user.is_admin && 1 == 0
+        // DONT SHOW THIS BUTTON FROM NOW (1 == 0)
+        .col-md-3.text-end        
+          - idocus_param = param_encode({ url: '/retrieved_v2/unlock_operations', method: 'post', confirm: 'Etes vous sûr?', form: { id: 'filter-operations-form' }, after_send: 'retrieved_datas_reload_operations' })
+          %button.btn.btn-default.semibold.force-preseizures.as_idocus_ajax{ idocus: idocus_param, type: 'button' }
+            %span.me-2= glyphicon('aperture', { size: '15', color: '#72AA42'})
+            %span Débloquer les
+            %span.count-operation= waiting_operations_count
+            %span opération(s)
+      - if waiting_operations_count > 0
+        .col-md-3.text-end        
+          - idocus_param = param_encode({ url: '/retrieved_v2/force_operations', method: 'post', confirm: 'Etes vous sûr?', form:{ id: 'filter-operations-form' }, after_send: 'retrieved_datas_reload_operations' })
+          %button.btn.btn-dark.semibold.force-preseizures.as_idocus_ajax{ idocus: idocus_param, type: 'button' }
+            %span.me-2= glyphicon('aperture', { size: '15', color: 'white'})
+            %span Forcer la pré-affectation de
+            %span.bold.count-operation= waiting_operations_count
+            %span opération(s)
+
+  .mb-4
+
+  %input#operations-size{ type: 'hidden', value: operations.total_count }
+  .row
+    .col-md-12
+      %table.table.table-striped.table_integration#tbl_operations
+        %thead            
+          %th= sortable 'date', 'Date'
+          /%th= sortable 'value_date', 'Date Valeur'
+          %th= sortable 'bank_accounts.bank_name', 'Automate'
+          %th= sortable 'bank_accounts.number', 'Compte'
+          /%th= sortable 'category', 'Catégorie'
+          %th= sortable 'label', 'Libellé'
+          %th= sortable 'amount', 'Montant'
+          - if @user.pre_assignement_displayed?
+            %th Pré-affecté
+        %tbody
+          - if operations.any?
+            - operations.each do |operation|
+              %tr
+                %td= operation.date.strftime('%d/%m/%Y')
+                /%td= operation.value_date.strftime('%d/%m/%Y')
+                %td.semibold= operation.bank_account.try(:bank_name)
+                %td.semibold= operation.bank_account.try(:number)
+                /%td -
+                %td= operation.label
+                %td= operation.amount.to_s + " €"
+                - if @user.pre_assignement_displayed?
+                  %td= is_operation_pre_assigned(operation)
+          - else
+            %tr
+              %td{colspan: 8}= t('global.no-data-found')
+
+    = render file: Rails.root.join('app/views/shared/_pagination.html.haml'), locals: { name: 'operations', mark: 'retrieved_data', total_pages: operations.total_pages }
